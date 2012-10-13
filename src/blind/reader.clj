@@ -1,12 +1,10 @@
 (set! *warn-on-reflection* true)
 
 (ns blind.reader
-  (:refer-clojure :exclude [read read-line read-string *ns* ns-map the-ns])
-  (:require [clojure.lang.runtime :refer [*ns*]]
-            [clojure.lang.ns :refer [resolve-ns ns-map the-ns maybe-resolve]])
+  (:refer-clojure :exclude [read read-line read-string])
   (:import (clojure.lang BigInt Numbers PersistentHashMap PersistentHashSet IMeta ISeq
                          RT IReference Symbol IPersistentList Reflector Var Symbol Keyword IObj
-                         PersistentVector IPersistentCollection IRecord)
+                         PersistentVector IPersistentCollection IRecord Namespace)
            (java.util ArrayList regex.Pattern regex.Matcher)
            java.lang.reflect.Constructor))
 
@@ -88,8 +86,8 @@
 (defn line-numbering-push-back-reader [s]
   (LineNumberingPushbackReader. (push-back-reader s) 0 true nil))
 
-(def pbr push-back-reader)
-(def lnpbr line-numbering-push-back-reader)
+;; (def pbr push-back-reader)
+;; (def lnpbr line-numbering-push-back-reader)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; predicates
@@ -424,6 +422,10 @@
             (symbol (p 0) (p 1)))
           (reader-error rdr "Invalid token:" token)))))
 
+(defn- resolve-ns [sym]
+  (or (find-ns sym)
+      ((ns-aliases *ns*) sym)))
+
 (defn read-keyword
   [reader initch]
   (let [ch (read-char reader)]
@@ -591,7 +593,7 @@
               (Reflector/invokeStaticMethod (namespace fs) fs-name args))
 
             :else
-            (let [v (maybe-resolve *ns* fs)]
+            (let [v (Compiler/maybeResolveIn *ns* fs)]
               (if (instance? Var v)
                 (apply v o)
                 (reader-error rdr "Can't resolve " fs)))))
@@ -649,18 +651,18 @@
 (defn- resolve-symbol [s]
   (if (pos? (.indexOf (name s) "."))
     s
-    (if (namespace s)
-      (let [ns (resolve-ns s)]
+    (if-let [ns-str (namespace s)]
+      (let [^Namespace ns (resolve-ns (symbol ns-str))]
         (if (or (nil? ns)
-                (= (name (:name ns)) (namespace s))) ;; not an alias
+                (= (name (.name ns)) ns-str)) ;; not an alias
           s
-          (symbol (name (:name ns)) (name s))))
+          (symbol (name (.name ns)) (name s))))
       (if-let [o ((ns-map *ns*) s)]
         (if (instance? Class o)
           (symbol (.getName ^Class o))
           (if (instance? Var o)
             (symbol (-> ^Var o .ns .name name) (-> ^Var o .sym name))))
-        (symbol (:name *ns*) (name s))))))
+        (symbol (.name *ns*) (name s))))))
 
 (defn syntax-quote [form]
   (cond
