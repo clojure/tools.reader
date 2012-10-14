@@ -7,8 +7,14 @@ A complete clojure reader implemented in clojure itself.
 In Leiningen:
 
 ```clojure
-:dependencies [[bronsa/blind "0.2.2"]]
+:dependencies [[bronsa/blind "0.2.3"]]
 ```
+
+## NOTE
+
+Right now, it's damn slow.
+
+It used to be a lot faster, i have to investigate the cause of the slowdown.
 
 ## Usage
 
