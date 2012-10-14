@@ -797,9 +797,9 @@
         (throw e)
         (throw (ex-info (.getCause e)
                         (merge {:type :reader-exception}
-                               (if (satisfies? IndexingReader rdr)
-                                 {:line (get-line-number rdr)
-                                  :column (get-column-number rdr)}))
+                               (if (satisfies? IndexingReader reader)
+                                 {:line (get-line-number reader)
+                                  :column (get-column-number reader)}))
                         e))))))
 
 (defn read-tagged* [rdr tag]
