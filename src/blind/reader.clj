@@ -104,8 +104,9 @@
 (defn- numeric?
   "Checks whether a given character is numeric"
   [^Character ch]
-  (Character/isDigit ch))
-   
+  (if ch
+    (Character/isDigit ch)))
+
 (defn- comment-prefix?
   "Checks whether the character begins a comment."
   [ch]
@@ -432,8 +433,8 @@
           (reader-error rdr "Invalid token:" token)))))
 
 (defn- resolve-ns [sym]
-  (or (find-ns sym)
-      ((ns-aliases *ns*) sym)))
+  (or ((ns-aliases *ns*) sym)
+      (find-ns sym)))
 
 (defn read-keyword
   [reader initch]
@@ -672,7 +673,7 @@
           (symbol (.getName ^Class o))
           (if (instance? Var o)
             (symbol (-> ^Var o .ns .name name) (-> ^Var o .sym name))))
-        (symbol (.name *ns*) (name s))))))
+        (symbol (name (.name *ns*)) (name s))))))
 
 (defn syntax-quote [form]
   (cond
@@ -851,15 +852,3 @@
   "Reads one object from the string s"
   [s]
   (read (string-push-back-reader s) true nil false))
-
-(comment
- (def l (slurp "/home/bronsa/src/clojure/src/clj/clojure/core.clj"))
-
- (defn bench [] (let [pl (pbr l)] (loop [r (read pl true nil true)]
-                                    (if r (recur (try (read pl true nil true)
-                                                      (catch Exception _)))))))
-
- (defn bench- [] (let [pl (java.io.PushbackReader. (java.io.StringReader. l))]
-                   (loop [r (clojure.core/read pl true nil true)]
-                     (if r (recur (try (clojure.core/read pl true nil true)
-                                       (catch Exception _))))))))
