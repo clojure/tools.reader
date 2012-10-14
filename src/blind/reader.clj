@@ -40,12 +40,13 @@
       (set! buf ch)
       (set! buf? true))))
 
-(defn push-back-reader [^String s]
+(defn string-push-back-reader [^String s]
   "Creates a StringPushbackReader from a given string"
   (StringPushbackReader. s nil (.length s) false))
 
-(defprotocol LineNumberingReader
-  (get-line-number [reader]))
+(defprotocol IndexingReader
+  (get-line-number [reader])
+  (get-column-number [reader]))
 
 (defn read-line [rdr]
   (loop [c (read-char rdr) s ""]
@@ -54,8 +55,8 @@
       s
       (recur (read-char rdr) (str s c)))))
 
-(deftype LineNumberingPushbackReader
-    [^StringPushbackReader spr ^:unsynchronized-mutable line
+(deftype IndexingPushbackReader
+    [^StringPushbackReader spr ^:unsynchronized-mutable line ^:unsynchronized-mutable column
      ^:unsynchronized-mutable line-start? ^:unsynchronized-mutable prev]
   PushbackReader
   (read-char [reader]
@@ -69,7 +70,9 @@
         (set! prev line-start?)
         (set! line-start? (= ch \newline))
         (when line-start?
+          (set! column 0)
           (update! line inc))
+        (update! column inc)
         ch)))
 
   (peek-char [reader]
@@ -78,16 +81,15 @@
   (unread [reader ch]
     (when line-start? (update! line dec))
     (set! line-start? prev)
+    (update! column dec)
     (unread spr ch))
   
-  LineNumberingReader
-  (get-line-number [reader] (inc line)))
+  IndexingReader
+  (get-line-number [reader] (inc line))
+  (get-column-number [reader]  column))
 
-(defn line-numbering-push-back-reader [s]
-  (LineNumberingPushbackReader. (push-back-reader s) 0 true nil))
-
-;; (def pbr push-back-reader)
-;; (def lnpbr line-numbering-push-back-reader)
+(defn indexing-push-back-reader [s]
+  (IndexingPushbackReader. (string-push-back-reader s) 0 1 true nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; predicates
@@ -125,7 +127,7 @@
 (defn reader-error
   [rdr & msg]
   (throw (RuntimeException. ^String (apply str msg)))
-  #_ (throw (ReaderException. (get-line rdr) (apply str msg))))
+  #_ (throw (ReaderException. (get-line-number rdr) (get-column-number rdr) (apply str msg))))
 
 (defn macro-terminating? [ch]
   (and (not= \# ch)
@@ -285,7 +287,7 @@
 
 (defn ^PersistentVector read-delimited-list
   [delim rdr recursive?]
-  (let [first-line (if (satisfies? LineNumberingReader rdr)
+  (let [first-line (if (satisfies? IndexingReader rdr)
                      (get-line-number rdr))]
    (loop [a (transient [])]
      (let [ch (read-past whitespace? rdr)]
@@ -325,14 +327,14 @@
 
 (defn read-list
   [rdr _]
-  (let [line (if (satisfies? LineNumberingReader rdr)
-               (get-line-number rdr))
+  (let [[line column] (if (satisfies? IndexingReader rdr)
+                        [(get-line-number rdr) (dec (get-column-number rdr))])
         the-list (read-delimited-list \) rdr true)]
     (if (empty? the-list)
       '()
       (if-not line
         (clojure.lang.PersistentList/create the-list)
-        (with-meta (clojure.lang.PersistentList/create the-list) {:line line})))))
+        (with-meta (clojure.lang.PersistentList/create the-list) {:line line :column column})))))
 
 (def read-comment skip-line)
 
@@ -467,8 +469,8 @@
 
 (defn read-meta
   [rdr _]
-  (let [line (if (satisfies? LineNumberingReader rdr)
-               (get-line-number rdr))
+  (let [[line column] (if (satisfies? IndexingReader rdr)
+                        [(get-line-number rdr) (dec (get-column-number rdr))])
         m (desugar-meta (read rdr true nil true))]
     (when-not (map? m)
       (reader-error rdr "Metadata must be Symbol,Keyword,String or Map"))
@@ -476,7 +478,8 @@
       (if (instance? IMeta o)
         (let [m (if (and (not (nil? line))
                          (instance? ISeq o))
-                  (assoc m :line line)
+                  (assoc m :line line
+                           :column column)
                   m)]
           (if-not (instance? IReference o)
             (with-meta o (merge (meta o) m))
@@ -725,7 +728,7 @@
     (let [form (read rdr true nil true)
           ret (syntax-quote form)]
       (if (and (instance? IObj form)
-               (dissoc (meta form) :line))
+               (dissoc (meta form) :line :column))
         (list 'clojure.core/with-meta ret (syntax-quote (meta form)))
         ret))))
 
@@ -830,7 +833,7 @@
 (defn read-string
   "Reads one object from the string s"
   [s]
-  (read (push-back-reader s) true nil false))
+  (read (string-push-back-reader s) true nil false))
 
 (comment
  (def l (slurp "/home/bronsa/src/clojure/src/clj/clojure/core.clj"))
