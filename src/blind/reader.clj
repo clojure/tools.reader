@@ -423,6 +423,9 @@
       "true" true
       "false" false
       "/" '/
+      "NaN" Double/NaN
+      "-Infinity" Double/NEGATIVE_INFINITY
+      ("Infinity" "+Infinity") Double/POSITIVE_INFINITY
       
       (or (when-let [p (parse-symbol token)]
             (symbol (p 0) (p 1)))
