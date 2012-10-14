@@ -98,7 +98,8 @@
 (defn- whitespace?
   "Checks whether a given character is whitespace"
   [^Character ch]
-  (or (Character/isWhitespace ch) (= \, ch)))
+  (if ch
+    (or (Character/isWhitespace ch) (= \, ch))))
 
 (defn- numeric?
   "Checks whether a given character is numeric"
@@ -126,8 +127,11 @@
 
 (defn reader-error
   [rdr & msg]
-  (throw (RuntimeException. ^String (apply str msg)))
-  #_ (throw (ReaderException. (get-line-number rdr) (get-column-number rdr) (apply str msg))))
+  (throw (ex-info (apply str msg)
+                  (merge {:type :reader-exception}
+                         (if (satisfies? IndexingReader rdr)
+                           {:line (get-line-number rdr)
+                            :column (get-column-number rdr)})))))
 
 (defn macro-terminating? [ch]
   (and (not= \# ch)
@@ -473,7 +477,7 @@
                         [(get-line-number rdr) (dec (get-column-number rdr))])
         m (desugar-meta (read rdr true nil true))]
     (when-not (map? m)
-      (reader-error rdr "Metadata must be Symbol,Keyword,String or Map"))
+      (reader-error rdr "Metadata must be Symbol, Keyword, String or Map"))
     (let [o (read rdr true nil true)]
       (if (instance? IMeta o)
         (let [m (if (and (not (nil? line))
@@ -770,20 +774,30 @@
   "Reads the first object from a PushbackReader. Returns the object read.
    If EOF, throws if eof-is-error is true. Otherwise returns sentinel."
   [reader eof-is-error sentinel is-recursive]
-  (let [ch (read-char reader)]
-    (cond
-     (nil? ch) (if eof-is-error (reader-error reader "EOF") sentinel)
-     (whitespace? ch) (recur reader eof-is-error sentinel is-recursive)
-     (comment-prefix? ch) (recur (read-comment reader ch) eof-is-error sentinel is-recursive)
-     :else (let [f (macros ch)
-                 res
-                 (cond
-                  f (f reader ch)
-                  (number-literal? reader ch) (read-number reader ch)
-                  :else (read-symbol reader ch))]
-     (if (= res reader)
-       (recur reader eof-is-error sentinel is-recursive)
-       res)))))
+  (try
+    (let [ch (read-char reader)]
+      (cond
+        (nil? ch) (if eof-is-error (reader-error reader "EOF") sentinel)
+        (whitespace? ch) (read reader eof-is-error sentinel is-recursive)
+        (comment-prefix? ch) (read (read-comment reader ch) eof-is-error sentinel is-recursive)
+        :else (let [f (macros ch)
+                    res
+                    (cond
+                      f (f reader ch)
+                      (number-literal? reader ch) (read-number reader ch)
+                      :else (read-symbol reader ch))]
+                (if (= res reader)
+                  (read reader eof-is-error sentinel is-recursive)
+                  res))))
+    (catch Exception e
+      (if (instance? clojure.lang.ExceptionInfo e)
+        (throw e)
+        (throw (ex-info (.getCause e)
+                        (merge {:type :reader-exception}
+                               (if (satisfies? IndexingReader rdr)
+                                 {:line (get-line-number rdr)
+                                  :column (get-column-number rdr)}))
+                        e))))))
 
 (defn read-tagged* [rdr tag]
   (let [o (read rdr true nil true)]
