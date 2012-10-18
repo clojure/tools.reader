@@ -674,70 +674,74 @@
             (symbol (-> ^Var o .ns .name name) (-> ^Var o .sym name))))
         (symbol (name (.name *ns*)) (name s))))))
 
+(defn- add-meta [form ret]
+  (if (and (instance? IObj form)
+           (dissoc (meta form) :line :column))
+    (list 'clojure.core/with-meta ret (syntax-quote (meta form)))
+    ret))
+
 (defn syntax-quote [form]
-  (cond
-    (.containsKey Compiler/specials form) (list 'quote form)
+  (->>
+   (cond
+     (.containsKey Compiler/specials form) (list 'quote form)
 
-    (instance? Symbol form)
-    (list 'quote
-          (if (namespace form)
-            (let [class? ((ns-map *ns*)
-                          (symbol (namespace form)))]
-              (if (instance? Class class)
-                (symbol (.getName ^Class class?) (name form))
-                (resolve-symbol form)))
-            (let [sym (name form)]
-              (cond
-                (.endsWith sym "#")
-                (register-gensym form)
+     (instance? Symbol form)
+     (list 'quote
+           (if (namespace form)
+             (let [class? ((ns-map *ns*)
+                           (symbol (namespace form)))]
+               (if (instance? Class class)
+                 (symbol (.getName ^Class class?) (name form))
+                 (resolve-symbol form)))
+             (let [sym (name form)]
+               (cond
+                 (.endsWith sym "#")
+                 (register-gensym form)
 
-                (.startsWith sym ".")
-                form
-                
-                (.endsWith sym ".")
-                (let [csym (symbol (subs sym 0 (dec (count sym))))]
-                  (symbol (.concat (name (resolve-symbol csym)) ".")))
-                :else (resolve-symbol form)))))
+                 (.startsWith sym ".")
+                 form
+                 
+                 (.endsWith sym ".")
+                 (let [csym (symbol (subs sym 0 (dec (count sym))))]
+                   (symbol (.concat (name (resolve-symbol csym)) ".")))
+                 :else (resolve-symbol form)))))
 
-    (unquote? form) (second form)
-    (unquote-splicing? form) (throw (IllegalStateException. "splice not in list"))
+     (unquote? form) (second form)
+     (unquote-splicing? form) (throw (IllegalStateException. "splice not in list"))
 
-    (instance? IPersistentCollection form)
-    (cond
-      (instance? IRecord form) form
-      (map? form) (list 'clojure.core/apply 'clojure.core/hash-map
-                        (list 'clojure.core/seq (cons 'clojure.core/concat (expand-list
-                                                                            (flatten-map form)))))
-      (vector? form) (list 'clojure.core/apply 'clojure.core/vector
-                           (list 'clojure.core/seq (cons 'clojure.core/concat
-                                                         (expand-list (seq form)))))
-      (set? form) (list 'clojure.core/apply 'clojure.core/hash-set
-                        (list 'clojure.core/seq (cons 'clojure.core/concat
-                                                      (expand-list (seq form)))))
-      (or (instance? ISeq form) (list? form))
-      (let [seq (seq form)]
-        (if seq
-          (list 'clojure.core/seq (cons 'clojure.core/concat (expand-list seq)))
-          (cons 'clojure.core/list nil)))
-      :else (throw (UnsupportedOperationException. "Unknown Collection type")))
+     (instance? IPersistentCollection form)
+     (cond
+       (instance? IRecord form) form
+       (map? form) (list 'clojure.core/apply 'clojure.core/hash-map
+                         (list 'clojure.core/seq (cons 'clojure.core/concat (expand-list
+                                                                             (flatten-map form)))))
+       (vector? form) (list 'clojure.core/apply 'clojure.core/vector
+                            (list 'clojure.core/seq (cons 'clojure.core/concat
+                                                          (expand-list (seq form)))))
+       (set? form) (list 'clojure.core/apply 'clojure.core/hash-set
+                         (list 'clojure.core/seq (cons 'clojure.core/concat
+                                                       (expand-list (seq form)))))
+       (or (instance? ISeq form) (list? form))
+       (let [seq (seq form)]
+         (if seq
+           (list 'clojure.core/seq (cons 'clojure.core/concat (expand-list seq)))
+           (cons 'clojure.core/list nil)))
+       :else (throw (UnsupportedOperationException. "Unknown Collection type")))
 
-    (or (keyword? form)
-        (number? form)
-        (char? form)
-        (string? form))
-    form
+     (or (keyword? form)
+         (number? form)
+         (char? form)
+         (string? form))
+     form
 
-    :else (list 'quote form)))
+     :else (list 'quote form))
+   (add-meta form)))
 
 (defn read-syntax-quote
   [rdr backquote]
   (with-bindings {#'gensym-env {}}
-    (let [form (read rdr true nil true)
-          ret (syntax-quote form)]
-      (if (and (instance? IObj form)
-               (dissoc (meta form) :line :column))
-        (list 'clojure.core/with-meta ret (syntax-quote (meta form)))
-        ret))))
+    (-> (read rdr true nil true)
+        syntax-quote)))
 
 (defn macros [c]
   (case c
