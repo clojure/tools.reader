@@ -17,32 +17,36 @@
   (list 'set! what (list f what)))
 
 (deftype StringPushbackReader
-    [^:unsynchronized-mutable ^String s ^:unsynchronized-mutable buf
-     ^:unsynchronized-mutable len ^:unsynchronized-mutable buf?]
+    [^:unsynchronized-mutable ^String s ^:unsynchronized-mutable len
+     ^"[Ljava.lang.Object;" buf ^:unsynchronized-mutable pos]
   PushbackReader
   (read-char [reader]
-    (if buf?
-      (do (set! buf? false)
-          buf)
+    (if (< pos (alength buf))
+      (let [r (aget buf pos)]
+        (update! pos inc)
+        r)
       (when (pos? len)
         (let [r (.charAt s 0)]
           (update! len dec)
           (set! s (.substring s 1))
           r))))
   (peek-char [reader]
-    (if buf?
-      buf
+    (if (< pos (alength buf))
+      (aget buf pos)
       (when (pos? len)
           (.charAt s 0))))
   (unread [reader ch]
     (when ch
-      (if buf? (throw (RuntimeException. "Pushback buffer is full")))
-      (set! buf ch)
-      (set! buf? true))))
+      (if (zero? pos) (throw (RuntimeException. "Pushback buffer is full")))
+      (update! pos dec)
+      (aset buf pos ch))))
 
-(defn string-push-back-reader [^String s]
+(defn string-push-back-reader
   "Creates a StringPushbackReader from a given string"
-  (StringPushbackReader. s nil (.length s) false))
+  ([s]
+     (string-push-back-reader s 1))
+  ([^String s buf-len]
+     (StringPushbackReader. s (.length s) (object-array buf-len) buf-len)))
 
 (defprotocol IndexingReader
   (get-line-number [reader])
