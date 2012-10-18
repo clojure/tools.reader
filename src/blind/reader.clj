@@ -18,7 +18,7 @@
 
 (deftype StringPushbackReader
     [^:unsynchronized-mutable ^String s ^:unsynchronized-mutable len
-     ^"[Ljava.lang.Object;" buf ^:unsynchronized-mutable pos]
+     ^objects buf ^:unsynchronized-mutable pos]
   PushbackReader
   (read-char [reader]
     (if (< pos (alength buf))
