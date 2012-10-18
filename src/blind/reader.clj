@@ -635,7 +635,7 @@
                        (cond
                          (unquote? item)          (list 'clojure.core/list (second item))
                          (unquote-splicing? item) (second item)
-                         :else                    (list (syntax-quote item))))]
+                         :else                    (list 'clojure.core/list (syntax-quote item))))]
         (recur (next s) ret))
       (seq (persistent! r)))))
 
