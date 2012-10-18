@@ -97,26 +97,26 @@
 
 (defn- whitespace?
   "Checks whether a given character is whitespace"
-  [ch]
+  [^Character ch]
   (if ch
-    (or (Character/isWhitespace ^char ch) (identical? \, ch))))
+    (or (Character/isWhitespace ch) (= \, ch))))
 
 (defn- numeric?
   "Checks whether a given character is numeric"
-  [ch]
+  [^Character ch]
   (if ch
-    (Character/isDigit ^char ch)))
+    (Character/isDigit ch)))
 
 (defn- comment-prefix?
   "Checks whether the character begins a comment."
   [ch]
-  (identical? \; ^char ch))
+  (= \; ^char ch))
 
 (defn- number-literal?
   "Checks whether the reader is at the start of a number literal"
-  [reader initch]
+  [reader ^Character initch]
   (or (numeric? initch)
-      (and (or (identical? \+ ^char initch) (identical? \- ^char initch))
+      (and (or (= \+ initch) (= \- initch))
            (numeric? (peek-char reader)))))
 
 (declare read macros dispatch-macros)
@@ -130,20 +130,21 @@
   [rdr & msg]
   (throw (ex-info (apply str msg)
                   (merge {:type :reader-exception}
-                         (if (instance? IndexingPushbackReader (class rdr))
+                         (if (satisfies? IndexingReader rdr)
                            {:line (get-line-number rdr)
                             :column (get-column-number rdr)})))))
 
 (defn macro-terminating? [ch]
-  (and (not (identical? \# ^char ch))
-       (not (identical? \' ^char ch))
+  (and (not= \# ch)
+       (not= \' ch)
        ;;(not= ch \:) ;; why?
        (macros ch)))
 
 (defn ^String read-token
   [rdr initch]
-  (if-not initch
+  (if (not initch)
     (reader-error rdr "EOF while reading")
+    
     (loop [sb (doto (StringBuilder.) (.append initch))
            ch (peek-char rdr)]
       (if (or (nil? ch)
@@ -291,23 +292,23 @@
 
 (defn ^PersistentVector read-delimited-list
   [delim rdr recursive?]
-  (let [first-line (if (instance? IndexingPushbackReader (class rdr))
+  (let [first-line (if (satisfies? IndexingReader rdr)
                      (get-line-number rdr))]
-    (loop [a (transient [])]
-      (let [ch (read-past whitespace? rdr)]
-        (when-not ch
-          (reader-error rdr "EOF while reading"
-                        (if first-line
-                          (str ", starting at line" first-line))))
-        (if (identical? ^char delim ^char  ch)
-          (persistent! a)
-          (if-let [macrofn (macros ch)]
-            (let [mret (macrofn rdr ch)]
-              (recur (if-not (= mret rdr) (conj! a mret) a)))
-            (do
-              (unread rdr ch)
-              (let [o (read rdr true nil recursive?)]
-                (recur (if-not (= o rdr) (conj! a o) a))))))))))
+   (loop [a (transient [])]
+     (let [ch (read-past whitespace? rdr)]
+       (when-not ch
+         (reader-error rdr "EOF while reading"
+                       (if first-line
+                         (str ", starting at line" first-line))))
+       (if (= delim ch)
+         (persistent! a)
+         (if-let [macrofn (macros ch)]
+           (let [mret (macrofn rdr ch)]
+             (recur (if-not (= mret rdr) (conj! a mret) a)))
+           (do
+             (unread rdr ch)
+             (let [o (read rdr true nil recursive?)]
+               (recur (if-not (= o rdr) (conj! a o) a))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; data structure readers
@@ -331,7 +332,7 @@
 
 (defn read-list
   [rdr _]
-  (let [[line column] (if (instance? IndexingPushbackReader (class rdr))
+  (let [[line column] (if (satisfies? IndexingReader rdr)
                         [(get-line-number rdr) (dec (get-column-number rdr))])
         the-list (read-delimited-list \) rdr true)]
     (if (empty? the-list)
@@ -476,7 +477,7 @@
 
 (defn read-meta
   [rdr _]
-  (let [[line column] (if (instance? IndexingPushbackReader (class rdr))
+  (let [[line column] (if (satisfies? IndexingReader rdr)
                         [(get-line-number rdr) (dec (get-column-number rdr))])
         m (desugar-meta (read rdr true nil true))]
     (when-not (map? m)
@@ -646,7 +647,7 @@
         (recur (next s) (-> key-vals
                             (conj! (key e))
                             (conj! (val e)))))
-      (seq (persistent! key-vals)))))
+      (persistent! key-vals))))
 
 (defn- register-gensym [sym]
   (if-not gensym-env
@@ -801,7 +802,7 @@
         (throw e)
         (throw (ex-info (.getCause e)
                         (merge {:type :reader-exception}
-                               (if (instance? IndexingPushbackReader (class reader))
+                               (if (satisfies? IndexingReader reader)
                                  {:line (get-line-number reader)
                                   :column (get-column-number reader)}))
                         e))))))
