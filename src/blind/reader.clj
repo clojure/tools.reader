@@ -647,7 +647,7 @@
         (recur (next s) (-> key-vals
                             (conj! (key e))
                             (conj! (val e)))))
-      (persistent! key-vals))))
+      (seq (persistent! key-vals)))))
 
 (defn- register-gensym [sym]
   (if-not gensym-env
