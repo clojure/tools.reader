@@ -695,7 +695,7 @@
                 form
                 
                 (.endsWith sym ".")
-                (let [csym (symbol (subs sym (dec (count sym))))]
+                (let [csym (symbol (subs sym 0 (dec (count sym))))]
                   (symbol (.concat (name (resolve-symbol csym)) ".")))
                 :else (resolve-symbol form)))))
 
@@ -717,7 +717,7 @@
       (or (instance? ISeq form) (list? form))
       (let [seq (seq form)]
         (if seq
-          (list 'cloure.core/seq (cons 'clojure.core/concat (expand-list seq)))
+          (list 'clojure.core/seq (cons 'clojure.core/concat (expand-list seq)))
           (cons 'clojure.core/list nil)))
       :else (throw (UnsupportedOperationException. "Unknown Collection type")))
 
