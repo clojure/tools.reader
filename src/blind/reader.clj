@@ -845,7 +845,7 @@
                 (if-not (instance? Keyword (first s))
                   (reader-error rdr "Unreadable ctor form: key must be of type clojure.lang.Keyword")
                   (recur (next s)))))
-            (Reflector/invokeStaticMethod class "create" (to-array vals)))))
+            (Reflector/invokeStaticMethod class "create" (object-array [vals])))))
       (reader-error rdr "Invalid reader constructor form"))))
 
 (defn read-tagged [rdr initch]
