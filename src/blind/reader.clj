@@ -141,7 +141,7 @@
 (defn macro-terminating? [ch]
   (and (not= \# ch)
        (not= \' ch)
-       ;;(not= ch \:) ;; why?
+       (not= ch \:)
        (macros ch)))
 
 (defn ^String read-token
