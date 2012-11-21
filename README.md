@@ -12,9 +12,7 @@ In Leiningen:
 
 ## NOTE
 
-Right now, it's damn slow.
-
-It used to be a lot faster, i have to investigate the cause of the slowdown.
+On my machine it reads core.clj 5x times slower than clojure's reader
 
 ## Usage
 
