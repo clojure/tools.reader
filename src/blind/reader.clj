@@ -141,7 +141,7 @@
   [rdr & msg]
   (throw (ex-info (apply str msg)
                   (merge {:type :reader-exception}
-                         (if (satisfies? IndexingReader rdr)
+                         (if (instance? IndexingPushbackReader rdr)
                            {:line (get-line-number rdr)
                             :column (get-column-number rdr)})))))
 
@@ -303,7 +303,7 @@
 
 (defn ^PersistentVector read-delimited-list
   [delim rdr recursive?]
-  (let [first-line  (when (satisfies? IndexingReader rdr)
+  (let [first-line  (when (instance? IndexingPushbackReader rdr)
                       (get-line-number rdr))
         delim ^char delim]
     (loop [a (transient [])]
@@ -344,7 +344,7 @@
 
 (defn read-list
   [rdr _]
-  (let [[line column] (when (satisfies? IndexingReader rdr)
+  (let [[line column] (when (instance? IndexingPushbackReader rdr)
                         [(get-line-number rdr) (dec (get-column-number rdr))])
         the-list (read-delimited-list \) rdr true)]
     (if (empty? the-list)
@@ -487,7 +487,7 @@
 
 (defn read-meta
   [rdr _]
-  (let [[line column] (when (satisfies? IndexingReader rdr)
+  (let [[line column] (when (instance? IndexingPushbackReader rdr)
                         [(get-line-number rdr) (dec (get-column-number rdr))])
         m (desugar-meta (read rdr true nil true))]
     (when-not (map? m)
@@ -595,7 +595,7 @@
   (when-not *read-eval*
     (reader-error rdr "#= not allowed when *read-eval* is false"))
   (let [o (read rdr true nil true)]
-    (if (instance? o Symbol)
+    (if (instance? Symbol o)
       (RT/classForName (.toString ^Symbol o))
       (if (instance? IPersistentList o)
         (let [fs (first o)
@@ -813,7 +813,7 @@
         (throw e)
         (throw (ex-info (.getCause e)
                         (merge {:type :reader-exception}
-                               (if (satisfies? IndexingReader reader)
+                               (if (instance? IndexingPushbackReader reader)
                                  {:line (get-line-number reader)
                                   :column (get-column-number reader)}))
                         e))))))

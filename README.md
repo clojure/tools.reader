@@ -12,7 +12,7 @@ In Leiningen:
 
 ## NOTE
 
-On my machine it reads core.clj 5x times slower than clojure's reader
+On my machine it reads core.clj 1.5x times slower than clojure's reader
 
 ## Usage
 
