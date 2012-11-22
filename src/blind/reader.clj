@@ -1,7 +1,7 @@
 (set! *warn-on-reflection* true)
 
 (ns blind.reader
-  (:refer-clojure :exclude [read read-line read-string char])
+  (:refer-clojure :exclude [read read-string char])
   (:import (clojure.lang BigInt Numbers PersistentHashMap PersistentHashSet IMeta ISeq
                          RT IReference Symbol IPersistentList Reflector Var Symbol Keyword IObj
                          PersistentVector IPersistentCollection IRecord Namespace)
@@ -936,7 +936,7 @@
   [s]
   (read (string-push-back-reader s) true nil false))
 
-(defn read-line [rdr]
+(defn read-line-from-reader [rdr]
   "Reads a line from the reader"
   (loop [c (char (read-char rdr)) s (StringBuilder.)]
     (if (newline? c)
