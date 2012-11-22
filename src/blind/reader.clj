@@ -240,9 +240,9 @@
 
 (defn- match-ratio
   [s ^Matcher m]
-  (let [^String numinator (.group m 1)
+  (let [^String nominator (.group m 1)
         ^String denominator (.group m 2)]
-    (/ (-> numinator   BigInteger. BigInt/fromBigInteger Numbers/reduceBigInt)
+    (/ (-> nominator   BigInteger. BigInt/fromBigInteger Numbers/reduceBigInt)
        (-> denominator BigInteger. BigInt/fromBigInteger Numbers/reduceBigInt))))
 
 (defn- match-float
