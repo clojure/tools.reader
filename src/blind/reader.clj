@@ -5,77 +5,106 @@
   (:import (clojure.lang BigInt Numbers PersistentHashMap PersistentHashSet IMeta ISeq
                          RT IReference Symbol IPersistentList Reflector Var Symbol Keyword IObj
                          PersistentVector IPersistentCollection IRecord Namespace)
+           java.io.InputStream
            (java.util ArrayList regex.Pattern regex.Matcher)
            java.lang.reflect.Constructor))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; utils
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defmacro ^:private update! [what f]
-          (list 'set! what (list f what)))
+  (list 'set! what (list f what)))
 
 (defn- char [x]
   (try (clojure.core/char x)
        (catch NullPointerException e)))
 
-(defprotocol PushbackReader
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; reader protocols
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defprotocol Reader
   (read-char [reader] "Returns the next char from the Reader, nil if the end of stream has been reached")
-  (peek-char [reader] "Same as (let [c (read-char rdr)] (unread rdr c) c) but without the overhead of unread")
+  (peek-char [reader] "Returns the next char from the Reader without removing it from the reader stream"))
+
+(defprotocol IPushbackReader
   (unread [reader ch] "Push back a single character on to the stream"))
 
-(deftype StringPushbackReader
-    [^:unsynchronized-mutable ^String s s-len ^:unsynchronized-mutable s-pos
-     ^objects buf buf-len ^:unsynchronized-mutable buf-pos]
-  PushbackReader
+(defprotocol IndexingReader
+  (get-line-number [reader])
+  (get-column-number [reader]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; reader deftypes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(deftype StringReader
+    [^String s s-len ^:unsynchronized-mutable s-pos]
+  Reader
+  (read-char [reader]
+    (when (> s-len s-pos)
+      (let [r (.charAt s s-pos)]
+        (update! s-pos inc)
+        r)))
+  (peek-char [reader]
+    (when (> s-len s-pos)
+      (.charAt s s-pos))))
+
+(deftype InputStreamReader [^InputStream is ^:unsynchronized-mutable ^bytes buf]
+  Reader
+  (read-char [reader]
+    (if buf
+      (let [c (aget buf 0)]
+        (set! buf nil)
+        (char c))
+      (let [c (.read is)]
+        (when-not (== c -1)
+          (char c)))))
+  (peek-char [reader]
+    (when-not buf
+      (set! buf (byte-array 1))
+      (when (== -1 (.read is buf))
+        (set! buf nil)))
+    (when buf
+      (char (aget buf 0)))))
+
+(deftype PushbackReader
+    [rdr ^objects buf buf-len ^:unsynchronized-mutable buf-pos]
+  Reader
   (read-char [reader]
     (if (< buf-pos buf-len)
       (let [r (aget buf buf-pos)]
         (update! buf-pos inc)
         r)
-      (when (> s-len s-pos)
-        (let [r (.charAt s s-pos)]
-          (update! s-pos inc)
-          r))))
+      (read-char rdr)))
   (peek-char [reader]
     (if (< buf-pos buf-len)
       (aget buf buf-pos)
-      (when (> s-len s-pos)
-        (.charAt s s-pos))))
+      (peek-char rdr)))
+  IPushbackReader
   (unread [reader ch]
     (when ch
       (if (zero? buf-pos) (throw (RuntimeException. "Pushback buffer is full")))
       (update! buf-pos dec)
       (aset buf buf-pos ch))))
 
-(defn string-push-back-reader
-  "Creates a StringPushbackReader from a given string"
-  ([s]
-     (string-push-back-reader s 1))
-  ([^String s buf-len]
-     (StringPushbackReader. s (.length s) 0 (object-array buf-len) buf-len buf-len)))
-
-(defprotocol IndexingReader
-  (get-line-number [reader])
-  (get-column-number [reader]))
-
-(defn read-line [rdr]
-  (loop [c (char (read-char rdr)) s (StringBuilder.)]
-    (if (or (identical? \newline c)
-            (nil? c))
-      (.toString s)
-      (recur (char (read-char rdr)) (.append s c)))))
+(declare newline?)
 
 (deftype IndexingPushbackReader
-    [^StringPushbackReader spr ^:unsynchronized-mutable line ^:unsynchronized-mutable column
+    [rdr ^:unsynchronized-mutable line ^:unsynchronized-mutable column
      ^:unsynchronized-mutable line-start? ^:unsynchronized-mutable prev]
-  PushbackReader
+  Reader
   (read-char [reader]
-    (when-let [ch (read-char spr)]
-      (let [ch (if (= \return ch)
-                 (let [c (peek-char spr)]
-                   (when (= \formfeed c)
-                     (read-char spr))
+    (when-let [ch (char (read-char rdr))]
+      (let [ch (if (identical? \return ch)
+                 (let [c (char (peek-char rdr))]
+                   (when (identical? \formfeed c)
+                     (read-char rdr))
                    \newline)
                  ch)]
         (set! prev line-start?)
-        (set! line-start? (= ch \newline))
+        (set! line-start? (newline? ch))
         (when line-start?
           (set! column 0)
           (update! line inc))
@@ -83,22 +112,46 @@
         ch)))
 
   (peek-char [reader]
-    (peek-char spr))
+    (peek-char rdr))
 
+  IPushbackReader
   (unread [reader ch]
     (when line-start? (update! line dec))
     (set! line-start? prev)
     (update! column dec)
-    (unread spr ch))
+    (unread rdr ch))
 
   IndexingReader
   (get-line-number [reader] (inc line))
   (get-column-number [reader]  column))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; constructors
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn string-reader
+  "Creates a StringReader from a given string"
+  ([^String s]
+     (StringReader. s (.length s) 0)))
+
+(defn string-push-back-reader
+  "Creates a StringPushbackReader from a given string"
+  ([s]
+     (string-push-back-reader s 1))
+  ([^String s buf-len]
+     (PushbackReader. (string-reader s) (object-array buf-len) buf-len buf-len)))
+
+(defn input-stream-reader
+  "Creates an InputStreamReader from an InputString"
+  [is]
+  (InputStreamReader. is nil))
+
 (defn indexing-push-back-reader
-  "Creates an IndexingPushBackReader from a given string"
-  ([s] (IndexingPushbackReader. (string-push-back-reader s) 0 1 true nil))
-  ([s buf-len] (IndexingPushbackReader. (string-push-back-reader s buf-len) 0 1 true nil)))
+  "Creates an IndexingPushbackReader from a given string"
+  ([s]
+     (IndexingPushbackReader. (string-push-back-reader s) 0 1 true nil))
+  ([s buf-len]
+     (IndexingPushbackReader. (string-push-back-reader s buf-len) 0 1 true nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; predicates
@@ -130,18 +183,24 @@
         (and (or (identical? \+ c) (identical?  \- c))
              (numeric? (peek-char reader))))))
 
-(declare read macros dispatch-macros)
+(defn newline? [c]
+  "Checks whether the character is a newline"
+  (let [c (char c)]
+    (or (identical? \newline c)
+        (nil? c))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; read helpers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(declare read macros dispatch-macros)
 
 (defn reader-error
   "Throws an Exception info, if rdr is an IndexingReader, additional information about column and line number is provided"
   [rdr & msg]
   (throw (ex-info (apply str msg)
                   (merge {:type :reader-exception}
-                         (if (instance? IndexingPushbackReader rdr)
+                         (if (instance? blind.reader.IndexingReader rdr)
                            {:line (get-line-number rdr)
                             :column (get-column-number rdr)})))))
 
@@ -173,10 +232,19 @@
       (recur (read-char rdr))
       ch)))
 
+(defn read-line [rdr]
+  "Reads a line from the reader"
+  (loop [c (char (read-char rdr)) s (StringBuilder.)]
+    (if (newline? c)
+      (.toString s)
+      (recur (char (read-char rdr)) (.append s c)))))
+
 (defn skip-line
   "Advances the reader to the end of a line. Returns the reader"
   [reader _]
-  (read-line reader)
+  (loop []
+    (when-not (newline? (read-char reader))
+      (recur)))
   reader)
 
 (def ^Pattern int-pattern #"([-+]?)(?:(0)|([1-9][0-9]*)|0[xX]([0-9A-Fa-f]+)|0([0-7]+)|([1-9][0-9]?)[rR]([0-9A-Za-z]+)|0[0-9]+)(N)?")
@@ -224,9 +292,39 @@
     (.contains s ".") (match-float s (doto (.matcher float-pattern s) .matches))
     :else (match-int s (doto (.matcher int-pattern s) .matches))))
 
+(defn- parse-symbol [^String token]
+  (when (not (= "" token))
+    (let [ns-idx (.indexOf token "/")
+          ns (if-not (== -1 ns-idx) (.substring token 0 ns-idx))]
+      (if (nil? ns)
+        [nil token]
+        (when-not (== (inc ns-idx) (count token))
+          (let [sym (.substring token (inc ns-idx))]
+            (when (and (not (numeric? (.charAt sym 0)))
+                       (not (= "" sym))
+                       (or (= sym "/")
+                           (== -1 (.indexOf sym "/"))))
+              [ns sym])))))))
+
+(defn read-dispatch
+  [rdr _]
+  (if-let [ch (read-char rdr)]
+    (if-let [dm (dispatch-macros ch)]
+      (dm rdr ch)
+      (if-let [obj (read-tagged (doto rdr (unread ch)) ch)] ;; ctor reader is implemented as a taggged literal
+        obj
+        (reader-error rdr "No dispatch macro for " ch)))
+    (reader-error rdr "EOF while reading character")))
+
+(defn read-unmatched-delimiter
+  [rdr ch]
+  (reader-error rdr "Unmatched delimiter " ch))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; unicode
+;; readers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def read-comment skip-line)
 
 (defn read-unicode-char
   ([^String token offset length base]
@@ -301,9 +399,11 @@
           :else (reader-error rdr "Unsupported character: \\" token)))
       (reader-error rdr "EOF while reading character"))))
 
+(declare read-tagged)
+
 (defn ^PersistentVector read-delimited-list
   [delim rdr recursive?]
-  (let [first-line  (when (instance? IndexingPushbackReader rdr)
+  (let [first-line  (when (instance? blind.reader.IndexingReader rdr)
                       (get-line-number rdr))
         delim ^char delim]
     (loop [a (transient [])]
@@ -322,29 +422,9 @@
               (let [o (read rdr true nil recursive?)]
                 (recur (if-not (identical? o rdr) (conj! a o) a))))))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; data structure readers
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(declare read-tagged)
-
-(defn read-dispatch
-  [rdr _]
-  (if-let [ch (read-char rdr)]
-    (if-let [dm (dispatch-macros ch)]
-      (dm rdr ch)
-      (if-let [obj (read-tagged (doto rdr (unread ch)) ch)] ;; ctor reader is implemented as a taggged literal
-        obj
-        (reader-error rdr "No dispatch macro for " ch)))
-    (reader-error rdr "EOF while reading character")))
-
-(defn read-unmatched-delimiter
-  [rdr ch]
-  (reader-error rdr "Unmatched delimiter " ch))
-
 (defn read-list
   [rdr _]
-  (let [[line column] (when (instance? IndexingPushbackReader rdr)
+  (let [[line column] (when (instance? blind.reader.IndexingReader rdr)
                         [(get-line-number rdr) (dec (get-column-number rdr))])
         the-list (read-delimited-list \) rdr true)]
     (if (empty? the-list)
@@ -352,8 +432,6 @@
       (if-not line
         (clojure.lang.PersistentList/create the-list)
         (with-meta (clojure.lang.PersistentList/create the-list) {:line line :column column})))))
-
-(def read-comment skip-line)
 
 (defn read-vector
   [rdr _]
@@ -411,20 +489,6 @@
       \" (.toString sb)
       (recur (doto sb (.append ch)) (char (read-char reader))))))
 
-(defn- parse-symbol [^String token]
-  (when (not (= "" token))
-    (let [ns-idx (.indexOf token "/")
-          ns (if-not (== -1 ns-idx) (.substring token 0 ns-idx))]
-      (if (nil? ns)
-        [nil token]
-        (when-not (== (inc ns-idx) (count token))
-          (let [sym (.substring token (inc ns-idx))]
-            (when (and (not (numeric? (.charAt sym 0)))
-                       (not (= "" sym))
-                       (or (= sym "/")
-                           (== -1 (.indexOf sym "/"))))
-              [ns sym])))))))
-
 (defn read-symbol
   [rdr initch]
   (when-let [token (read-token rdr initch)]
@@ -441,7 +505,7 @@
 
       (or (when-let [p (parse-symbol token)]
             (symbol (p 0) (p 1)))
-          (reader-error rdr "Invalid token:" token)))))
+          (reader-error rdr "Invalid token: " token)))))
 
 (defn- resolve-ns [sym]
   (or ((ns-aliases *ns*) sym)
@@ -487,7 +551,7 @@
 
 (defn read-meta
   [rdr _]
-  (let [[line column] (when (instance? IndexingPushbackReader rdr)
+  (let [[line column] (when (instance? blind.reader.IndexingReader rdr)
                         [(get-line-number rdr) (dec (get-column-number rdr))])
         m (desugar-meta (read rdr true nil true))]
     (when-not (map? m)
@@ -791,7 +855,7 @@
       nil)))
 
 (defn read
-  "Reads the first object from a PushbackReader. Returns the object read.
+  "Reads the first object from a IPushbackReader. Returns the object read.
    If EOF, throws if eof-is-error is true. Otherwise returns sentinel."
   [reader eof-is-error sentinel is-recursive]
   (try
@@ -813,7 +877,7 @@
         (throw e)
         (throw (ex-info (.getCause e)
                         (merge {:type :reader-exception}
-                               (if (instance? IndexingPushbackReader reader)
+                               (if (instance? blind.reader.IndexingReader reader)
                                  {:line (get-line-number reader)
                                   :column (get-column-number reader)}))
                         e))))))
