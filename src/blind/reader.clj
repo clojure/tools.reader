@@ -154,11 +154,15 @@
      (PushbackReader. (input-stream-reader is) (object-array buf-len) buf-len buf-len)))
 
 (defn indexing-push-back-reader
-  "Creates an IndexingPushbackReader from a given string"
-  ([s]
-     (IndexingPushbackReader. (string-push-back-reader s) 0 1 true nil))
-  ([s buf-len]
-     (IndexingPushbackReader. (string-push-back-reader s buf-len) 0 1 true nil)))
+  "Creates an IndexingPushbackReader from a given string or Reader"
+  ([s-or-rdr]
+     (IndexingPushbackReader.
+      ((if (string? s-or-rdr) string-push-back-reader input-stream-push-back-reader)
+       s-or-rdr) 0 1 true nil))
+  ([s-or-rdr buf-len]
+     (IndexingPushbackReader.
+      ((if (string? s-or-rdr) string-push-back-reader input-stream-push-back-reader)
+       s-or-rdr buf-len) 0 1 true nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; predicates

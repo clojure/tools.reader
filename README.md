@@ -16,9 +16,9 @@ On my machine it reads core.clj 1.5x times slower than clojure's reader
 
 ## Usage
 
-In `blind.reader` are available `read`, `read-string` and `read-line`, they have the same semantics of clojure.core ones, except they require a `blind.reader.PushbackReader`.
+In `blind.reader` are available `read`, `read-string` and `read-line`, they have the same semantics of clojure.core ones, except they require a `blind.reader.IPushbackReader`.
 
-Two implementations of `blind.reader.PushbackReader` are provided:  `blind.reader.StringPushbackReader` and `blind.reader.IndexingPushbackReader`, functions for creating those are provided, formely: `string-push-back-reader` and `indexing-push-back-reader`.
+`blind.reader`  also provides `string-reader`, `input-stream-reader`, `string-push-back-reader`, `input-stream-push-back-reader` and `indexing-push-back-reader`.
 
 ## Differences from clojure's reader
 
