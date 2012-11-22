@@ -4,7 +4,7 @@
   (:refer-clojure :exclude [read read-line read-string char])
   (:import (clojure.lang BigInt Numbers PersistentHashMap PersistentHashSet IMeta ISeq
                          RT IReference Symbol IPersistentList Reflector Var Symbol Keyword IObj
-                         PersistentVector IPersistentCollection IRecord Namespace)
+                         PersistentVector IPersistentCollection IRecord Namespace LineNumberingPushbackReader)
            java.io.InputStream
            (java.util ArrayList regex.Pattern regex.Matcher)
            java.lang.reflect.Constructor))
@@ -145,6 +145,14 @@
   (unread [rdr c]
     (when c
       (.unread ^java.io.PushbackReader rdr (int c)))))
+
+;; getColumnNumber is available only since clojure-1.5.0-beta1
+;; (extend-type LineNumberingPushbackReader
+;;   IndexingReader
+;;   (get-line-number [rdr]
+;;     (.getLineNumber ^LineNumberingPushbackReader rdr))
+;;   (get-column-number [rdr]
+;;     (.getColumnNumber ^LineNumberingPushbackReader rdr)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; predicates
@@ -964,7 +972,10 @@ Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns
   "Reads a line from the reader or from *in* if no reader is specified"
   ([] (read-line *in*))
   ([rdr]
-     (loop [c (char (read-char rdr)) s (StringBuilder.)]
-       (if (newline? c)
-         (.toString s)
-         (recur (char (read-char rdr)) (.append s c))))))
+     (if (or (instance? LineNumberingPushbackReader rdr)
+             (instance? java.io.BufferedReader rdr))
+       (clojure.core/read-line rdr)
+       (loop [c (char (read-char rdr)) s (StringBuilder.)]
+        (if (newline? c)
+          (.toString s)
+          (recur (char (read-char rdr)) (.append s c)))))))
