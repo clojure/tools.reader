@@ -133,12 +133,14 @@
         (char c))))
 
   (peek-char [rdr]
-    (let [c (read-char rdr)]
+    (when-let [c (read-char rdr)]
       (unread rdr c)
       c))
 
   IPushbackReader
-  (unread [rdr c] (.unread ^java.io.PushbackReader rdr (int c))))
+  (unread [rdr c]
+    (when c
+      (.unread ^java.io.PushbackReader rdr (int c)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; predicates
