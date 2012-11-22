@@ -126,45 +126,6 @@
   (get-column-number [reader]  column))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; constructors
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn string-reader
-  "Creates a StringReader from a given string"
-  ([^String s]
-     (StringReader. s (.length s) 0)))
-
-(defn string-push-back-reader
-  "Creates a PushbackReader from a given string"
-  ([s]
-     (string-push-back-reader s 1))
-  ([^String s buf-len]
-     (PushbackReader. (string-reader s) (object-array buf-len) buf-len buf-len)))
-
-(defn input-stream-reader
-  "Creates an InputStreamReader from an InputString"
-  [is]
-  (InputStreamReader. is nil))
-
-(defn input-stream-push-back-reader
-  "Creates a PushbackReader from a given InputString"
-  ([is]
-     (input-stream-push-back-reader is 1))
-  ([^InputStream is buf-len]
-     (PushbackReader. (input-stream-reader is) (object-array buf-len) buf-len buf-len)))
-
-(defn indexing-push-back-reader
-  "Creates an IndexingPushbackReader from a given string or Reader"
-  ([s-or-rdr]
-     (IndexingPushbackReader.
-      ((if (string? s-or-rdr) string-push-back-reader input-stream-push-back-reader)
-       s-or-rdr) 0 1 true nil))
-  ([s-or-rdr buf-len]
-     (IndexingPushbackReader.
-      ((if (string? s-or-rdr) string-push-back-reader input-stream-push-back-reader)
-       s-or-rdr buf-len) 0 1 true nil)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; predicates
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -243,13 +204,6 @@
       (recur (read-char rdr))
       ch)))
 
-(defn read-line [rdr]
-  "Reads a line from the reader"
-  (loop [c (char (read-char rdr)) s (StringBuilder.)]
-    (if (newline? c)
-      (.toString s)
-      (recur (char (read-char rdr)) (.append s c)))))
-
 (defn skip-line
   "Advances the reader to the end of a line. Returns the reader"
   [reader _]
@@ -316,6 +270,8 @@
                        (or (= sym "/")
                            (== -1 (.indexOf sym "/"))))
               [ns sym])))))))
+
+(declare read-tagged)
 
 (defn read-dispatch
   [rdr _]
@@ -409,8 +365,6 @@
 
           :else (reader-error rdr "Unsupported character: \\" token)))
       (reader-error rdr "EOF while reading character"))))
-
-(declare read-tagged)
 
 (defn ^PersistentVector read-delimited-list
   [delim rdr recursive?]
@@ -865,34 +819,6 @@
       \_ read-discard
       nil)))
 
-(defn read
-  "Reads the first object from a IPushbackReader. Returns the object read.
-   If EOF, throws if eof-is-error is true. Otherwise returns sentinel."
-  [reader eof-is-error sentinel is-recursive]
-  (try
-    (let [ch (char (read-char reader))]
-      (cond
-        (nil? ch) (if eof-is-error (reader-error reader "EOF") sentinel)
-        (whitespace? ch) (read reader eof-is-error sentinel is-recursive)
-        (comment-prefix? ch) (read (read-comment reader ch) eof-is-error sentinel is-recursive)
-        :else (let [f (macros ch)
-                    res (cond
-                          f (f reader ch)
-                          (number-literal? reader ch) (read-number reader ch)
-                          :else (read-symbol reader ch))]
-                (if (identical? res reader)
-                  (read reader eof-is-error sentinel is-recursive)
-                  res))))
-    (catch Exception e
-      (if (instance? clojure.lang.ExceptionInfo e)
-        (throw e)
-        (throw (ex-info (.getCause e)
-                        (merge {:type :reader-exception}
-                               (if (instance? blind.reader.IndexingReader reader)
-                                 {:line (get-line-number reader)
-                                  :column (get-column-number reader)}))
-                        e))))))
-
 (defn read-tagged* [rdr tag]
   (let [o (read rdr true nil true)]
     (if-let [f (or (*data-readers* tag)
@@ -938,7 +864,81 @@
       (read-ctor rdr tag)
       (read-tagged* rdr tag))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Public API
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn string-reader
+  "Creates a StringReader from a given string"
+  ([^String s]
+     (StringReader. s (.length s) 0)))
+
+(defn string-push-back-reader
+  "Creates a PushbackReader from a given string"
+  ([s]
+     (string-push-back-reader s 1))
+  ([^String s buf-len]
+     (PushbackReader. (string-reader s) (object-array buf-len) buf-len buf-len)))
+
+(defn input-stream-reader
+  "Creates an InputStreamReader from an InputString"
+  [is]
+  (InputStreamReader. is nil))
+
+(defn input-stream-push-back-reader
+  "Creates a PushbackReader from a given InputString"
+  ([is]
+     (input-stream-push-back-reader is 1))
+  ([^InputStream is buf-len]
+     (PushbackReader. (input-stream-reader is) (object-array buf-len) buf-len buf-len)))
+
+(defn indexing-push-back-reader
+  "Creates an IndexingPushbackReader from a given string or Reader"
+  ([s-or-rdr]
+     (IndexingPushbackReader.
+      ((if (string? s-or-rdr) string-push-back-reader input-stream-push-back-reader)
+       s-or-rdr) 0 1 true nil))
+  ([s-or-rdr buf-len]
+     (IndexingPushbackReader.
+      ((if (string? s-or-rdr) string-push-back-reader input-stream-push-back-reader)
+       s-or-rdr buf-len) 0 1 true nil)))
+
+(defn read
+  "Reads the first object from a IPushbackReader. Returns the object read.
+   If EOF, throws if eof-is-error is true. Otherwise returns sentinel."
+  [^blind.reader.IPushbackReader reader eof-is-error sentinel is-recursive]
+  (try
+    (let [ch (char (read-char reader))]
+      (cond
+        (nil? ch) (if eof-is-error (reader-error reader "EOF") sentinel)
+        (whitespace? ch) (read reader eof-is-error sentinel is-recursive)
+        (comment-prefix? ch) (read (read-comment reader ch) eof-is-error sentinel is-recursive)
+        :else (let [f (macros ch)
+                    res (cond
+                          f (f reader ch)
+                          (number-literal? reader ch) (read-number reader ch)
+                          :else (read-symbol reader ch))]
+                (if (identical? res reader)
+                  (read reader eof-is-error sentinel is-recursive)
+                  res))))
+    (catch Exception e
+      (if (instance? clojure.lang.ExceptionInfo e)
+        (throw e)
+        (throw (ex-info (.getMessage e)
+                        (merge {:type :reader-exception}
+                               (if (instance? blind.reader.IndexingReader reader)
+                                 {:line (get-line-number reader)
+                                  :column (get-column-number reader)}))
+                        e))))))
+
 (defn read-string
   "Reads one object from the string s"
   [s]
   (read (string-push-back-reader s) true nil false))
+
+(defn read-line [rdr]
+  "Reads a line from the reader"
+  (loop [c (char (read-char rdr)) s (StringBuilder.)]
+    (if (newline? c)
+      (.toString s)
+      (recur (char (read-char rdr)) (.append s c)))))
