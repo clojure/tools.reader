@@ -20,7 +20,7 @@ In `blind.reader` are available `read`, `read-string` and `read-line`, they have
 
 `read-string` uses internally a blind.reader.StringReader with fast peek-char semantics.
 
-`read` and `read-line` work as their clojure.core counterparts, requirring a `blind.reader.IPushbackReader` (Read the end of usage for java.io.PushbackReader)
+`read` and `read-line` work as their clojure.core counterparts, requiring a `blind.reader.IPushbackReader` (Read the end of usage for java.io.PushbackReader)
 
 `blind.reader` also provides `string-reader`, `input-stream-reader`, `string-push-back-reader`, `input-stream-push-back-reader` and `indexing-push-back-reader`.
 
