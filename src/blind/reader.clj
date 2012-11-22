@@ -258,7 +258,7 @@
     :else (match-int s (doto (.matcher int-pattern s) .matches))))
 
 (defn- parse-symbol [^String token]
-  (when (not (= "" token))
+  (when-not (= "" token)
     (let [ns-idx (.indexOf token "/")
           ns (if-not (== -1 ns-idx) (.substring token 0 ns-idx))]
       (if (nil? ns)
@@ -296,33 +296,33 @@
 (defn read-unicode-char
   ([^String token offset length base]
      (let [l (+ offset length)]
-       (when-not (= (.length token) l)
+       (when-not (== (.length token) l)
          (throw (IllegalArgumentException. (str "Invalid unicode character: \\" token))))
        (loop [uc 0 i offset]
-         (if (= i l)
+         (if (== i l)
            (char uc)
            (let [d (Character/digit (.charAt token i) ^int base)]
-             (if (= d -1)
+             (if (== d -1)
                (throw (IllegalArgumentException. (str "Invalid digit: " (.charAt token i))))
                (recur (long (* uc (+ base d))) (inc i))))))))
 
   ([rdr initch base length exact?]
      (let [uc (Character/digit ^char initch ^int base)]
-       (if (= uc -1)
+       (if (== uc -1)
          (throw (IllegalArgumentException. (str "Invalid digit: " initch))))
        (loop [i 1 uc uc]
-         (if-not (= i length)
+         (if-not (== i length)
            (let [ch (peek-char rdr)]
              (if (or (nil? ch)
                      (whitespace? ch)
                      (macros ch))
                (if exact?
                  (throw (IllegalArgumentException.
-                         (str "Invalid character lenght: " i ", should be: " length)))
+                         (str "Invalid character length: " i ", should be: " length)))
                  (char uc))
                (let [d (Character/digit ^char ch ^int base)]
                  (read-char rdr)
-                 (if (= d -1)
+                 (if (== d -1)
                    (throw (IllegalArgumentException. (str "Invalid digit: " (char ch))))
                    (recur (inc i) (long (* uc (+ base d))))))))
            (char uc))))))
@@ -334,7 +334,7 @@
       (let [token (read-token rdr ch)]
         (cond
 
-          (= 1 (.length token))  (Character/valueOf (.charAt token 0))
+          (== 1 (.length token))  (Character/valueOf (.charAt token 0))
 
           (= token "newline") \newline
           (= token "space") \space
@@ -479,7 +479,7 @@
 (defn read-keyword
   [reader initch]
   (let [ch (read-char reader)]
-    (if (not (whitespace? ch))
+    (if-not (whitespace? ch)
       (let [token (read-token reader ch)
             s (parse-symbol token)]
         (if (and s (== -1 (.indexOf token "::")))
@@ -615,7 +615,7 @@
         (let [n (read rdr true nil true)]
           (if (= n '&)
             (register-arg -1)
-            (if (not (instance? Number n))
+            (if-not (instance? Number n)
               (throw (IllegalStateException. "Arg literal must be %, %& or %integer"))
               (register-arg n))))))))
 
