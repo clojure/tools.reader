@@ -91,18 +91,22 @@
 
 (declare newline?)
 
+(defn- normalize-newline [rdr ch]
+  (let [ch (char ch)]
+    (if (identical? \return ch)
+      (let [c (char (peek-char rdr))]
+        (when (identical? \formfeed c)
+          (read-char rdr))
+        \newline)
+      ch)))
+
 (deftype IndexingPushbackReader
     [rdr ^:unsynchronized-mutable line ^:unsynchronized-mutable column
      ^:unsynchronized-mutable line-start? ^:unsynchronized-mutable prev]
   Reader
   (read-char [reader]
     (when-let [ch (char (read-char rdr))]
-      (let [ch (if (identical? \return ch)
-                 (let [c (char (peek-char rdr))]
-                   (when (identical? \formfeed c)
-                     (read-char rdr))
-                   \newline)
-                 ch)]
+      (let [ch (normalize-newline rdr ch)]
         (set! prev line-start?)
         (set! line-start? (newline? ch))
         (when line-start?
@@ -130,7 +134,7 @@
   (read-char [rdr]
     (let [c (.read ^java.io.PushbackReader rdr)]
       (when-not (== -1 c)
-        (char c))))
+        (normalize-newline rdr (char c)))))
 
   (peek-char [rdr]
     (when-let [c (read-char rdr)]
