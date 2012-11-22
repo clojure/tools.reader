@@ -135,7 +135,7 @@
      (StringReader. s (.length s) 0)))
 
 (defn string-push-back-reader
-  "Creates a StringPushbackReader from a given string"
+  "Creates a PushbackReader from a given string"
   ([s]
      (string-push-back-reader s 1))
   ([^String s buf-len]
@@ -145,6 +145,13 @@
   "Creates an InputStreamReader from an InputString"
   [is]
   (InputStreamReader. is nil))
+
+(defn input-stream-push-back-reader
+  "Creates a PushbackReader from a given InputString"
+  ([is]
+     (input-stream-push-back-reader is 1))
+  ([^InputStream is buf-len]
+     (PushbackReader. (input-stream-reader is) (object-array buf-len) buf-len buf-len)))
 
 (defn indexing-push-back-reader
   "Creates an IndexingPushbackReader from a given string"
@@ -609,23 +616,23 @@
   (if arg-env
     (throw (IllegalStateException. "Nested #()s are not allowed")))
   (with-bindings {#'arg-env (sorted-map)}
-                 (unread rdr \()
-                 (let [form (read rdr true nil true) ;; this sets bindings
-                       rargs (rseq arg-env)
-                       args (if rargs
-                              (let [higharg (key (first rargs))]
-                                (if (pos? higharg)
-                                  (let [args (loop [i 1 args (transient [])]
-                                               (if (> i higharg)
-                                                 (persistent! args)
-                                                 (recur (inc i) (conj! args (or (get arg-env i)
-                                                                                (garg i))))))
-                                        args (if (arg-env -1)
-                                               (conj args '& (arg-env -1))
-                                               args)]
-                                    args)))
-                              [])]
-                   (list 'fn* args form))))
+    (unread rdr \()
+    (let [form (read rdr true nil true) ;; this sets bindings
+          rargs (rseq arg-env)
+          args (if rargs
+                 (let [higharg (key (first rargs))]
+                   (if (pos? higharg)
+                     (let [args (loop [i 1 args (transient [])]
+                                  (if (> i higharg)
+                                    (persistent! args)
+                                    (recur (inc i) (conj! args (or (get arg-env i)
+                                                                   (garg i))))))
+                           args (if (arg-env -1)
+                                  (conj args '& (arg-env -1))
+                                  args)]
+                       args)))
+                 [])]
+      (list 'fn* args form))))
 
 (defn register-arg [n]
   (if arg-env
@@ -815,8 +822,8 @@
 (defn read-syntax-quote
   [rdr backquote]
   (with-bindings {#'gensym-env {}}
-                 (-> (read rdr true nil true)
-                     syntax-quote)))
+    (-> (read rdr true nil true)
+        syntax-quote)))
 
 (defn macros [ch]
   (let [c (char ch)]
