@@ -7,7 +7,7 @@ A complete clojure reader implemented in clojure itself.
 In Leiningen:
 
 ```clojure
-:dependencies [[bronsa/blind "0.3.3"]]
+:dependencies [[bronsa/blind "0.3.4"]]
 ```
 
 ## NOTE
