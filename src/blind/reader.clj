@@ -684,17 +684,17 @@
   [rdr comma]
   (if-let [ch (char (peek-char rdr))]
     (if (identical? \@ ch)
-      ((wrapping-reader 'unquote-splicing) (doto rdr read-char) \@)
-      ((wrapping-reader 'unquote) rdr \~))))
+      ((wrapping-reader 'clojure.core/unquote-splicing) (doto rdr read-char) \@)
+      ((wrapping-reader 'clojure.core/unquote) rdr \~))))
 
 (declare syntax-quote)
 (defn unquote-splicing? [form]
   (and (instance? ISeq form)
-       (= (first form) 'unquote-splicing)))
+       (= (first form) 'clojure.core/unquote-splicing)))
 
 (defn unquote? [form]
   (and (instance? ISeq form)
-       (= (first form) 'unquote)))
+       (= (first form) 'clojure.core/unquote)))
 
 (defn- expand-list [s]
   (loop [s s r (transient [])]
