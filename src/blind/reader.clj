@@ -425,7 +425,7 @@
       '()
       (if-not line
         (clojure.lang.PersistentList/create the-list)
-        (with-meta (clojure.lang.PersistentList/create the-list) {:line line :column column})))))
+        (with-meta (clojure.lang.PersistentList/create the-list) {:line (int line) :column column})))))
 
 (defn read-vector
   [rdr _]
