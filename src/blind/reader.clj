@@ -126,8 +126,8 @@
     (unread rdr ch))
 
   IndexingReader
-  (get-line-number [reader] (inc line))
-  (get-column-number [reader]  column))
+  (get-line-number [reader] (int (inc line)))
+  (get-column-number [reader]  (int column)))
 
 (extend-type java.io.PushbackReader
   Reader
@@ -425,7 +425,7 @@
       '()
       (if-not line
         (clojure.lang.PersistentList/create the-list)
-        (with-meta (clojure.lang.PersistentList/create the-list) {:line (int line) :column column})))))
+        (with-meta (clojure.lang.PersistentList/create the-list) {:line line :column column})))))
 
 (defn read-vector
   [rdr _]
