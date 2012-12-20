@@ -38,6 +38,8 @@ There are small differences from clojure's LispReader.java:
 
 `blind.reader/read` is capable of reading `Infinity` `+Infinity` `-Infinity` and `NaN` as per #CLJ-1074
 
+`blind.reader/read` is capable of reading literal tags contaning periods, fixing #CLJ-1100
+
 `blind.reader/read-line` has an additional arity with which is possible to specify the reader to read from
 
 ## License

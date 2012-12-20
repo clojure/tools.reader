@@ -848,12 +848,9 @@
       \_ read-discard
       nil)))
 
-(defn read-tagged* [rdr tag]
+(defn read-tagged* [rdr tag f]
   (let [o (read rdr true nil true)]
-    (if-let [f (or (*data-readers* tag)
-                   (default-data-readers tag))]
-      (f o)
-      (reader-error rdr "No reader function for tag " (name tag)))))
+    (f o)))
 
 (defn read-ctor [rdr class-name]
   (let [class (RT/classForName (name class-name))
@@ -889,9 +886,12 @@
   (let [tag (read rdr true nil false)]
     (if-not (instance? Symbol tag)
       (reader-error rdr "Reader tag must be a symbol"))
-    (if (.contains (name tag) ".")
-      (read-ctor rdr tag)
-      (read-tagged* rdr tag))))
+    (if-let [f (or (*data-readers* tag)
+                   (default-data-readers tag))]
+      (read-tagged* rdr tag f)
+      (if (.contains (name tag) ".")
+        (read-ctor rdr tag)
+        (reader-error rdr "No reader function for tag " (name tag))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public API
