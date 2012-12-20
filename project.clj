@@ -1,4 +1,4 @@
-(defproject bronsa/blind "0.3.5"
+(defproject bronsa/blind "0.3.6"
   :description "A clojure reader written in clojure"
   :url "https://github.com/Bronsa/blind"
   :license {:name "Eclipse Public License"
