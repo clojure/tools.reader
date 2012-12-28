@@ -540,7 +540,7 @@
 (defn wrapping-reader
   [sym]
   (fn [rdr _]
-    (cons sym (cons (read rdr true nil true) nil))))
+    (list sym (read rdr true nil true) nil)))
 
 (defn throwing-reader
   [msg]
@@ -796,7 +796,7 @@
        (let [seq (seq form)]
          (if seq
            (syntax-quote-coll nil seq)
-           (cons 'clojure.core/list nil)))
+           '(clojure.core/list)))
        :else (throw (UnsupportedOperationException. "Unknown Collection type")))
 
      (or (keyword? form)
@@ -805,7 +805,7 @@
          (string? form))
      form
 
-     :else (cons 'quote (cons form nil)))
+     :else (list 'quote form))
    (add-meta form)))
 
 (defn read-syntax-quote
