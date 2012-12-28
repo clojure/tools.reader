@@ -697,7 +697,7 @@
        (= (first form) 'clojure.core/unquote)))
 
 (defn- expand-list [s]
-  (loop [s s r (transient [])]
+  (loop [s (seq s) r (transient [])]
     (if s
       (let [item (first s)
             ret (conj! r
@@ -749,6 +749,14 @@
     (list 'clojure.core/with-meta ret (syntax-quote (meta form)))
     ret))
 
+(defn- syntax-quote-coll [type coll]
+  (let [res (list 'clojure.core/seq
+                  (cons 'clojure.core/concat
+                        (expand-list coll)))]
+    (if type
+      (list 'clojure.core/apply type res)
+      res)))
+
 (defn syntax-quote [form]
   (->>
    (cond
@@ -781,19 +789,13 @@
      (coll? form)
      (cond
        (instance? IRecord form) form
-       (map? form) (list 'clojure.core/apply 'clojure.core/hash-map
-                         (list 'clojure.core/seq (cons 'clojure.core/concat (expand-list
-                                                                             (flatten-map form)))))
-       (vector? form) (list 'clojure.core/apply 'clojure.core/vector
-                            (list 'clojure.core/seq (cons 'clojure.core/concat
-                                                          (expand-list (seq form)))))
-       (set? form) (list 'clojure.core/apply 'clojure.core/hash-set
-                         (list 'clojure.core/seq (cons 'clojure.core/concat
-                                                       (expand-list (seq form)))))
+       (map? form) (syntax-quote-coll 'clojure.core/hash-map (flatten-map form))
+       (vector? form) (syntax-quote-coll 'clojure.core/vector form)
+       (set? form) (syntax-quote-coll 'clojure.core/hash-set form)
        (or (seq? form) (list? form))
        (let [seq (seq form)]
          (if seq
-           (list 'clojure.core/seq (cons 'clojure.core/concat (expand-list seq)))
+           (syntax-quote-coll nil seq)
            (cons 'clojure.core/list nil)))
        :else (throw (UnsupportedOperationException. "Unknown Collection type")))
 
