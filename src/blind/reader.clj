@@ -940,26 +940,26 @@ Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns
      (try
        (let [ch (read-char reader)]
          (cond
-            (nil? ch) (if eof-error? (reader-error reader "EOF") sentinel)
-            (whitespace? ch) (read reader eof-error? sentinel recursive?)
-            (comment-prefix? ch) (read (read-comment reader ch) eof-error? sentinel recursive?)
-            :else (let [f (macros ch)
-                        res (cond
-                              f (f reader ch)
-                              (number-literal? reader ch) (read-number reader ch)
-                              :else (read-symbol reader ch))]
-                    (if (identical? res reader)
-                      (read reader eof-error? sentinel recursive?)
-                      res))))
-        (catch Exception e
-          (if (instance? clojure.lang.ExceptionInfo e)
-            (throw e)
-            (throw (ex-info (.getMessage e)
-                            (merge {:type :reader-exception}
-                                   (if (instance? blind.reader.IndexingReader reader)
-                                     {:line (get-line-number reader)
-                                      :column (get-column-number reader)}))
-                            e)))))))
+           (whitespace? ch) (read reader eof-error? sentinel recursive?)
+           (nil? ch) (if eof-error? (reader-error reader "EOF") sentinel)
+           (number-literal? reader ch) (read-number reader ch)
+           (comment-prefix? ch) (read (read-comment reader ch) eof-error? sentinel recursive?)
+           :else (let [f (macros ch)]
+                   (if f
+                     (let [res (f reader ch)]
+                       (if (identical? res reader)
+                         (read reader eof-error? sentinel recursive?)
+                         res))
+                     (read-symbol reader ch)))))
+       (catch Exception e
+         (if (instance? clojure.lang.ExceptionInfo e)
+           (throw e)
+           (throw (ex-info (.getMessage e)
+                           (merge {:type :reader-exception}
+                                  (if (instance? blind.reader.IndexingReader reader)
+                                    {:line (get-line-number reader)
+                                     :column (get-column-number reader)}))
+                           e)))))))
 
 (defn read-string
   "Reads one object from the string s"
