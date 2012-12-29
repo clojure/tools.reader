@@ -40,6 +40,8 @@ There are small differences from clojure's LispReader.java:
 
 `blind.reader/read` is capable of reading literal tags contaning periods, fixing #CLJ-1100
 
+`blind.reader/read` checks if `blind.reader/*alias-map*` is bound, if that's the case, aliases will be resolved by querying it (must be a map), otherwhise (ns-aliases *ns*) will be used
+
 `blind.reader/read-line` has an additional arity with which is possible to specify the reader to read from
 
 ## License
