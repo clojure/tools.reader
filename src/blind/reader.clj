@@ -59,7 +59,7 @@
         (set! buf nil)
         (char c))
       (let [c (.read is)]
-        (when-not (== c -1)
+        (when (pos? c)
           (char c)))))
   (peek-char [reader]
     (when-not buf
@@ -134,7 +134,7 @@
   Reader
   (read-char [rdr]
     (let [c (.read ^java.io.PushbackReader rdr)]
-      (when-not (== -1 c)
+      (when (pos? c)
         (normalize-newline rdr (char c)))))
 
   (peek-char [rdr]
@@ -216,9 +216,9 @@
     (reader-error rdr "EOF while reading")
     (loop [sb (doto (StringBuilder.) (.append initch))
            ch (peek-char rdr)]
-      (if (or (nil? ch)
-              (whitespace? ch)
-              (macro-terminating? ch))
+      (if (or (whitespace? ch)
+              (macro-terminating? ch)
+              (nil? ch))
         (str sb)
         (recur (doto sb (.append (read-char rdr))) (peek-char rdr))))))
 
@@ -249,11 +249,11 @@
     (if (.group m 8) 0N 0)
     (let [negate? (= "-" (.group m 1))
           a (cond
-              (.group m 3) [(.group m 3) 10]
-              (.group m 4) [(.group m 4) 16]
-              (.group m 5) [(.group m 5) 8]
-              (.group m 7) [(.group m 7) (Integer/parseInt (.group m 6))]
-              :else        [nil nil])
+             (.group m 3) [(.group m 3) 10]
+             (.group m 4) [(.group m 4) 16]
+             (.group m 5) [(.group m 5) 8]
+             (.group m 7) [(.group m 7) (Integer/parseInt (.group m 6))]
+             :else        [nil nil])
           ^String n (a 0)
           ^int radix (a 1)]
       (when n
@@ -281,30 +281,29 @@
 (defn match-number [^String s]
   (try
     (cond
-      (.contains s "/") (match-ratio s (doto (.matcher ratio-pattern s) .matches))
+     (.contains s "/") (match-ratio s (doto (.matcher ratio-pattern s) .matches))
 
-      (or (.contains s ".")
-          (.contains s "M")
-          (.contains s "E")
-          (.contains s "e"))
-      (match-float s (doto (.matcher float-pattern s) .matches))
+     (or (.contains s ".")
+         (.contains s "M")
+         (.contains s "E")
+         (.contains s "e"))
+     (match-float s (doto (.matcher float-pattern s) .matches))
 
-      :else (match-int s (doto (.matcher int-pattern s) .matches)))
+     :else (match-int s (doto (.matcher int-pattern s) .matches)))
     (catch IllegalStateException e)))
 
 (defn- parse-symbol [^String token]
-  (when-not (= "" token)
-    (let [ns-idx (.indexOf token "/")
-          ns (if-not (== -1 ns-idx) (subs token 0 ns-idx))]
-      (if (nil? ns)
-        [nil token]
-        (when-not (== (inc ns-idx) (count token))
-          (let [sym (subs token (inc ns-idx))]
+  (when-not (identical? "" token)
+    (let [ns-idx (inc (.indexOf token "/"))]
+      (if-let [ns (and (pos? ns-idx) (subs token 0 (dec ns-idx)))]
+        (when-not (== ns-idx (count token))
+          (let [sym (subs token ns-idx)]
             (when (and (not (numeric? (nth sym 0)))
-                       (not (= "" sym))
-                       (or (= sym "/")
+                       (not (identical? "" sym))
+                       (or (identical? sym "/")
                            (== -1 (.indexOf sym "/"))))
-              [ns sym])))))))
+              [ns sym])))
+        [nil token]))))
 
 (declare read-tagged)
 
@@ -348,9 +347,9 @@
        (loop [i 1 uc uc]
          (if-not (== i length)
            (let [ch (peek-char rdr)]
-             (if (or (nil? ch)
-                     (whitespace? ch)
-                     (macros ch))
+             (if (or (whitespace? ch)
+                     (macros ch)
+                     (nil? ch))
                (if exact?
                  (throw (IllegalArgumentException.
                          (str "Invalid character length: " i ", should be: " length)))
@@ -362,44 +361,47 @@
                    (recur (inc i) (long (* uc (+ base d))))))))
            (char uc))))))
 
-(defn read-char*
-  [rdr backslash]
-  (let [ch (read-char rdr)]
-    (if-not (nil? ch)
-      (let [token (read-token rdr ch)]
-        (cond
+(let [upper-limit (int \uD799)
+      lower-limit (int \uE000)]
+  (defn read-char*
+    [rdr backslash]
+    (let [ch (read-char rdr)]
+      (if-not (nil? ch)
+        (let [token (read-token rdr ch)
+              token-len (count token)]
+          (cond
 
-          (== 1 (count token))  (Character/valueOf (nth token 0))
+           (== 1 token-len)  (Character/valueOf (nth token 0))
 
-          (= token "newline") \newline
-          (= token "space") \space
-          (= token "tab") \tab
-          (= token "backspace") \backspace
-          (= token "formfeed") \formfeed
-          (= token "return") \return
+           (= token "newline") \newline
+           (= token "space") \space
+           (= token "tab") \tab
+           (= token "backspace") \backspace
+           (= token "formfeed") \formfeed
+           (= token "return") \return
 
-          (.startsWith token "u")
-          (let [c (read-unicode-char token 1 4 16)
-                ic (int c)]
-            (if (and (> ic (int \uD799))
-                     (< ic (int \uE000)))
-              (reader-error rdr "Invalid character constant: \\u" (Integer/toString ic 16))
-              c))
+           (.startsWith token "u")
+           (let [c (read-unicode-char token 1 4 16)
+                 ic (int c)]
+             (if (and (> ic upper-limit)
+                      (< ic lower-limit))
+               (reader-error rdr "Invalid character constant: \\u" (Integer/toString ic 16))
+               c))
 
-          (.startsWith token "x")
-          (read-unicode-char token 1 2 16)
+           (.startsWith token "x")
+           (read-unicode-char token 1 2 16)
 
-          (.startsWith token "o")
-          (let [len (dec (count token))]
-            (if (> len 3)
-              (reader-error rdr "Invalid octal escape sequence length: " len)
-              (let [uc (read-unicode-char token 1 len 8)]
-                (if (> (int uc) 0377)
-                  (reader-error rdr "Octal escape sequence must be in range [0, 377]")
-                  uc))))
+           (.startsWith token "o")
+           (let [len (dec token-len)]
+             (if (> len 3)
+               (reader-error rdr "Invalid octal escape sequence length: " len)
+               (let [uc (read-unicode-char token 1 len 8)]
+                 (if (> (int uc) 0377)
+                   (reader-error rdr "Octal escape sequence must be in range [0, 377]")
+                   uc))))
 
-          :else (reader-error rdr "Unsupported character: \\" token)))
-      (reader-error rdr "EOF while reading character"))))
+           :else (reader-error rdr "Unsupported character: \\" token)))
+        (reader-error rdr "EOF while reading character")))))
 
 (defn ^PersistentVector read-delimited-list
   [delim rdr recursive?]
@@ -416,11 +418,9 @@
           (persistent! a)
           (if-let [macrofn (macros ch)]
             (let [mret (macrofn rdr ch)]
-              (recur (if-not (= mret rdr) (conj! a mret) a)))
-            (do
-              (unread rdr ch)
-              (let [o (read rdr true nil recursive?)]
-                (recur (if-not (identical? o rdr) (conj! a o) a))))))))))
+              (recur (if-not (identical? mret rdr) (conj! a mret) a)))
+            (let [o (read (doto rdr (unread ch)) true nil recursive?)]
+              (recur (if-not (identical? o rdr) (conj! a o) a)))))))))
 
 (defn read-list
   [rdr _]
@@ -447,12 +447,13 @@
 (defn read-number
   [reader initch]
   (loop [sb (doto (StringBuilder.) (.append initch))
-         ch (peek-char reader)]
-    (if (or (nil? ch) (whitespace? ch) (macros ch))
+         ch (read-char reader)]
+    (if (or (whitespace? ch) (macros ch) (nil? ch))
       (let [s (str sb)]
+        (unread reader ch)
         (or (match-number s)
             (reader-error reader "Invalid number format [" s "]")))
-      (recur (doto sb (.append (read-char reader))) (peek-char reader)))))
+      (recur (doto sb (.append ch)) (read-char reader)))))
 
 (defn escape-char [sb rdr]
   (let [ch (read-char rdr)]
@@ -472,7 +473,7 @@
            (if (== -1 (Character/digit ^char ch 16))
              (reader-error rdr "Invalid unicode escape: \\x" ch)
              (read-unicode-char rdr ch 16 2 true)))
-      (if (Character/isDigit ^char ch)
+      (if (numeric? ch)
         (let [ch (read-unicode-char rdr ch 8 3 false)]
           (if (> (int ch) 0337)
             (reader-error rdr "Octal escape sequence must be in range [0, 377]")
@@ -536,10 +537,10 @@
 (defn desugar-meta
   [f]
   (cond
-    (symbol? f) {:tag f}
-    (string? f) {:tag f}
-    (keyword? f) {f true}
-    :else f))
+   (symbol? f) {:tag f}
+   (string? f) {:tag f}
+   (keyword? f) {f true}
+   :else f))
 
 (defn wrapping-reader
   [sym]
@@ -560,14 +561,14 @@
       (reader-error rdr "Metadata must be Symbol, Keyword, String or Map"))
     (let [o (read rdr true nil true)]
       (if (instance? IMeta o)
-        (let [m (if (and (not (nil? line))
+        (let [m (if (and line
                          (seq? o))
                   (assoc m :line line
-                         :column column)
+                           :column column)
                   m)]
-          (if-not (instance? IReference o)
+          (if (instance? IObj o)
             (with-meta o (merge (meta o) m))
-            #_(reset-meta! o m))) ;; I'm not sure whether this is right behaviour
+            (reset-meta! o m)))
         (reader-error rdr "Metadata can only be applied to IMetas")))))
 
 (defn read-set
@@ -582,7 +583,7 @@
         (Pattern/compile (str sb))
         (if (nil? ch)
           (reader-error rdr "EOF while reading regex")
-          (do (.append sb ch)
+          (do
               (if (identical? \\ ch)
                 (let [ch (read-char rdr)]
                   (if (nil? ch)
@@ -641,9 +642,9 @@
   (if-not arg-env
     (read-symbol rdr pct)
     (let [ch (peek-char rdr)]
-      (if (or (not ch)
-              (whitespace? ch)
-              (macro-terminating? ch)) ;; we hit %
+      (if (or (whitespace? ch)
+              (macro-terminating? ch)
+              (nil? ch))
         (register-arg 1)
         (let [n (read rdr true nil true)]
           (if (= n '&)
@@ -664,22 +665,22 @@
               o (rest o)
               fs-name (name fs)]
           (cond
-            (= fs 'var) (let [vs (first o)]
-                          (RT/var (namespace vs) (name vs)))
-            (.endsWith fs-name ".")
-            (let [args (to-array o)]
-              (-> fs-name (subs 0 (dec (count fs-name)))
-                  RT/classForName (Reflector/invokeConstructor args)))
+           (= fs 'var) (let [vs (first o)]
+                         (RT/var (namespace vs) (name vs)))
+           (.endsWith fs-name ".")
+           (let [args (to-array o)]
+             (-> fs-name (subs 0 (dec (count fs-name)))
+                 RT/classForName (Reflector/invokeConstructor args)))
 
-            (Compiler/namesStaticMember fs)
-            (let [args (to-array o)]
-              (Reflector/invokeStaticMethod (namespace fs) fs-name args))
+           (Compiler/namesStaticMember fs)
+           (let [args (to-array o)]
+             (Reflector/invokeStaticMethod (namespace fs) fs-name args))
 
-            :else
-            (let [v (Compiler/maybeResolveIn *ns* fs)]
-              (if (var? v)
-                (apply v o)
-                (reader-error rdr "Can't resolve " fs)))))
+           :else
+           (let [v (Compiler/maybeResolveIn *ns* fs)]
+             (if (var? v)
+               (apply v o)
+               (reader-error rdr "Can't resolve " fs)))))
         (throw (IllegalArgumentException. "Unsupported #= form"))))))
 
 (def ^:private ^:dynamic gensym-env nil)
@@ -706,9 +707,9 @@
       (let [item (first s)
             ret (conj! r
                        (cond
-                         (unquote? item)          (list 'clojure.core/list (second item))
-                         (unquote-splicing? item) (second item)
-                         :else                    (list 'clojure.core/list (syntax-quote item))))]
+                        (unquote? item)          (list 'clojure.core/list (second item))
+                        (unquote-splicing? item) (second item)
+                        :else                    (list 'clojure.core/list (syntax-quote item))))]
         (recur (next s) ret))
       (seq (persistent! r)))))
 
@@ -764,52 +765,52 @@
 (defn syntax-quote [form]
   (->>
    (cond
-     (.containsKey Compiler/specials form) (list 'quote form)
+    (.containsKey Compiler/specials form) (list 'quote form)
 
-     (symbol? form)
-     (list 'quote
-           (if (namespace form)
-             (let [maybe-class ((ns-map *ns*)
-                                (symbol (namespace form)))]
-               (if (class? class)
-                 (symbol (.getName ^Class maybe-class) (name form))
-                 (resolve-symbol form)))
-             (let [sym (name form)]
-               (cond
-                 (.endsWith sym "#")
-                 (register-gensym form)
+    (symbol? form)
+    (list 'quote
+          (if (namespace form)
+            (let [maybe-class ((ns-map *ns*)
+                               (symbol (namespace form)))]
+              (if (class? class)
+                (symbol (.getName ^Class maybe-class) (name form))
+                (resolve-symbol form)))
+            (let [sym (name form)]
+              (cond
+               (.endsWith sym "#")
+               (register-gensym form)
 
-                 (.startsWith sym ".")
-                 form
+               (.startsWith sym ".")
+               form
 
-                 (.endsWith sym ".")
-                 (let [csym (symbol (subs sym 0 (dec (count sym))))]
-                   (symbol (.concat (name (resolve-symbol csym)) ".")))
-                 :else (resolve-symbol form)))))
+               (.endsWith sym ".")
+               (let [csym (symbol (subs sym 0 (dec (count sym))))]
+                 (symbol (.concat (name (resolve-symbol csym)) ".")))
+               :else (resolve-symbol form)))))
 
-     (unquote? form) (second form)
-     (unquote-splicing? form) (throw (IllegalStateException. "splice not in list"))
+    (unquote? form) (second form)
+    (unquote-splicing? form) (throw (IllegalStateException. "splice not in list"))
 
-     (coll? form)
-     (cond
-       (instance? IRecord form) form
-       (map? form) (syntax-quote-coll 'clojure.core/hash-map (flatten-map form))
-       (vector? form) (syntax-quote-coll 'clojure.core/vector form)
-       (set? form) (syntax-quote-coll 'clojure.core/hash-set form)
-       (or (seq? form) (list? form))
-       (let [seq (seq form)]
-         (if seq
-           (syntax-quote-coll nil seq)
-           '(clojure.core/list)))
-       :else (throw (UnsupportedOperationException. "Unknown Collection type")))
+    (coll? form)
+    (cond
+     (instance? IRecord form) form
+     (map? form) (syntax-quote-coll 'clojure.core/hash-map (flatten-map form))
+     (vector? form) (syntax-quote-coll 'clojure.core/vector form)
+     (set? form) (syntax-quote-coll 'clojure.core/hash-set form)
+     (or (seq? form) (list? form))
+     (let [seq (seq form)]
+       (if seq
+         (syntax-quote-coll nil seq)
+         '(clojure.core/list)))
+     :else (throw (UnsupportedOperationException. "Unknown Collection type")))
 
-     (or (keyword? form)
-         (number? form)
-         (char? form)
-         (string? form))
-     form
+    (or (keyword? form)
+        (number? form)
+        (char? form)
+        (string? form))
+    form
 
-     :else (list 'quote form))
+    :else (list 'quote form))
    (add-meta form)))
 
 (defn read-syntax-quote
@@ -946,17 +947,17 @@ Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns
      (try
        (let [ch (read-char reader)]
          (cond
-           (whitespace? ch) (read reader eof-error? sentinel recursive?)
-           (nil? ch) (if eof-error? (reader-error reader "EOF") sentinel)
-           (number-literal? reader ch) (read-number reader ch)
-           (comment-prefix? ch) (read (read-comment reader ch) eof-error? sentinel recursive?)
-           :else (let [f (macros ch)]
-                   (if f
-                     (let [res (f reader ch)]
-                       (if (identical? res reader)
-                         (read reader eof-error? sentinel recursive?)
-                         res))
-                     (read-symbol reader ch)))))
+          (whitespace? ch) (read reader eof-error? sentinel recursive?)
+          (nil? ch) (if eof-error? (reader-error reader "EOF") sentinel)
+          (number-literal? reader ch) (read-number reader ch)
+          (comment-prefix? ch) (read (read-comment reader ch) eof-error? sentinel recursive?)
+          :else (let [f (macros ch)]
+                  (if f
+                    (let [res (f reader ch)]
+                      (if (identical? res reader)
+                        (read reader eof-error? sentinel recursive?)
+                        res))
+                    (read-symbol reader ch)))))
        (catch Exception e
          (if (instance? clojure.lang.ExceptionInfo e)
            (throw e)
@@ -980,6 +981,6 @@ Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns
              (instance? java.io.BufferedReader rdr))
        (clojure.core/read-line rdr)
        (loop [c (read-char rdr) s (StringBuilder.)]
-        (if (newline? c)
-          (str s)
-          (recur (read-char rdr) (.append s c)))))))
+         (if (newline? c)
+           (str s)
+           (recur (read-char rdr) (.append s c)))))))
