@@ -581,13 +581,13 @@
         (if (nil? ch)
           (reader-error rdr "EOF while reading regex")
           (do
-              (if (identical? \\ ch)
-                (let [ch (read-char rdr)]
-                  (if (nil? ch)
-                    (reader-error rdr "EOF while reading regex"))
-                  (.append sb ch)
-                  (recur (read-char rdr)))
-                (recur (read-char rdr)))))))))
+            (.append sb ch )
+            (when (identical? \\ ch)
+              (let [ch (read-char rdr)]
+                (if (nil? ch)
+                  (reader-error rdr "EOF while reading regex"))
+                (.append sb ch)))
+            (recur (read-char rdr))))))))
 
 (defn read-discard
   [rdr _]
