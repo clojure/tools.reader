@@ -244,7 +244,7 @@
 (def ^Pattern float-pattern #"([-+]?[0-9]+(\.[0-9]*)?([eE][-+]?[0-9]+)?)(M)?")
 
 (defn- match-int
-  [s ^Matcher m]
+  [^Matcher m]
   (if (.group m 2)
     (if (.group m 8) 0N 0)
     (let [negate? (= "-" (.group m 1))
@@ -266,7 +266,7 @@
               (BigInt/fromBigInteger bn))))))))
 
 (defn- match-ratio
-  [s ^Matcher m]
+  [^Matcher m]
   (let [^String numerator (.group m 1)
         ^String denominator (.group m 2)]
     (/ (-> numerator   BigInteger. BigInt/fromBigInteger Numbers/reduceBigInt)
@@ -279,18 +279,15 @@
     (Double/parseDouble s)))
 
 (defn match-number [^String s]
-  (try
-    (cond
-     (.contains s "/") (match-ratio s (doto (.matcher ratio-pattern s) .matches))
-
-     (or (.contains s ".")
-         (.contains s "M")
-         (.contains s "E")
-         (.contains s "e"))
-     (match-float s (doto (.matcher float-pattern s) .matches))
-
-     :else (match-int s (doto (.matcher int-pattern s) .matches)))
-    (catch IllegalStateException e)))
+  (let [int-matcher (.matcher int-pattern s)]
+    (if (.matches int-matcher)
+      (match-int int-matcher)
+      (let [float-matcher (.matcher float-pattern s)]
+        (if (.matches float-matcher)
+          (match-float s float-matcher)
+          (let [ratio-matcher (.matcher ratio-pattern s)]
+            (when (.matches ratio-matcher)
+              (match-ratio ratio-matcher))))))))
 
 (defn- parse-symbol [^String token]
   (when-not (identical? "" token)
