@@ -329,19 +329,18 @@
      (let [l (+ offset length)]
        (when-not (== (count token) l)
          (throw (IllegalArgumentException. (str "Invalid unicode character: \\" token))))
-       (loop [uc 0 i offset]
+       (loop [i offset uc 0]
          (if (== i l)
            (char uc)
            (let [d (Character/digit ^char (nth token i) ^int base)]
              (if (== d -1)
                (throw (IllegalArgumentException. (str "Invalid digit: " (nth token i))))
-               (recur (long (* uc (+ base d))) (inc i))))))))
+               (recur (inc i) (long (+ d (* uc base))))))))))
 
   ([rdr initch base length exact?]
-     (let [uc (Character/digit ^char initch ^int base)]
+     (loop [i 1 uc (Character/digit ^char initch ^int base)]
        (if (== uc -1)
-         (throw (IllegalArgumentException. (str "Invalid digit: " initch))))
-       (loop [i 1 uc uc]
+         (throw (IllegalArgumentException. (str "Invalid digit: " initch)))
          (if-not (== i length)
            (let [ch (peek-char rdr)]
              (if (or (whitespace? ch)
@@ -355,7 +354,7 @@
                  (read-char rdr)
                  (if (== d -1)
                    (throw (IllegalArgumentException. (str "Invalid digit: " ch)))
-                   (recur (inc i) (long (* uc (+ base d))))))))
+                   (recur (inc i) (long (+ d (* uc base))))))))
            (char uc))))))
 
 (let [upper-limit (int \uD799)
@@ -483,7 +482,8 @@
          ch (read-char reader)]
     (case ch
       nil (reader-error reader "EOF while reading string")
-      \\ (recur (doto sb (.append (escape-char sb reader))) (read-char reader))
+      \\ (recur (doto sb (.append (escape-char sb reader)))
+                (read-char reader))
       \" (str sb)
       (recur (doto sb (.append ch)) (read-char reader)))))
 
