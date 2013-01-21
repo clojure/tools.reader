@@ -545,7 +545,7 @@
 (defn wrapping-reader
   [sym]
   (fn [rdr _]
-    (list sym (read rdr true nil true) nil)))
+    (list sym (read rdr true nil true))))
 
 (defn throwing-reader
   [msg]
