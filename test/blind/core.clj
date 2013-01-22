@@ -42,7 +42,7 @@
 
 (deftest read-ratio
   (is (== 4/2 (read-string "4/2")))
-  (is (== +4/2 (read-string "+4/2")))
+  (is (== 4/2 (read-string "+4/2")))
   (is (== -4/2 (read-string "-4/2"))))
 
 (deftest read-keyword
