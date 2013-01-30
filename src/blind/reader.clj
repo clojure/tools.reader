@@ -735,7 +735,7 @@
     (if-let [ns-str (namespace s)]
       (let [^Namespace ns (resolve-ns (symbol ns-str))]
         (if (or (nil? ns)
-                (= (name (.name ns)) ns-str)) ;; not an alias
+                (= (name (ns-name ns)) ns-str)) ;; not an alias
           s
           (symbol (name (.name ns)) (name s))))
       (if-let [o ((ns-map *ns*) s)]
@@ -743,7 +743,7 @@
           (symbol (.getName ^Class o))
           (if (var? o)
             (symbol (-> ^Var o .ns .name name) (-> ^Var o .sym name))))
-        (symbol (name (.name *ns*)) (name s))))))
+        (symbol (name (ns-name *ns*)) (name s))))))
 
 (defn- add-meta [form ret]
   (if (and (instance? IObj form)
@@ -762,7 +762,7 @@
 (defn syntax-quote [form]
   (->>
    (cond
-    (.containsKey Compiler/specials form) (list 'quote form)
+    (special-symbol? form) (list 'quote form)
 
     (symbol? form)
     (list 'quote
