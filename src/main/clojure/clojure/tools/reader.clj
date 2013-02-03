@@ -282,7 +282,10 @@
 (defn- match-ratio
   [^Matcher m]
   (let [^String numerator (.group m 1)
-        ^String denominator (.group m 2)]
+        ^String denominator (.group m 2)
+        numerator (if (.startsWith numerator "+")
+                    (subs numerator 1)
+                    numerator)]
     (/ (-> numerator   BigInteger. BigInt/fromBigInteger Numbers/reduceBigInt)
        (-> denominator BigInteger. BigInt/fromBigInteger Numbers/reduceBigInt))))
 
