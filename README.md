@@ -1,51 +1,89 @@
-# blind
+clojure.tools.reader
+========================================
 
-A complete clojure reader implemented in clojure itself.
+A complete Clojure reader implemented in Clojure.
 
-## Installation
+Releases and Dependency Information
+========================================
 
-In Leiningen:
+Latest stable release: NONE
+
+* [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
+
+* [Development Snapshot Versions](https://oss.sonatype.org/index.html#nexus-search;gav%7Eorg.clojure%7Etools.reader%7E%7E%7E)
+
+[Leiningen](https://github.com/technomancy/leiningen) dependency information:
+
+    [org.clojure/tools.reader "0.6.0"]
+
+[Maven](http://maven.apache.org/) dependency information:
+
+    <dependency>
+      <groupId>org.clojure</groupId>
+      <artifactId>tools.reader</artifactId>
+      <version>0.6.0</version>
+    </dependency>
+
+Example Usage
+========================================
 
 ```clojure
-:dependencies [[bronsa/blind "0.5.0"]]
+(require '[clojure.tools.reader :as t.r])
+
+(def reader (t.r/string-push-back-reader "1"))
+
+(t.r/read-char reader) ;=> \1
+
+(t.r/unread reader \1) ;=> \1
+
+(t.r/read reader) ;=> 1
+
+(t.r/read-string "2") ;=> 2
 ```
 
-## NOTE
+Differences from LispReader.java
+========================================
 
-On my machine it reads core.clj 1.5x times slower than clojure's reader
+There are small differences from clojure.lang.LispReader:
 
-## Usage
+* `t.r/read` throws an `ex-info` for almost every exception, whereas `clojure.lang.LispReader/read` throws a `ReaderException` wrapping the causing exception.
 
-In `blind.reader` are available `read`, `read-string` and `read-line`, they have the same semantics of clojure.core ones.
+* `t.r/read` is capable of reading `\x` escaped chars
 
-`read-string` uses internally a blind.reader.StringReader with fast peek-char semantics.
+* `t.r/read` is capable of reading `Infinity` `+Infinity` `-Infinity` and `NaN` as per #CLJ-1074
 
-`read` and `read-line` work as their clojure.core counterparts, requiring a `blind.reader.IPushbackReader` (Read the end of usage for java.io.PushbackReader)
+* `t.r/read` is capable of reading literal tags contaning periods, fixing #CLJ-1100
 
-`blind.reader` also provides `string-reader`, `input-stream-reader`, `string-push-back-reader`, `input-stream-push-back-reader` and `indexing-push-back-reader`.
+* `t.r/read` checks if `t.r/*alias-map*` is bound, if that's the case, aliases will be resolved by querying it (must be a map), otherwhise (ns-aliases *ns*) will be used
 
-`indexing-push-back-reader` takes a string or a `blind.reader.IPushbackreader` and an optional pushback buffer size and returns a blind.reader.IndexingPushbackReader that can be used with `read` to get column/line infos.
+* `t.r/read-line` has an additional arity with which is possible to specify the reader to read from
 
-Note that `blind.reader.Reader` and `blind.reader.PushbackReader` have been extended to `java.io.PushbackReader` so both `java.io.PushbackReader` and `clojure.lang.LineNumberingPushbackReader` work as `blind.reader.PushbackReader`s
+TODO
+========================================
 
-## Differences from clojure's reader
+- More consistent error handling
+- Better documentation
+- Port to clojurescript
 
-There are small differences from clojure's LispReader.java:
+Changelog
+========================================
 
-`blind.reader/read` throws an `ex-info` for almost every exception, whereas `clojure.lang.LispReader/read` throws a `ReaderException` wrapping the causing exception.
+* Release 0.6.0 on ???
+  * Initial release.
 
-`blind.reader/read` is capable of reading `\x` escaped chars
+Developer Information
+========================================
 
-`blind.reader/read` is capable of reading `Infinity` `+Infinity` `-Infinity` and `NaN` as per #CLJ-1074
+* [GitHub project](https://github.com/clojure/tools.reader)
 
-`blind.reader/read` is capable of reading literal tags contaning periods, fixing #CLJ-1100
+* [Bug Tracker](http://dev.clojure.org/jira/browse/TRDR)
 
-`blind.reader/read` checks if `blind.reader/*alias-map*` is bound, if that's the case, aliases will be resolved by querying it (must be a map), otherwhise (ns-aliases *ns*) will be used
+* [Continuous Integration](http://build.clojure.org/job/tools.reader/)
 
-`blind.reader/read-line` has an additional arity with which is possible to specify the reader to read from
+* [Compatibility Test Matrix](http://build.clojure.org/job/tools.reader-test-matrix/)
 
 ## License
 
-Copyright © 2012 Bronsa
+Copyright © Nicola Mometto, Rich Hickey & contributors.
 
-Distributed under the Eclipse Public License, the same as Clojure.
+Licensed under the EPL. (See the file epl.html.)

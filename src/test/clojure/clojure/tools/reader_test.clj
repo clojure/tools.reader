@@ -1,6 +1,6 @@
-(ns blind.core
+(ns clojure.tools.reader-test
   (:refer-clojure :exclude [read-string])
-  (:require [blind.reader :refer [read-string]]
+  (:require [clojure.tools.reader :refer [read-string]]
             [clojure.test :refer [deftest is]]))
 
 (deftest read-integer
