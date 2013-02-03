@@ -15,8 +15,8 @@
   (list 'set! what (list f what)))
 
 (defn- char [x]
-  (try (clojure.core/char x)
-       (catch NullPointerException e)))
+  (when x
+    (clojure.core/char x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; reader protocols
