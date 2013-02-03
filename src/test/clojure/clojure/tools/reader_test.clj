@@ -48,7 +48,8 @@
 (deftest read-keyword
   (is (= :foo-bar (read-string ":foo-bar")))
   (is (= :foo/bar (read-string ":foo/bar")))
-  (is (= :user/foo-bar (read-string "::foo-bar")))
+  (is (= :user/foo-bar (binding [*ns* (the-ns 'user)]
+                         (read-string "::foo-bar"))))
   (is (= :clojure.core/foo-bar
          (do (alias 'core 'clojure.core)
              (read-string "::core/foo-bar")))))
@@ -111,7 +112,8 @@
   (is (= ''foo (read-string "'foo"))))
 
 (deftest read-syntax-quote
-  (is (= '`user/foo (read-string "`foo")))
+  (is (= '`user/foo (binding [*ns* (the-ns 'user)]
+                      (read-string "`foo"))))
   (is (= '`+ (read-string "`+")))
   (is (= '`foo/bar (read-string "`foo/bar")))
   (is (= '`1 (read-string "`1")))
