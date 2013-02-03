@@ -57,7 +57,7 @@
         (set! buf nil)
         (char c))
       (let [c (.read is)]
-        (when (pos? c)
+        (when (>= 0 c)
           (char c)))))
   (peek-char [reader]
     (when-not buf
@@ -132,7 +132,7 @@
   Reader
   (read-char [rdr]
     (let [c (.read ^java.io.PushbackReader rdr)]
-      (when (pos? c)
+      (when (>= 0 c)
         (normalize-newline rdr (char c)))))
 
   (peek-char [rdr]
