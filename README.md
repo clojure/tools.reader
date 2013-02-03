@@ -6,7 +6,7 @@ A complete Clojure reader implemented in Clojure.
 Releases and Dependency Information
 ========================================
 
-Latest stable release: NONE
+Latest stable release: 0.6.0
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
@@ -14,16 +14,18 @@ Latest stable release: NONE
 
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
-    [org.clojure/tools.reader "0.6.0"]
-
+```clojure
+[org.clojure/tools.reader "0.6.0"]
+```
 [Maven](http://maven.apache.org/) dependency information:
 
-    <dependency>
-      <groupId>org.clojure</groupId>
-      <artifactId>tools.reader</artifactId>
-      <version>0.6.0</version>
-    </dependency>
-
+```xml
+<dependency>
+  <groupId>org.clojure</groupId>
+  <artifactId>tools.reader</artifactId>
+  <version>0.6.0</version>
+</dependency>
+```
 Example Usage
 ========================================
 
@@ -68,7 +70,7 @@ TODO
 Changelog
 ========================================
 
-* Release 0.6.0 on ???
+* Release 0.6.0 on Feb 03, 2013
   * Initial release.
 
 Developer Information
