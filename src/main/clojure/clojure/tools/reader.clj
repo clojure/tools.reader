@@ -146,12 +146,21 @@
       (.unread ^java.io.PushbackReader rdr (int c)))))
 
 ;; getColumnNumber is available only since clojure-1.5.0-beta1
-;; (extend-type LineNumberingPushbackReader
-;;   IndexingReader
-;;   (get-line-number [rdr]
-;;     (.getLineNumber ^LineNumberingPushbackReader rdr))
-;;   (get-column-number [rdr]
-;;     (.getColumnNumber ^LineNumberingPushbackReader rdr)))
+(def ^:private getColumnNumber?
+  (let [{:keys [minor qualifier]} *clojure-version*]
+    (and (>= 5 minor)
+         (not= "alpha"
+               (when qualifier
+                 (subs qualifier 0 (dec (count qualifier))))))))
+
+(extend LineNumberingPushbackReader
+  IndexingReader
+  {:get-line-number (fn [rdr] (.getLineNumber ^LineNumberingPushbackReader rdr))
+   :get-column-number (if getColumnNumber?
+                        (fn [rdr]
+                          (.getColumnNumber ^LineNumberingPushbackReader rdr))
+                        (fn [rdr] 0))})
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; predicates
