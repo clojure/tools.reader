@@ -161,6 +161,13 @@
                           (.getColumnNumber ^LineNumberingPushbackReader rdr))
                         (fn [rdr] 0))})
 
+;; fast check for provided implementations
+(defn indexing-reader? [rdr]
+  (or (instance? clojure.tools.reader.IndexingReader rdr)
+      (instance? clojure.lang.LineNumberingPushbackReader rdr)
+      (and (not (instance? clojure.tools.reader.StringReader rdr))
+           (not (instance? clojure.tools.reader.InputStreamReader rdr))
+           (get (:impls IndexingReader) (class rdr)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; predicates
@@ -207,7 +214,7 @@
   [rdr & msg]
   (throw (ex-info (apply str msg)
                   (merge {:type :reader-exception}
-                         (if (instance? clojure.tools.reader.IndexingReader rdr)
+                         (if (indexing-reader? rdr)
                            {:line (get-line-number rdr)
                             :column (get-column-number rdr)})))))
 
@@ -408,7 +415,7 @@
 
 (defn ^PersistentVector read-delimited-list
   [delim rdr recursive?]
-  (let [first-line  (when (instance? clojure.tools.reader.IndexingReader rdr)
+  (let [first-line  (when (indexing-reader? rdr)
                       (get-line-number rdr))
         delim ^char delim]
     (loop [a (transient [])]
@@ -427,7 +434,7 @@
 
 (defn read-list
   [rdr _]
-  (let [[line column] (when (instance? clojure.tools.reader.IndexingReader rdr)
+  (let [[line column] (when (indexing-reader? rdr)
                         [(get-line-number rdr) (dec (get-column-number rdr))])
         the-list (read-delimited-list \) rdr true)]
     (if (empty? the-list)
@@ -558,7 +565,7 @@
 
 (defn read-meta
   [rdr _]
-  (let [[line column] (when (instance? clojure.tools.reader.IndexingReader rdr)
+  (let [[line column] (when (indexing-reader? rdr)
                         [(get-line-number rdr) (dec (get-column-number rdr))])
         m (desugar-meta (read rdr true nil true))]
     (when-not (map? m)
@@ -967,7 +974,7 @@ Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns
            (throw e)
            (throw (ex-info (.getMessage e)
                            (merge {:type :reader-exception}
-                                  (if (instance? clojure.tools.reader.IndexingReader reader)
+                                  (if (indexing-reader? reader)
                                     {:line (get-line-number reader)
                                      :column (get-column-number reader)}))
                            e)))))))
