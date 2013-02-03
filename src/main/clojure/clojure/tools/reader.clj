@@ -940,13 +940,10 @@
 (defn indexing-push-back-reader
   "Creates an IndexingPushbackReader from a given string or Reader"
   ([s-or-rdr]
-     (IndexingPushbackReader.
-      ((if (string? s-or-rdr) string-push-back-reader input-stream-push-back-reader)
-       s-or-rdr) 0 1 true nil))
+     (indexing-push-back-reader s-or-rdr 1))
   ([s-or-rdr buf-len]
      (IndexingPushbackReader.
-      ((if (string? s-or-rdr) string-push-back-reader input-stream-push-back-reader)
-       s-or-rdr buf-len) 0 1 true nil)))
+      (if (string? s-or-rdr) (string-push-back-reader s-or-rdr buf-len) s-or-rdr) 0 1 true nil)))
 
 (defn read
   "Reads the first object from an IPushbackReader or a java.io.PushbackReader.
