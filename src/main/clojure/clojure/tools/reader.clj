@@ -126,7 +126,7 @@
 
   IndexingReader
   (get-line-number [reader] (int (inc line)))
-  (get-column-number [reader]  (int column)))
+  (get-column-number [reader] (int column)))
 
 (extend-type java.io.PushbackReader
   Reader
@@ -214,7 +214,7 @@
   [rdr & msg]
   (throw (ex-info (apply str msg)
                   (merge {:type :reader-exception}
-                         (if (indexing-reader? rdr)
+                         (when (indexing-reader? rdr)
                            {:line (get-line-number rdr)
                             :column (get-column-number rdr)})))))
 
@@ -442,20 +442,29 @@
         the-list (read-delimited-list \) rdr true)]
     (if (empty? the-list)
       '()
-      (if-not line
-        (clojure.lang.PersistentList/create the-list)
-        (with-meta (clojure.lang.PersistentList/create the-list) {:line line :column column})))))
+      (with-meta (clojure.lang.PersistentList/create the-list)
+        (when line
+          {:line line :column column})))))
 
 (defn read-vector
   [rdr _]
-  (read-delimited-list \] rdr true))
+  (let [[line column] (when (indexing-reader? rdr)
+                        [(get-line-number rdr) (dec (get-column-number rdr))])
+        the-vector (read-delimited-list \] rdr true)]
+    (with-meta the-vector
+      (when line
+        {:line line :column column}))))
 
 (defn read-map
   [rdr _]
-  (let [l (to-array (read-delimited-list \} rdr true))]
+  (let [[line column] (when (indexing-reader? rdr)
+                        [(get-line-number rdr) (dec (get-column-number rdr))])
+        l (to-array (read-delimited-list \} rdr true))]
     (when (== 1 (bit-and (alength l) 1))
       (reader-error rdr "Map literal must contain an even number of forms"))
-    (RT/map l)))
+    (with-meta (RT/map l)
+      (when line
+        {:line line :column column}))))
 
 (defn read-number
   [reader initch]
@@ -507,20 +516,24 @@
 (defn read-symbol
   [rdr initch]
   (when-let [token (read-token rdr initch)]
-    (case token
+    (let [[line column] (when (indexing-reader? rdr)
+                          [(get-line-number rdr) (dec (get-column-number rdr))])]
+      (case token
 
-      ;; special symbols
-      "nil" nil
-      "true" true
-      "false" false
-      "/" '/
-      "NaN" Double/NaN
-      "-Infinity" Double/NEGATIVE_INFINITY
-      ("Infinity" "+Infinity") Double/POSITIVE_INFINITY
+        ;; special symbols
+        "nil" nil
+        "true" true
+        "false" false
+        "/" '/
+        "NaN" Double/NaN
+        "-Infinity" Double/NEGATIVE_INFINITY
+        ("Infinity" "+Infinity") Double/POSITIVE_INFINITY
 
-      (or (when-let [p (parse-symbol token)]
-            (symbol (p 0) (p 1)))
-          (reader-error rdr "Invalid token: " token)))))
+        (or (when-let [p (parse-symbol token)]
+              (with-meta (symbol (p 0) (p 1))
+                (when line
+                  {:line line :column column})))
+            (reader-error rdr "Invalid token: " token))))))
 
 (def ^:dynamic *alias-map* nil)
 (defn- resolve-ns [sym]
