@@ -416,7 +416,7 @@
            :else (reader-error rdr "Unsupported character: \\" token)))
         (reader-error rdr "EOF while reading character")))))
 
-(defn ^PersistentVector read-delimited-list
+(defn ^PersistentVector read-delimited
   [delim rdr recursive?]
   (let [first-line  (when (indexing-reader? rdr)
                       (get-line-number rdr))
@@ -439,7 +439,7 @@
   [rdr _]
   (let [[line column] (when (indexing-reader? rdr)
                         [(get-line-number rdr) (dec (get-column-number rdr))])
-        the-list (read-delimited-list \) rdr true)]
+        the-list (read-delimited \) rdr true)]
     (if (empty? the-list)
       '()
       (with-meta (clojure.lang.PersistentList/create the-list)
@@ -450,7 +450,7 @@
   [rdr _]
   (let [[line column] (when (indexing-reader? rdr)
                         [(get-line-number rdr) (dec (get-column-number rdr))])
-        the-vector (read-delimited-list \] rdr true)]
+        the-vector (read-delimited \] rdr true)]
     (with-meta the-vector
       (when line
         {:line line :column column}))))
@@ -459,7 +459,7 @@
   [rdr _]
   (let [[line column] (when (indexing-reader? rdr)
                         [(get-line-number rdr) (dec (get-column-number rdr))])
-        l (to-array (read-delimited-list \} rdr true))]
+        l (to-array (read-delimited \} rdr true))]
     (when (== 1 (bit-and (alength l) 1))
       (reader-error rdr "Map literal must contain an even number of forms"))
     (with-meta (RT/map l)
@@ -600,7 +600,7 @@
 
 (defn read-set
   [rdr _]
-  (PersistentHashSet/createWithCheck (read-delimited-list \} rdr true)))
+  (PersistentHashSet/createWithCheck (read-delimited \} rdr true)))
 
 (defn read-regex
   [rdr ch]
@@ -891,7 +891,7 @@
                              \[ [\] :short]
                              \{ [\} :extended]
                              nil)]
-      (let [entries (to-array (read-delimited-list end-ch rdr true))
+      (let [entries (to-array (read-delimited end-ch rdr true))
             all-ctors (.getConstructors class)
             ctors-num (count all-ctors)]
         (case form
