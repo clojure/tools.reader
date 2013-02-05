@@ -1,12 +1,22 @@
 clojure.tools.reader
 ========================================
 
-A complete Clojure reader implemented in Clojure.
+A complete Clojure reader and an EDN-only reader.
+
+Public API
+========================================
+
+There are three public namespaces:
+* `clojure.tools.reader.reader-types`, offers protocols, implementations and conveniente constructors for some reader types.
+* `clojure.tools.reader.edn` offers a feature-complete EDN reader
+* `clojure.tools.reader` offers a feature-complete clojure reader
+
+Refer to docstrings in each namespace for more documentation.
 
 Releases and Dependency Information
 ========================================
 
-Latest stable release: 0.6.2
+Latest stable release: 0.6.4
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
@@ -15,7 +25,7 @@ Latest stable release: 0.6.2
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "0.6.2"]
+[org.clojure/tools.reader "0.6.4"]
 ```
 [Maven](http://maven.apache.org/) dependency information:
 
@@ -23,24 +33,31 @@ Latest stable release: 0.6.2
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>0.6.2</version>
+  <version>0.6.4</version>
 </dependency>
 ```
 Example Usage
 ========================================
 
 ```clojure
-(require '[clojure.tools.reader :as t.r])
+(require '[clojure.tools.reader.reader-types :as r-t]
+         '[clojure.tools.reader :as r])
+;;=> nil
 
-(def reader (t.r/string-push-back-reader "1"))
+(def reader (r-t/string-push-back-reader "1"))
+;;=> #'user/reader
 
-(t.r/read-char reader) ;=> \1
+(r-t/read-char reader)
+;;=> \1
 
-(t.r/unread reader \1) ;=> \1
+(r-t/unread reader \1)
+;;=> \1
 
-(t.r/read reader) ;=> 1
+(r/read reader)
+;;=> 1
 
-(t.r/read-string "2") ;=> 2
+(r/read-string "2")
+;;=> 2
 ```
 
 Differences from LispReader.java
@@ -55,8 +72,6 @@ There are small differences from clojure.lang.LispReader:
 * `t.r/read` is capable of reading `Infinity` `+Infinity` `-Infinity` and `NaN` as per #CLJ-1074
 
 * `t.r/read` is capable of reading literal tags contaning periods, fixing #CLJ-1100
-
-* `t.r/read` checks if `t.r/*alias-map*` is bound, if that's the case, aliases will be resolved by querying it (must be a map), otherwhise (ns-aliases *ns*) will be used
 
 * `t.r/read-line` has an additional arity with which is possible to specify the reader to read from
 
@@ -74,7 +89,10 @@ Changelog
   * Initial release.
 * Release 0.6.2 on Feb 04, 2013
   * Add line/column metadata on vectors, maps and symbols
-
+* Release 0.6.4 on ???
+  * Fix unicode char reading
+  * Add *default-data-reader-fn* support
+  * Add an EDN-only reader
 
 Developer Information
 ========================================
