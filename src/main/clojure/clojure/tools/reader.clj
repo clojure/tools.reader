@@ -374,7 +374,7 @@
                    (recur (inc i) (long (+ d (* uc base))))))))
            (char uc))))))
 
-(let [upper-limit (int \uD799)
+(let [upper-limit (int \uD7ff)
       lower-limit (int \uE000)]
   (defn read-char*
     [rdr backslash]
