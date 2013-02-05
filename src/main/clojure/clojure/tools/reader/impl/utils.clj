@@ -1,4 +1,4 @@
-(ns clojure.tools.reader.utils
+(ns clojure.tools.reader.impl.utils
   (:refer-clojure :exclude [char]))
 
 (defn char [x]

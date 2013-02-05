@@ -1,6 +1,6 @@
 (ns clojure.tools.reader.reader-types
   (:refer-clojure :exclude [char read-line])
-  (:require [clojure.tools.reader.utils :refer :all])
+  (:require [clojure.tools.reader.impl.utils :refer :all])
   (:import clojure.lang.LineNumberingPushbackReader
            (java.io InputStream BufferedReader)))
 

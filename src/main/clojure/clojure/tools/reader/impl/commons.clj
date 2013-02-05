@@ -1,8 +1,7 @@
-(ns clojure.tools.reader.commons
+(ns clojure.tools.reader.impl.commons
   (:refer-clojure :exclude [char read-line])
-  (:require [clojure.tools.reader
-             [utils :refer :all]
-             [reader-types :refer :all]])
+  (:require [clojure.tools.reader.reader-types :refer :all]
+            [clojure.tools.reader.impl.utils :refer :all])
   (:import (clojure.lang BigInt Numbers PersistentHashMap PersistentHashSet IMeta
                          RT IReference Symbol Reflector Var IObj
                          PersistentVector IRecord Namespace LineNumberingPushbackReader)
