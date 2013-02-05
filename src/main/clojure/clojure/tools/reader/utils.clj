@@ -35,3 +35,11 @@
   "Checks whether the character is a newline"
   (or (identical? \newline c)
       (nil? c)))
+
+(defn desugar-meta
+  [f]
+  (cond
+   (symbol? f) {:tag f}
+   (string? f) {:tag f}
+   (keyword? f) {f true}
+   :else f))

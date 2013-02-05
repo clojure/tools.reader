@@ -2,7 +2,8 @@
   (:refer-clojure :exclude [read read-line read-string char])
   (:require [clojure.tools.reader
              [utils :refer :all]
-             [reader-types :refer :all]])
+             [reader-types :refer :all]
+             [commons :refer :all]])
   (:import (clojure.lang BigInt Numbers PersistentHashMap PersistentHashSet IMeta
                          RT IReference Symbol Reflector Var IObj
                          PersistentVector IRecord Namespace LineNumberingPushbackReader)
@@ -11,7 +12,7 @@
            java.lang.reflect.Constructor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; predicates
+;; helpers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (declare read macros dispatch-macros)
@@ -21,17 +22,6 @@
        (not (identical? \' ch))
        (not (identical? \: ch))
        (macros ch)))
-
-(defn- number-literal?
-  "Checks whether the reader is at the start of a number literal"
-  [reader initch]
-  (or (numeric? initch)
-      (and (or (identical? \+ initch) (identical?  \- initch))
-           (numeric? (peek-char reader)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; read helpers
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn ^String read-token
   [rdr initch]
@@ -44,89 +34,6 @@
               (nil? ch))
         (str sb)
         (recur (doto sb (.append (read-char rdr))) (peek-char rdr))))))
-
-(defn read-past
-  "Read until first character that doesn't match pred, returning
-   char."
-  [pred rdr]
-  (loop [ch (read-char rdr)]
-    (if (pred ch)
-      (recur (read-char rdr))
-      ch)))
-
-(defn skip-line
-  "Advances the reader to the end of a line. Returns the reader"
-  [reader _]
-  (loop []
-    (when-not (newline? (read-char reader))
-      (recur)))
-  reader)
-
-(def ^Pattern int-pattern #"([-+]?)(?:(0)|([1-9][0-9]*)|0[xX]([0-9A-Fa-f]+)|0([0-7]+)|([1-9][0-9]?)[rR]([0-9A-Za-z]+)|0[0-9]+)(N)?")
-(def ^Pattern ratio-pattern #"([-+]?[0-9]+)/([0-9]+)")
-(def ^Pattern float-pattern #"([-+]?[0-9]+(\.[0-9]*)?([eE][-+]?[0-9]+)?)(M)?")
-
-(defn- match-int
-  [^Matcher m]
-  (if (.group m 2)
-    (if (.group m 8) 0N 0)
-    (let [negate? (= "-" (.group m 1))
-          a (cond
-             (.group m 3) [(.group m 3) 10]
-             (.group m 4) [(.group m 4) 16]
-             (.group m 5) [(.group m 5) 8]
-             (.group m 7) [(.group m 7) (Integer/parseInt (.group m 6))]
-             :else        [nil nil])
-          ^String n (a 0)
-          ^int radix (a 1)]
-      (when n
-        (let [bn (BigInteger. n radix)
-              bn (if negate? (.negate bn) bn)]
-          (if (.group m 8)
-            (BigInt/fromBigInteger bn)
-            (if (< (.bitLength bn) 64)
-              (.longValue bn)
-              (BigInt/fromBigInteger bn))))))))
-
-(defn- match-ratio
-  [^Matcher m]
-  (let [^String numerator (.group m 1)
-        ^String denominator (.group m 2)
-        numerator (if (.startsWith numerator "+")
-                    (subs numerator 1)
-                    numerator)]
-    (/ (-> numerator   BigInteger. BigInt/fromBigInteger Numbers/reduceBigInt)
-       (-> denominator BigInteger. BigInt/fromBigInteger Numbers/reduceBigInt))))
-
-(defn- match-float
-  [^String s ^Matcher m]
-  (if (.group m 4)
-    (BigDecimal. ^String (.group m 1))
-    (Double/parseDouble s)))
-
-(defn match-number [^String s]
-  (let [int-matcher (.matcher int-pattern s)]
-    (if (.matches int-matcher)
-      (match-int int-matcher)
-      (let [float-matcher (.matcher float-pattern s)]
-        (if (.matches float-matcher)
-          (match-float s float-matcher)
-          (let [ratio-matcher (.matcher ratio-pattern s)]
-            (when (.matches ratio-matcher)
-              (match-ratio ratio-matcher))))))))
-
-(defn- parse-symbol [^String token]
-  (when-not (= "" token)
-    (let [ns-idx (inc (.indexOf token "/"))]
-      (if-let [ns (and (pos? ns-idx) (subs token 0 (dec ns-idx)))]
-        (when-not (== ns-idx (count token))
-          (let [sym (subs token ns-idx)]
-            (when (and (not (numeric? (nth sym 0)))
-                       (not (= "" sym))
-                       (or (= sym "/")
-                           (== -1 (.indexOf sym "/"))))
-              [ns sym])))
-        [nil token]))))
 
 (declare read-tagged)
 
@@ -147,8 +54,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; readers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(def read-comment skip-line)
 
 (defn read-unicode-char
   ([^String token offset length base]
@@ -344,10 +249,8 @@
                   {:line line :column column})))
             (reader-error rdr "Invalid token: " token))))))
 
-(def ^:dynamic *alias-map* nil)
 (defn- resolve-ns [sym]
-  (or ((or *alias-map*
-           (ns-aliases *ns*)) sym)
+  (or ((ns-aliases *ns*) sym)
       (find-ns sym)))
 
 (defn read-keyword
@@ -370,23 +273,10 @@
           (reader-error reader "Invalid token: :" token)))
       (reader-error reader "Invalid token: :"))))
 
-(defn desugar-meta
-  [f]
-  (cond
-   (symbol? f) {:tag f}
-   (string? f) {:tag f}
-   (keyword? f) {f true}
-   :else f))
-
 (defn wrapping-reader
   [sym]
   (fn [rdr _]
     (list sym (read rdr true nil true))))
-
-(defn throwing-reader
-  [msg]
-  (fn [rdr _]
-    (reader-error rdr msg)))
 
 (defn read-meta
   [rdr _]
@@ -410,23 +300,6 @@
 (defn read-set
   [rdr _]
   (PersistentHashSet/createWithCheck (read-delimited \} rdr true)))
-
-(defn read-regex
-  [rdr ch]
-  (let [sb (StringBuilder.)]
-    (loop [ch (read-char rdr)]
-      (if (identical? \" ch)
-        (Pattern/compile (str sb))
-        (if (nil? ch)
-          (reader-error rdr "EOF while reading regex")
-          (do
-            (.append sb ch )
-            (when (identical? \\ ch)
-              (let [ch (read-char rdr)]
-                (if (nil? ch)
-                  (reader-error rdr "EOF while reading regex"))
-                (.append sb ch)))
-            (recur (read-char rdr))))))))
 
 (defn read-discard
   [rdr _]
@@ -722,10 +595,6 @@
                   (recur (next s)))))
             (Reflector/invokeStaticMethod class "create" (object-array [vals])))))
       (reader-error rdr "Invalid reader constructor form"))))
-
-(def default-data-reader-fn
-  (when >=clojure-1-5-alpha*?
-    (resolve '*default-data-reader-fn*)))
 
 (defn read-tagged [rdr initch]
   (let [tag (read rdr true nil false)]
