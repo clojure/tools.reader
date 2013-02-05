@@ -146,34 +146,21 @@
 
 (defn read-list
   [rdr _]
-  (let [[line column] (when (indexing-reader? rdr)
-                        [(get-line-number rdr) (dec (get-column-number rdr))])
-        the-list (read-delimited \) rdr true)]
+  (let [the-list (read-delimited \) rdr true)]
     (if (empty? the-list)
       '()
-      (with-meta (clojure.lang.PersistentList/create the-list)
-        (when line
-          {:line line :column column})))))
+      (clojure.lang.PersistentList/create the-list))))
 
 (defn read-vector
   [rdr _]
-  (let [[line column] (when (indexing-reader? rdr)
-                        [(get-line-number rdr) (dec (get-column-number rdr))])
-        the-vector (read-delimited \] rdr true)]
-    (with-meta the-vector
-      (when line
-        {:line line :column column}))))
+  (read-delimited \] rdr true))
 
 (defn read-map
   [rdr _]
-  (let [[line column] (when (indexing-reader? rdr)
-                        [(get-line-number rdr) (dec (get-column-number rdr))])
-        l (to-array (read-delimited \} rdr true))]
+  (let [l (to-array (read-delimited \} rdr true))]
     (when (== 1 (bit-and (alength l) 1))
       (reader-error rdr "Map literal must contain an even number of forms"))
-    (with-meta (RT/map l)
-      (when line
-        {:line line :column column}))))
+    (RT/map l)))
 
 (defn read-number
   [reader initch]
@@ -225,24 +212,20 @@
 (defn read-symbol
   [rdr initch]
   (when-let [token (read-token rdr initch)]
-    (let [[line column] (when (indexing-reader? rdr)
-                          [(get-line-number rdr) (dec (get-column-number rdr))])]
-      (case token
+    (case token
 
-        ;; special symbols
-        "nil" nil
-        "true" true
-        "false" false
-        "/" '/
-        "NaN" Double/NaN
-        "-Infinity" Double/NEGATIVE_INFINITY
-        ("Infinity" "+Infinity") Double/POSITIVE_INFINITY
+      ;; special symbols
+      "nil" nil
+      "true" true
+      "false" false
+      "/" '/
+      "NaN" Double/NaN
+      "-Infinity" Double/NEGATIVE_INFINITY
+      ("Infinity" "+Infinity") Double/POSITIVE_INFINITY
 
-        (or (when-let [p (parse-symbol token)]
-              (with-meta (symbol (p 0) (p 1))
-                (when line
-                  {:line line :column column})))
-            (reader-error rdr "Invalid token: " token))))))
+      (or (when-let [p (parse-symbol token)]
+            (symbol (p 0) (p 1)))
+          (reader-error rdr "Invalid token: " token)))))
 
 (defn read-keyword
   [reader initch]
@@ -266,20 +249,13 @@
 
 (defn read-meta
   [rdr _]
-  (let [[line column] (when (indexing-reader? rdr)
-                        [(get-line-number rdr) (dec (get-column-number rdr))])
-        m (desugar-meta (read rdr true nil true))]
+  (let [m (desugar-meta (read rdr true nil true))]
     (when-not (map? m)
       (reader-error rdr "Metadata must be Symbol, Keyword, String or Map"))
     (let [o (read rdr true nil true)]
       (if (instance? IMeta o)
-        (let [m (if (and line
-                         (seq? o))
-                  (assoc m :line line
-                           :column column)
-                  m)]
-          (when (instance? IObj o)
-            (with-meta o (merge (meta o) m))))
+        (when (instance? IObj o)
+          (with-meta o (merge (meta o) m)))
         (reader-error rdr "Metadata can only be applied to IMetas")))))
 
 (defn read-set
