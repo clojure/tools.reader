@@ -4,11 +4,9 @@
             [clojure.tools.reader.impl
              [utils :refer :all]
              [commons :refer :all]])
-  (:import (clojure.lang BigInt Numbers PersistentHashMap PersistentHashSet IMeta
-                         RT IReference Symbol Reflector Var IObj
-                         PersistentVector IRecord Namespace LineNumberingPushbackReader)
-           java.io.InputStream
-           (java.util ArrayList regex.Pattern regex.Matcher)
+  (:import (clojure.lang PersistentHashSet IMeta
+                         RT Symbol Reflector Var IObj
+                         PersistentVector IRecord Namespace)
            java.lang.reflect.Constructor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

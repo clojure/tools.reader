@@ -2,11 +2,8 @@
   (:refer-clojure :exclude [char read-line])
   (:require [clojure.tools.reader.reader-types :refer :all]
             [clojure.tools.reader.impl.utils :refer :all])
-  (:import (clojure.lang BigInt Numbers PersistentHashMap PersistentHashSet IMeta
-                         RT IReference Symbol Reflector Var IObj
-                         PersistentVector IRecord Namespace LineNumberingPushbackReader)
-           java.io.InputStream
-           (java.util ArrayList regex.Pattern regex.Matcher)
+  (:import (clojure.lang BigInt Numbers)
+           (java.util regex.Pattern regex.Matcher)
            java.lang.reflect.Constructor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -41,7 +38,7 @@
 (def ^Pattern ratio-pattern #"([-+]?[0-9]+)/([0-9]+)")
 (def ^Pattern float-pattern #"([-+]?[0-9]+(\.[0-9]*)?([eE][-+]?[0-9]+)?)(M)?")
 
-(defn match-int
+(defn- match-int
   [^Matcher m]
   (if (.group m 2)
     (if (.group m 8) 0N 0)
@@ -63,7 +60,7 @@
               (.longValue bn)
               (BigInt/fromBigInteger bn))))))))
 
-(defn match-ratio
+(defn- match-ratio
   [^Matcher m]
   (let [^String numerator (.group m 1)
         ^String denominator (.group m 2)
@@ -73,7 +70,7 @@
     (/ (-> numerator   BigInteger. BigInt/fromBigInteger Numbers/reduceBigInt)
        (-> denominator BigInteger. BigInt/fromBigInteger Numbers/reduceBigInt))))
 
-(defn match-float
+(defn- match-float
   [^String s ^Matcher m]
   (if (.group m 4)
     (BigDecimal. ^String (.group m 1))
