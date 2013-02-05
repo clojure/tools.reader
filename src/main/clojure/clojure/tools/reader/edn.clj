@@ -296,7 +296,7 @@
     \= (throwing-reader "Not an EDN form")
     \{ read-set
     \< (throwing-reader "Unreadable form")
-    \" read-regex
+    \" (throwing-reader "Not an EDN form") ;;read-regex
     \! read-comment
     \_ read-discard
     nil))
