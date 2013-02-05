@@ -680,10 +680,14 @@
               (throw (IllegalStateException. "Arg literal must be %, %& or %integer"))
               (register-arg n))))))))
 
+(def ^:private ^:dynamic *unsafe-read* false)
+
 (defn read-eval
   [rdr _]
   (when-not *read-eval*
     (reader-error rdr "#= not allowed when *read-eval* is false"))
+  (when-not *unsafe-read*
+    (reader-error rdr "#= only allowed when using the unsafe- variants of read and read-string"))
   (let [o (read rdr true nil true)]
     (if (symbol? o)
       (RT/classForName (str ^Symbol o))
@@ -969,7 +973,8 @@
 
 (defn read
   "Reads the first object from an IPushbackReader or a java.io.PushbackReader.
-Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns sentinel."
+Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns sentinel.
+Safe, #= is not allowed"
   ([] (read *in*))
   ([reader] (read reader true nil))
   ([reader eof-error? sentinel] (read reader eof-error? sentinel false))
@@ -999,7 +1004,8 @@ Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns
                            e)))))))
 
 (defn read-string
-  "Reads one object from the string s"
+  "Reads one object from the string s.
+Safe, #= is not allowed"
   [s]
   (read (string-push-back-reader s) true nil false))
 
@@ -1014,3 +1020,20 @@ Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns
          (if (newline? c)
            (str s)
            (recur (read-char rdr) (.append s c)))))))
+
+(defn unsafe-read
+  "Reads the first object from an IPushbackReader or a java.io.PushbackReader.
+Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns sentinel.
+Unsafe, #= is allowed if *read-eval* is bound to true"
+  ([]  (unsafe-read *in*))
+  ([reader] (unsafe-read reader true nil))
+  ([reader eof-error? sentinel] (unsafe-read reader eof-error? sentinel false))
+  ([^clojure.tools.reader.IPushbackReader reader eof-error? sentinel recursive?]
+     (binding [*unsafe-read* true]
+       (read reader eof-error? sentinel recursive?))))
+
+(defn unsafe-read-string
+  "Reads one object from the string s.
+Unsafe, #= is allowed if *read-eval* is bound to true"
+  [s]
+  (unsafe-read (string-push-back-reader s) true nil false))
