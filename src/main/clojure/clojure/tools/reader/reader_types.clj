@@ -1,8 +1,8 @@
 (ns clojure.tools.reader.reader-types
-  (:refer-clojure :exclude [char])
+  (:refer-clojure :exclude [char read-line])
   (:require [clojure.tools.reader.utils :refer :all])
   (:import clojure.lang.LineNumberingPushbackReader
-           java.io.InputStream))
+           (java.io InputStream BufferedReader)))
 
 (defmacro ^:private update! [what f]
   (list 'set! what (list f what)))
@@ -148,7 +148,7 @@
 (defn indexing-reader? [rdr]
   "Returns true if the reader satisfies IndexingReader"
   (or (instance? clojure.tools.reader.reader_types.IndexingReader rdr)
-      (instance? clojure.lang.LineNumberingPushbackReader rdr)
+      (instance? LineNumberingPushbackReader rdr)
       (and (not (instance? clojure.tools.reader.reader_types.StringReader rdr))
            (not (instance? clojure.tools.reader.reader_types.InputStreamReader rdr))
            (get (:impls IndexingReader) (class rdr)))))
@@ -184,6 +184,18 @@
   ([s-or-rdr buf-len]
      (IndexingPushbackReader.
       (if (string? s-or-rdr) (string-push-back-reader s-or-rdr buf-len) s-or-rdr) 0 1 true nil)))
+
+(defn read-line
+  "Reads a line from the reader or from *in* if no reader is specified"
+  ([] (read-line *in*))
+  ([rdr]
+     (if (or (instance? LineNumberingPushbackReader rdr)
+             (instance? BufferedReader rdr))
+       (clojure.core/read-line rdr)
+       (loop [c (read-char rdr) s (StringBuilder.)]
+         (if (newline? c)
+           (str s)
+           (recur (read-char rdr) (.append s c)))))))
 
 (defn reader-error
   "Throws an Exception info, if rdr is an IndexingReader, additional information about column and line number is provided"
