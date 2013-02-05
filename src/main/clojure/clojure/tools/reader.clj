@@ -18,6 +18,14 @@
   (when x
     (clojure.core/char x)))
 
+;; getColumnNumber and *default-data-reader-fn* are available only since clojure-1.5.0-beta1
+(def ^:private >=clojure-1-5-alpha*?
+  (let [{:keys [minor qualifier]} *clojure-version*]
+    (and (>= minor 5)
+         (not= "alpha"
+               (when qualifier
+                 (subs qualifier 0 (dec (count qualifier))))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; reader protocols
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -145,18 +153,10 @@
     (when c
       (.unread ^java.io.PushbackReader rdr (int c)))))
 
-;; getColumnNumber is available only since clojure-1.5.0-beta1
-(def ^:private getColumnNumber?
-  (let [{:keys [minor qualifier]} *clojure-version*]
-    (and (>= 5 minor)
-         (not= "alpha"
-               (when qualifier
-                 (subs qualifier 0 (dec (count qualifier))))))))
-
 (extend LineNumberingPushbackReader
   IndexingReader
   {:get-line-number (fn [rdr] (.getLineNumber ^LineNumberingPushbackReader rdr))
-   :get-column-number (if getColumnNumber?
+   :get-column-number (if >=clojure-1-5-alpha*?
                         (fn [rdr]
                           (.getColumnNumber ^LineNumberingPushbackReader rdr))
                         (fn [rdr] 0))})
@@ -914,6 +914,10 @@
             (Reflector/invokeStaticMethod class "create" (object-array [vals])))))
       (reader-error rdr "Invalid reader constructor form"))))
 
+(def default-data-reader-fn
+  (when >=clojure-1-5-alpha*?
+    (resolve '*default-data-reader-fn*)))
+
 (defn read-tagged [rdr initch]
   (let [tag (read rdr true nil false)]
     (if-not (symbol? tag)
@@ -923,7 +927,9 @@
       (read-tagged* rdr tag f)
       (if (.contains (name tag) ".")
         (read-ctor rdr tag)
-        (reader-error rdr "No reader function for tag " (name tag))))))
+        (if-let [f @default-data-reader-fn]
+          (f tag (read rdr true nil true))
+          (reader-error rdr "No reader function for tag " (name tag)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public API
