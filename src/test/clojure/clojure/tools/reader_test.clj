@@ -1,6 +1,6 @@
 (ns clojure.tools.reader-test
   (:refer-clojure :exclude [read-string])
-  (:require [clojure.tools.reader :refer [read-string default-data-reader-fn]]
+  (:require [clojure.tools.reader :refer [read-string default-data-reader-fn unsafe-read-string]]
             [clojure.test :refer [deftest is]])
   (:import clojure.lang.BigInt))
 
@@ -295,7 +295,11 @@
   (is (= 14 ((eval (read-string "#(apply + % %1 %3 %&)")) 1 2 3 4 5))))
 
 (deftest read-eval
-  (is (= 3 (read-string "#=(+ 1 2)"))))
+  (is (= 3 (binding [*read-eval* true]
+             (unsafe-read-string "#=(+ 1 2)"))))
+  (is (thrown-with-msg? Exception #"#= only allowed when using the unsafe- variants of read and read-string"
+        (binding [*read-eval* true]
+          (read-string "#=(+ 1 2)")))))
 
 (deftest read-tagged
   (is (= #inst "2010-11-12T13:14:15.666"
