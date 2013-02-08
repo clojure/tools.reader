@@ -8,15 +8,15 @@ Public API
 
 There are three public namespaces:
 * `clojure.tools.reader.reader-types`, offers protocols, implementations and conveniente constructors for some reader types.
-* `clojure.tools.reader.edn` offers a feature-complete EDN reader
-* `clojure.tools.reader` offers a feature-complete clojure reader
+* `clojure.tools.reader.edn` offers a feature-complete EDN reader, whose api matches clojure.edn's one
+* `clojure.tools.reader` offers a feature-complete clojure reader, whose api matches clojure.core's one
 
 Refer to docstrings in each namespace for more documentation.
 
 Releases and Dependency Information
 ========================================
 
-Latest stable release: 0.6.4
+Latest stable release: 0.6.2
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
@@ -25,7 +25,7 @@ Latest stable release: 0.6.4
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "0.6.4"]
+[org.clojure/tools.reader "0.6.2"]
 ```
 [Maven](http://maven.apache.org/) dependency information:
 
@@ -33,7 +33,7 @@ Latest stable release: 0.6.4
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>0.6.4</version>
+  <version>0.6.2</version>
 </dependency>
 ```
 Example Usage
@@ -93,6 +93,9 @@ Changelog
   * Fix unicode char reading
   * Add *default-data-reader-fn* support
   * Add an EDN-only reader
+  * Disable record literals reading when *read-eval* is bound to false
+  * Made \% a symbol constituent char
+  * Made the EDN reader api match the clojure.edn one
 
 Developer Information
 ========================================
