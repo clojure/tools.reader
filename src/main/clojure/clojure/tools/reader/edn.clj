@@ -49,7 +49,7 @@
   [rdr _ opts]
   (if-let [ch (read-char rdr)]
     (if-let [dm (dispatch-macros ch)]
-      (dm rdr ch)
+      (dm rdr ch opts)
       (if-let [obj (read-tagged (doto rdr (unread ch)) ch opts)]
         obj
         (reader-error rdr "No dispatch macro for " ch)))
@@ -152,7 +152,7 @@
         (if (identical? delim ^char ch)
           (persistent! a)
           (if-let [macrofn (macros ch)]
-            (let [mret (macrofn rdr ch)]
+            (let [mret (macrofn rdr ch opts)]
               (recur (if-not (identical? mret rdr) (conj! a mret) a)))
             (let [o (read (doto rdr (unread ch)) true nil opts)]
               (recur (if-not (identical? o rdr) (conj! a o) a)))))))))
@@ -258,14 +258,14 @@
 (defn wrapping-reader
   [sym]
   (fn [rdr _ opts]
-    (list sym (read rdr true nil true opts))))
+    (list sym (read rdr true nil opts))))
 
 (defn read-meta
   [rdr _ opts]
-  (let [m (desugar-meta (read rdr true nil true opts))]
+  (let [m (desugar-meta (read rdr true nil opts))]
     (when-not (map? m)
       (reader-error rdr "Metadata must be Symbol, Keyword, String or Map"))
-    (let [o (read rdr true nil true opts)]
+    (let [o (read rdr true nil opts)]
       (if (instance? IMeta o)
         (with-meta o (merge (meta o) m))
         (reader-error rdr "Metadata can only be applied to IMetas")))))
@@ -305,8 +305,8 @@
     nil))
 
 (defn read-tagged [rdr initch opts]
-  (let [tag (read rdr true nil false opts)
-        object (read rdr true nil true opts)]
+  (let [tag (read rdr true nil opts)
+        object (read rdr true nil opts)]
     (if-not (symbol? tag)
       (reader-error rdr "Reader tag must be a symbol"))
     (if-let [f (or (get (:readers opts) tag)
@@ -334,8 +334,8 @@ Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns
          (cond
           (whitespace? ch) (read opts reader)
           (nil? ch) (if eof-error? (reader-error reader "EOF") eof)
-          (number-literal? reader ch) (read-number reader ch)
-          (comment-prefix? ch) (read opts (read-comment reader ch))
+          (number-literal? reader ch) (read-number reader ch opts)
+          (comment-prefix? ch) (read opts (read-comment reader ch opts))
           :else (let [f (macros ch)]
                   (if f
                     (let [res (f reader ch opts)]

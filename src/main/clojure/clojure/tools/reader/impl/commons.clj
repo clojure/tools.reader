@@ -108,11 +108,13 @@
 ;; readers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(def read-comment skip-line)
+(defn read-comment
+  [rdr & _]
+  (skip-line rdr _))
 
 (defn throwing-reader
   [msg]
-  (fn [rdr _]
+  (fn [rdr & _]
     (reader-error rdr msg)))
 
 (defn read-regex
