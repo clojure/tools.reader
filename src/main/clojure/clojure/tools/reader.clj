@@ -18,6 +18,7 @@
 (defn macro-terminating? [ch]
   (and (not (identical? \# ch))
        (not (identical? \' ch))
+       (not (identical? \% ch))
        (not (identical? \: ch))
        (macros ch)))
 
@@ -565,7 +566,9 @@
     (f o)))
 
 (defn read-ctor [rdr class-name]
-  (let [class (RT/classForName (name class-name))
+  (when-not *read-eval*
+    (reader-error "Record construction syntax can only be used when *read-eval* == true"))
+  (let [class (Class/forName (name class-name) false (RT/baseLoader))
         ch (read-past whitespace? rdr)] ;; differs from clojure
     (if-let [[end-ch form] (case ch
                              \[ [\] :short]
@@ -618,6 +621,8 @@ Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns
   ([reader] (read reader true nil))
   ([reader eof-error? sentinel] (read reader eof-error? sentinel false))
   ([reader eof-error? sentinel recursive?]
+     (when (= :unknown *read-eval*)
+       (reader-error "Reading disallowed - *read-eval* bound to :unknown"))
      (try
        (let [ch (read-char reader)]
          (cond

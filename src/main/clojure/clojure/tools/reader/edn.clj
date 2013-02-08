@@ -18,32 +18,45 @@
        (not (identical? \: ch))
        (macros ch)))
 
+(defn not-constituent? [ch]
+  (or (identical? \@ ch)
+      (identical? \` ch)
+      (identical? \~ ch)))
+
 (defn ^String read-token
   [rdr initch]
-  (if-not initch
-    (reader-error rdr "EOF while reading")
-    (loop [sb (doto (StringBuilder.) (.append initch))
-           ch (peek-char rdr)]
-      (if (or (whitespace? ch)
-              (macro-terminating? ch)
-              (nil? ch))
-        (str sb)
-        (recur (doto sb (.append (read-char rdr))) (peek-char rdr))))))
+  (cond
+   (not initch)
+   (reader-error rdr "EOF while reading")
+
+   (not-constituent? initch)
+   (reader-error rdr "Invalid leading character: " initch)
+
+   :else
+   (loop [sb (doto (StringBuilder.) (.append initch))
+          ch (peek-char rdr)]
+     (if (or (whitespace? ch)
+             (macro-terminating? ch)
+             (nil? ch))
+       (str sb)
+       (if (not-constituent? ch)
+         (reader-error rdr "Invalid constituent character: " ch)
+         (recur (doto sb (.append (read-char rdr))) (peek-char rdr)))))))
 
 (declare read-tagged)
 
 (defn read-dispatch
-  [rdr _]
+  [rdr _ opts]
   (if-let [ch (read-char rdr)]
     (if-let [dm (dispatch-macros ch)]
       (dm rdr ch)
-      (if-let [obj (read-tagged (doto rdr (unread ch)) ch)]
+      (if-let [obj (read-tagged (doto rdr (unread ch)) ch opts)]
         obj
         (reader-error rdr "No dispatch macro for " ch)))
     (reader-error rdr "EOF while reading character")))
 
 (defn read-unmatched-delimiter
-  [rdr ch]
+  [rdr ch opts]
   (reader-error rdr "Unmatched delimiter " ch))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -86,7 +99,7 @@
 (let [upper-limit (int \uD7ff)
       lower-limit (int \uE000)]
   (defn read-char*
-    [rdr backslash]
+    [rdr backslash opts]
     (let [ch (read-char rdr)]
       (if-not (nil? ch)
         (let [token (read-token rdr ch)
@@ -126,7 +139,7 @@
         (reader-error rdr "EOF while reading character")))))
 
 (defn ^PersistentVector read-delimited
-  [delim rdr recursive?]
+  [delim rdr opts]
   (let [first-line  (when (indexing-reader? rdr)
                       (get-line-number rdr))
         delim ^char delim]
@@ -141,29 +154,29 @@
           (if-let [macrofn (macros ch)]
             (let [mret (macrofn rdr ch)]
               (recur (if-not (identical? mret rdr) (conj! a mret) a)))
-            (let [o (read (doto rdr (unread ch)) true nil recursive?)]
+            (let [o (read (doto rdr (unread ch)) true nil opts)]
               (recur (if-not (identical? o rdr) (conj! a o) a)))))))))
 
 (defn read-list
-  [rdr _]
-  (let [the-list (read-delimited \) rdr true)]
+  [rdr _ opts]
+  (let [the-list (read-delimited \) rdr opts)]
     (if (empty? the-list)
       '()
       (clojure.lang.PersistentList/create the-list))))
 
 (defn read-vector
-  [rdr _]
-  (read-delimited \] rdr true))
+  [rdr _ opts]
+  (read-delimited \] rdr opts))
 
 (defn read-map
-  [rdr _]
-  (let [l (to-array (read-delimited \} rdr true))]
+  [rdr _ opts]
+  (let [l (to-array (read-delimited \} rdr opts))]
     (when (== 1 (bit-and (alength l) 1))
       (reader-error rdr "Map literal must contain an even number of forms"))
     (RT/map l)))
 
 (defn read-number
-  [reader initch]
+  [reader initch opts]
   (loop [sb (doto (StringBuilder.) (.append initch))
          ch (read-char reader)]
     (if (or (whitespace? ch) (macros ch) (nil? ch))
@@ -199,7 +212,7 @@
         (reader-error rdr "Unsupported escape character: \\" ch)))))
 
 (defn read-string*
-  [reader _]
+  [reader _ opts]
   (loop [sb (StringBuilder.)
          ch (read-char reader)]
     (case ch
@@ -228,7 +241,7 @@
           (reader-error rdr "Invalid token: " token)))))
 
 (defn read-keyword
-  [reader initch]
+  [reader initch opts]
   (let [ch (read-char reader)]
     (if-not (whitespace? ch)
       (let [token (read-token reader ch)
@@ -244,27 +257,26 @@
 
 (defn wrapping-reader
   [sym]
-  (fn [rdr _]
-    (list sym (read rdr true nil true))))
+  (fn [rdr _ opts]
+    (list sym (read rdr true nil true opts))))
 
 (defn read-meta
-  [rdr _]
-  (let [m (desugar-meta (read rdr true nil true))]
+  [rdr _ opts]
+  (let [m (desugar-meta (read rdr true nil true opts))]
     (when-not (map? m)
       (reader-error rdr "Metadata must be Symbol, Keyword, String or Map"))
-    (let [o (read rdr true nil true)]
+    (let [o (read rdr true nil true opts)]
       (if (instance? IMeta o)
-        (when (instance? IObj o)
-          (with-meta o (merge (meta o) m)))
+        (with-meta o (merge (meta o) m))
         (reader-error rdr "Metadata can only be applied to IMetas")))))
 
 (defn read-set
-  [rdr _]
-  (PersistentHashSet/createWithCheck (read-delimited \} rdr true)))
+  [rdr _ opts]
+  (PersistentHashSet/createWithCheck (read-delimited \} rdr opts)))
 
 (defn read-discard
-  [rdr _]
-  (read rdr true nil true)
+  [rdr _ opts]
+  (read rdr true nil opts)
   rdr)
 
 (defn macros [ch]
@@ -272,11 +284,7 @@
     \" read-string*
     \: read-keyword
     \; read-comment
-    \' (throwing-reader "Not an EDN form")
-    \@ (throwing-reader "Not an EDN form")
     \^ read-meta
-    \` (throwing-reader "Not an EDN form")
-    \~ (throwing-reader "Not an EDN form")
     \( read-list
     \) read-unmatched-delimiter
     \[ read-vector
@@ -284,56 +292,55 @@
     \{ read-map
     \} read-unmatched-delimiter
     \\ read-char*
-    \% (throwing-reader "Not an EDN form")
     \# read-dispatch
     nil))
 
 (defn dispatch-macros [ch]
   (case ch
     \^ read-meta                ;deprecated
-    \' (throwing-reader "Not an EDN form")
-    \( (throwing-reader "Not an EDN form")
-    \= (throwing-reader "Not an EDN form")
     \{ read-set
     \< (throwing-reader "Unreadable form")
-    \" (throwing-reader "Not an EDN form") ;;read-regex
     \! read-comment
     \_ read-discard
     nil))
 
-(defn read-tagged [rdr initch]
-  (let [tag (read rdr true nil false)
-        object (read rdr true nil true)]
+(defn read-tagged [rdr initch opts]
+  (let [tag (read rdr true nil false opts)
+        object (read rdr true nil true opts)]
     (if-not (symbol? tag)
       (reader-error rdr "Reader tag must be a symbol"))
-    (if-let [f (or (*data-readers* tag)
+    (if-let [f (or (get (:readers opts) tag)
                    (default-data-readers tag)
-                   @default-data-reader-fn)]
+                   (:default opts))]
+      (f tag object)
       (reader-error rdr "No reader function for tag " (name tag)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Public API
+  ;; Public API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 (defn read
   "Reads the first object from an IPushbackReader or a java.io.PushbackReader.
-Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns sentinel."
+Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns eof."
   ([] (read *in*))
-  ([reader] (read reader true nil))
-  ([reader eof-error? sentinel] (read reader eof-error? sentinel false))
-  ([reader eof-error? sentinel recursive?]
+  ([reader] (read {} reader))
+  ([{:keys [eof] :as opts} reader]
+     (let [eof-error? (not (contains? opts :eof))]
+       (read reader eof-error? eof opts)))
+  ([reader eof-error? eof opts]
      (try
        (let [ch (read-char reader)]
          (cond
-          (whitespace? ch) (read reader eof-error? sentinel recursive?)
-          (nil? ch) (if eof-error? (reader-error reader "EOF") sentinel)
+          (whitespace? ch) (read opts reader)
+          (nil? ch) (if eof-error? (reader-error reader "EOF") eof)
           (number-literal? reader ch) (read-number reader ch)
-          (comment-prefix? ch) (read (read-comment reader ch) eof-error? sentinel recursive?)
+          (comment-prefix? ch) (read opts (read-comment reader ch))
           :else (let [f (macros ch)]
                   (if f
-                    (let [res (f reader ch)]
+                    (let [res (f reader ch opts)]
                       (if (identical? res reader)
-                        (read reader eof-error? sentinel recursive?)
+                        (read opts reader)
                         res))
                     (read-symbol reader ch)))))
        (catch Exception e
@@ -348,5 +355,7 @@ Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns
 
 (defn read-string
   "Reads one object from the string s"
-  [s]
-  (read (string-push-back-reader s) true nil false))
+  ([s]  (read-string {:eof nil} s))
+  ([opts s]
+     (when s
+       (read opts (string-push-back-reader s)))))
