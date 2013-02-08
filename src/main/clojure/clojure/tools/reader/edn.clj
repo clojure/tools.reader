@@ -310,10 +310,11 @@
     (if-not (symbol? tag)
       (reader-error rdr "Reader tag must be a symbol"))
     (if-let [f (or (get (:readers opts) tag)
-                   (default-data-readers tag)
-                   (:default opts))]
-      (f tag object)
-      (reader-error rdr "No reader function for tag " (name tag)))))
+                   (default-data-readers tag))]
+      (f object)
+      (if-let [d (:default opts)]
+        (d tag object)
+        (reader-error rdr "No reader function for tag " (name tag))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; Public API

@@ -597,6 +597,10 @@
             (Reflector/invokeStaticMethod class "create" (object-array [vals])))))
       (reader-error rdr "Invalid reader constructor form"))))
 
+(def default-data-reader-fn
+  (when >=clojure-1-5-alpha*?
+    (resolve '*default-data-reader-fn*)))
+
 (defn read-tagged [rdr initch]
   (let [tag (read rdr true nil false)]
     (if-not (symbol? tag)

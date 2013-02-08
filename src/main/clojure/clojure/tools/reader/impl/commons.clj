@@ -100,10 +100,6 @@
               [ns sym])))
         [nil token]))))
 
-(def default-data-reader-fn
-  (when >=clojure-1-5-alpha*?
-    (resolve '*default-data-reader-fn*)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; readers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
