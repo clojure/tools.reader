@@ -16,7 +16,7 @@ Refer to docstrings in each namespace for more documentation.
 Releases and Dependency Information
 ========================================
 
-Latest stable release: 0.6.2
+Latest stable release: 0.6.4
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
@@ -25,7 +25,7 @@ Latest stable release: 0.6.2
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "0.6.2"]
+[org.clojure/tools.reader "0.6.4"]
 ```
 [Maven](http://maven.apache.org/) dependency information:
 
@@ -33,7 +33,7 @@ Latest stable release: 0.6.2
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>0.6.2</version>
+  <version>0.6.4</version>
 </dependency>
 ```
 Example Usage
@@ -89,7 +89,7 @@ Changelog
   * Initial release.
 * Release 0.6.2 on Feb 04, 2013
   * Add line/column metadata on vectors, maps and symbols
-* Release 0.6.4 on ???
+* Release 0.6.4 on Feb 08, 2013
   * Fix unicode char reading
   * Add *default-data-reader-fn* support
   * Add an EDN-only reader
