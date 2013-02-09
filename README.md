@@ -16,7 +16,7 @@ Refer to docstrings in each namespace for more documentation.
 Releases and Dependency Information
 ========================================
 
-Latest stable release: 0.6.4
+Latest stable release: 0.6.5
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
@@ -25,7 +25,7 @@ Latest stable release: 0.6.4
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "0.6.4"]
+[org.clojure/tools.reader "0.6.5"]
 ```
 [Maven](http://maven.apache.org/) dependency information:
 
@@ -33,7 +33,7 @@ Latest stable release: 0.6.4
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>0.6.4</version>
+  <version>0.6.5</version>
 </dependency>
 ```
 Example Usage
@@ -96,6 +96,8 @@ Changelog
   * Disable record literals reading when *read-eval* is bound to false
   * Made \% a symbol constituent char
   * Made the EDN reader api match the clojure.edn one
+* Release 0.6.5 on Feb 09, 2013
+  * Fixed reading \@ \~ and \`
 
 Developer Information
 ========================================
