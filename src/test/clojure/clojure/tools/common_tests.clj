@@ -210,6 +210,7 @@
   (is (= (char 0) (read-string "\\o000")))
   (is (= (char 0377) (read-string "\\o377")))
   (is (= \A (read-string "\\u0041")))
+  (is (= \@ (read-string "\\@")))
   (is (= (char 0xd7ff) (read-string "\\ud7ff")))
   (is (= (char 0xe000) (read-string "\\ue000")))
   (is (= (char 0xffff) (read-string "\\uffff"))))

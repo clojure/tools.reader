@@ -24,24 +24,27 @@
       (identical? \~ ch)))
 
 (defn ^String read-token
-  [rdr initch]
-  (cond
-   (not initch)
-   (reader-error rdr "EOF while reading")
+  ([rdr initch]
+     (read-token rdr initch true))
+  ([rdr initch validate-leading?]
+     (cond
+      (not initch)
+      (reader-error rdr "EOF while reading")
 
-   (not-constituent? initch)
-   (reader-error rdr "Invalid leading character: " initch)
+      (and validate-leading?
+           (not-constituent? initch))
+      (reader-error rdr "Invalid leading character: " initch)
 
-   :else
-   (loop [sb (doto (StringBuilder.) (.append initch))
-          ch (peek-char rdr)]
-     (if (or (whitespace? ch)
-             (macro-terminating? ch)
-             (nil? ch))
-       (str sb)
-       (if (not-constituent? ch)
-         (reader-error rdr "Invalid constituent character: " ch)
-         (recur (doto sb (.append (read-char rdr))) (peek-char rdr)))))))
+      :else
+      (loop [sb (doto (StringBuilder.) (.append initch))
+             ch (peek-char rdr)]
+        (if (or (whitespace? ch)
+                (macro-terminating? ch)
+                (nil? ch))
+          (str sb)
+          (if (not-constituent? ch)
+            (reader-error rdr "Invalid constituent character: " ch)
+            (recur (doto sb (.append (read-char rdr))) (peek-char rdr))))))))
 
 (declare read-tagged)
 
@@ -102,7 +105,7 @@
     [rdr backslash opts]
     (let [ch (read-char rdr)]
       (if-not (nil? ch)
-        (let [token (read-token rdr ch)
+        (let [token (read-token rdr ch false)
               token-len (count token)]
           (cond
 
