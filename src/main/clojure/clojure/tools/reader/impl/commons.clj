@@ -88,16 +88,18 @@
               (match-ratio ratio-matcher))))))))
 
 (defn parse-symbol [^String token]
-  (when-not (= "" token)
-    (let [ns-idx (inc (.indexOf token "/"))]
-      (if-let [ns (and (pos? ns-idx) (subs token 0 (dec ns-idx)))]
-        (when-not (== ns-idx (count token))
-          (let [sym (subs token ns-idx)]
-            (when (and (not (numeric? (nth sym 0)))
-                       (not (= "" sym))
-                       (or (= sym "/")
-                           (== -1 (.indexOf sym "/"))))
-              [ns sym])))
+  (when-not (identical? "" token)
+    (let [ns-idx (.indexOf token "/")]
+      (if-let [ns (and (pos? ns-idx)
+                       (subs token 0 ns-idx))]
+        (let [ns-idx (inc ns-idx)]
+          (when-not (== ns-idx (count token))
+            (let [sym (subs token ns-idx)]
+              (when (and (not (numeric? (nth sym 0)))
+                         (not (identical? "" sym))
+                         (or (= sym "/")
+                             (== -1 (.indexOf sym "/"))))
+                [ns sym]))))
         [nil token]))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -39,7 +39,7 @@
 (defn desugar-meta
   [f]
   (cond
-   (symbol? f) {:tag f}
-   (string? f) {:tag f}
-   (keyword? f) {f true}
-   :else f))
+    (keyword? f) {f true}
+    (symbol? f)  {:tag f}
+    (string? f)  {:tag f}
+    :else        f))

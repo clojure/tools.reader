@@ -16,23 +16,22 @@
 (declare read macros dispatch-macros)
 
 (defn macro-terminating? [ch]
-  (and (not (identical? \# ch))
-       (not (identical? \' ch))
-       (not (identical? \% ch))
-       (not (identical? \: ch))
-       (macros ch)))
+  (case ch
+    (\" \; \@ \^ \` \~ \( \) \[ \] \{ \} \\) true
+    false))
 
 (defn ^String read-token
   [rdr initch]
   (if-not initch
     (reader-error rdr "EOF while reading")
     (loop [sb (doto (StringBuilder.) (.append initch))
-           ch (peek-char rdr)]
+           ch (read-char rdr)]
       (if (or (whitespace? ch)
               (macro-terminating? ch)
               (nil? ch))
-        (str sb)
-        (recur (doto sb (.append (read-char rdr))) (peek-char rdr))))))
+        (do (unread rdr ch)
+            (str sb))
+        (recur (.append sb ch) (read-char rdr))))))
 
 (declare read-tagged)
 
@@ -135,18 +134,17 @@
                       (get-line-number rdr))
         delim ^char delim]
     (loop [a (transient [])]
-      (let [ch (read-past whitespace? rdr)]
-        (when-not ch
-          (reader-error rdr "EOF while reading"
-                        (if first-line
-                          (str ", starting at line" first-line))))
+      (if-let [ch (read-past whitespace? rdr)]
         (if (identical? delim ^char ch)
           (persistent! a)
           (if-let [macrofn (macros ch)]
             (let [mret (macrofn rdr ch)]
               (recur (if-not (identical? mret rdr) (conj! a mret) a)))
             (let [o (read (doto rdr (unread ch)) true nil recursive?)]
-              (recur (if-not (identical? o rdr) (conj! a o) a)))))))))
+              (recur (if-not (identical? o rdr) (conj! a o) a)))))
+        (reader-error rdr "EOF while reading"
+                      (when first-line
+                        (str ", starting at line" first-line)))))))
 
 (defn read-list
   [rdr _]
@@ -172,10 +170,14 @@
   [rdr _]
   (let [[line column] (when (indexing-reader? rdr)
                         [(get-line-number rdr) (dec (get-column-number rdr))])
-        l (to-array (read-delimited \} rdr true))]
-    (when (== 1 (bit-and (alength l) 1))
+        the-map (read-delimited \} rdr true)
+        map-count (count the-map)]
+    (when (odd? map-count)
       (reader-error rdr "Map literal must contain an even number of forms"))
-    (with-meta (RT/map l)
+    (with-meta
+      (if (zero? map-count)
+        {}
+        (RT/map (to-array the-map)))
       (when line
         {:line line :column column}))))
 
@@ -305,7 +307,7 @@
   (read rdr true nil true)
   rdr)
 
-(def ^:private ^:dynamic arg-env nil)
+(def ^:private ^:dynamic arg-env)
 
 (defn- garg [n]
   (symbol (str (if (== -1 n) "rest" (str "p" n))
@@ -313,11 +315,10 @@
 
 (defn read-fn
   [rdr _]
-  (if arg-env
+  (if (thread-bound? #'arg-env)
     (throw (IllegalStateException. "Nested #()s are not allowed")))
-  (with-bindings {#'arg-env (sorted-map)}
-    (unread rdr \()
-    (let [form (read rdr true nil true) ;; this sets bindings
+  (binding [arg-env (sorted-map)]
+    (let [form (read (doto rdr (unread \()) true nil true) ;; this sets bindings
           rargs (rseq arg-env)
           args (if rargs
                  (let [higharg (key (first rargs))]
@@ -335,7 +336,7 @@
       (list 'fn* args form))))
 
 (defn register-arg [n]
-  (if arg-env
+  (if (thread-bound? #'arg-env)
     (if-let [ret (arg-env n)]
       ret
       (let [g (garg n)]
@@ -347,19 +348,24 @@
 
 (defn read-arg
   [rdr pct]
-  (if-not arg-env
+  (if-not (thread-bound? #'arg-env)
     (read-symbol rdr pct)
     (let [ch (peek-char rdr)]
-      (if (or (whitespace? ch)
-              (macro-terminating? ch)
-              (nil? ch))
+      (cond
+        (or (whitespace? ch)
+            (macro-terminating? ch)
+            (nil? ch))
         (register-arg 1)
+
+        (identical? ch \&)
+        (do (read-char rdr)
+            (register-arg -1))
+
+        :else
         (let [n (read rdr true nil true)]
-          (if (= n '&)
-            (register-arg -1)
-            (if-not (number? n)
-              (throw (IllegalStateException. "Arg literal must be %, %& or %integer"))
-              (register-arg n))))))))
+          (if-not (integer? n)
+            (throw (IllegalStateException. "Arg literal must be %, %& or %integer"))
+            (register-arg n)))))))
 
 (defn read-eval
   [rdr _]

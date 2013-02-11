@@ -149,7 +149,8 @@
   "Returns true if the reader satisfies IndexingReader"
   (or (instance? clojure.tools.reader.reader_types.IndexingReader rdr)
       (instance? LineNumberingPushbackReader rdr)
-      (and (not (instance? clojure.tools.reader.reader_types.StringReader rdr))
+      (and (not (instance? clojure.tools.reader.reader_types.PushbackReader rdr))
+           (not (instance? clojure.tools.reader.reader_types.StringReader rdr))
            (not (instance? clojure.tools.reader.reader_types.InputStreamReader rdr))
            (get (:impls IndexingReader) (class rdr)))))
 
