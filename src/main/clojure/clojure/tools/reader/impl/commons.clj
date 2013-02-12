@@ -50,7 +50,7 @@
              (.group m 7) [(.group m 7) (Integer/parseInt (.group m 6))]
              :else        [nil nil])
           ^String n (a 0)
-          ^int radix (a 1)]
+          radix (int (a 1))]
       (when n
         (let [bn (BigInteger. n radix)
               bn (if negate? (.negate bn) bn)]

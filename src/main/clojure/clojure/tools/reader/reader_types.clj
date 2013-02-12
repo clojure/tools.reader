@@ -38,7 +38,7 @@
     (when (> s-len s-pos)
       (nth s s-pos))))
 
-(deftype InputStreamReader [^InputStream is ^:unsynchronized-mutable ^bytes buf]
+(deftype InputStreamReader [^InputStream is ^:unsynchronized-mutable ^"[B" buf]
   Reader
   (read-char [reader]
     (if buf
@@ -57,7 +57,7 @@
       (char (aget buf 0)))))
 
 (deftype PushbackReader
-    [rdr ^objects buf buf-len ^:unsynchronized-mutable buf-pos]
+    [rdr ^"[Ljava.lang.Object;" buf buf-len ^:unsynchronized-mutable buf-pos]
   Reader
   (read-char [reader]
     (char
