@@ -52,18 +52,22 @@
   (is (= 3 (read-string "#=(+ 1 2)"))))
 
 (deftest read-tagged
-  (is (= #inst "2010-11-12T13:14:15.666"
-         (read-string "#inst \"2010-11-12T13:14:15.666\"")))
-  (is (= #inst "2010-11-12T13:14:15.666"
-         (read-string "#inst\"2010-11-12T13:14:15.666\"")))
-  (is (= #uuid "550e8400-e29b-41d4-a716-446655440000"
+  ;; (is (= #inst "2010-11-12T13:14:15.666"
+  ;;        (read-string "#inst \"2010-11-12T13:14:15.666\"")))
+  ;; (is (= #inst "2010-11-12T13:14:15.666"
+  ;;        (read-string "#inst\"2010-11-12T13:14:15.666\"")))
+  ;; (is (= #uuid "550e8400-e29b-41d4-a716-446655440000"
+  ;;        (read-string "#uuid \"550e8400-e29b-41d4-a716-446655440000\"")))
+  ;; (is (= #uuid "550e8400-e29b-41d4-a716-446655440000"
+  ;;        (read-string "#uuid\"550e8400-e29b-41d4-a716-446655440000\"")))
+  (is (= (java.util.UUID/fromString "550e8400-e29b-41d4-a716-446655440000")
          (read-string "#uuid \"550e8400-e29b-41d4-a716-446655440000\"")))
-  (is (= #uuid "550e8400-e29b-41d4-a716-446655440000"
-         (read-string "#uuid\"550e8400-e29b-41d4-a716-446655440000\"")))
-  (when default-data-reader-fn
+  (is (= (java.util.UUID/fromString "550e8400-e29b-41d4-a716-446655440000")
+                  (read-string "#uuid\"550e8400-e29b-41d4-a716-446655440000\"")))
+  (when *default-data-reader-fn*
     (let [my-unknown (fn [tag val] {:unknown-tag tag :value val})]
       (is (= {:unknown-tag 'foo :value 'bar}
-             (with-bindings {default-data-reader-fn my-unknown}
+             (binding [*default-data-reader-fn* my-unknown]
                (read-string "#foo bar")))))))
 
 (defrecord foo [])
