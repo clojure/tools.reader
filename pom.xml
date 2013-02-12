@@ -7,6 +7,20 @@
   <description>A Clojure reader in Clojure </description>
   <url>https://github.com/clojure/tools.reader</url>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.theoryinpractise</groupId>
+        <artifactId>clojure-maven-plugin</artifactId>
+        <version>1.3.13</version>
+        <configuration>
+          <!-- needed for clojure-1.3 compatibility -->
+          <temporaryOutputDirectory>false</temporaryOutputDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <licenses>
     <license>
       <name>Eclipse Public License 1.0</name>

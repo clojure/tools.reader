@@ -6,6 +6,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :source-paths ["src/main/clojure"]
   :test-paths ["src/test/clojure"]
+  :aot [clojure.tools.reader.impl.ExceptionInfo]
   :repositories {"sonatype-oss-public" "https://oss.sonatype.org/content/groups/public/"}
   :dependencies [[org.clojure/clojure "1.5.0-master-SNAPSHOT"]]
   :profiles {:1.3 {:dependencies [[org.clojure/clojure "1.3.0"]]}
