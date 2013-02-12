@@ -1,9 +1,7 @@
 (ns clojure.tools.reader.edn
   (:refer-clojure :exclude [read read-line read-string char])
-  (:require [clojure.tools.reader.reader-types :refer :all]
-            [clojure.tools.reader.impl
-             [utils :refer :all]
-             [commons :refer :all]])
+  (:use clojure.tools.reader.reader-types
+        [clojure.tools.reader.impl utils commons])
   (:import (clojure.lang PersistentHashSet IMeta  RT PersistentVector)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

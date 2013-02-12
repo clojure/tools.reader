@@ -1,7 +1,7 @@
 (ns clojure.tools.reader-edn-test
   (:refer-clojure :exclude [read-string])
-  (:require [clojure.tools.reader.edn :refer [read-string]]
-            [clojure.test :refer [deftest is]])
+  (:use [clojure.tools.reader.edn :only [read-string]]
+        [clojure.test :only [deftest is]])
   (:import clojure.lang.BigInt))
 
 (load "common_tests")

@@ -1,7 +1,7 @@
 (ns clojure.tools.reader.impl.commons
   (:refer-clojure :exclude [char read-line])
-  (:require [clojure.tools.reader.reader-types :refer :all]
-            [clojure.tools.reader.impl.utils :refer :all])
+  (:use clojure.tools.reader.reader-types
+        clojure.tools.reader.impl.utils)
   (:import (clojure.lang BigInt Numbers)
            (java.util regex.Pattern regex.Matcher)
            java.lang.reflect.Constructor))
