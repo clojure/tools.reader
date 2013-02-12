@@ -1,6 +1,6 @@
 (ns clojure.tools.reader-test
-  (:refer-clojure :exclude [read-string])
-  (:use [clojure.tools.reader :only [read-string default-data-reader-fn]]
+  (:refer-clojure :exclude [read-string *default-data-reader-fn*])
+  (:use [clojure.tools.reader :only [read-string *default-data-reader-fn*]]
         [clojure.test :only [deftest is]])
   (:import clojure.lang.BigInt))
 

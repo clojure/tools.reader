@@ -1,7 +1,10 @@
 (ns clojure.tools.reader
-  (:refer-clojure :exclude [read read-line read-string char])
+  (:refer-clojure :exclude [read read-line read-string char
+                            default-data-readers *default-data-reader-fn*
+                            *read-eval* *data-readers*])
   (:use clojure.tools.reader.reader-types
         [clojure.tools.reader.impl utils commons])
+  (:require [clojure.tools.reader.default-data-readers :as data-readers])
   (:import (clojure.lang PersistentHashSet IMeta
                          RT Symbol Reflector Var IObj
                          PersistentVector IRecord Namespace)
@@ -11,7 +14,11 @@
 ;; helpers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(declare read macros dispatch-macros)
+(declare read macros dispatch-macros
+         ^:dynamic *read-eval*
+         ^:dynamic *data-readers*
+         ^:dynamic *default-data-reader-fn*
+         default-data-readers)
 
 (defn macro-terminating? [ch]
   (case ch
@@ -601,10 +608,6 @@
             (Reflector/invokeStaticMethod class "create" (object-array [vals])))))
       (reader-error rdr "Invalid reader constructor form"))))
 
-(def default-data-reader-fn
-  (when >=clojure-1-5-alpha*?
-    (resolve '*default-data-reader-fn*)))
-
 (defn read-tagged [rdr initch]
   (let [tag (read rdr true nil false)]
     (if-not (symbol? tag)
@@ -614,13 +617,20 @@
       (read-tagged* rdr tag f)
       (if (.contains (name tag) ".")
         (read-ctor rdr tag)
-        (if-let [f @default-data-reader-fn]
+        (if-let [f *default-data-reader-fn*]
           (f tag (read rdr true nil true))
           (reader-error rdr "No reader function for tag " (name tag)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def ^:dynamic *read-eval* true)
+(def ^:dynamic *data-readers* {})
+(def ^:dynamic *default-data-reader-fn* nil)
+(def  default-data-readers
+  {'inst #'data-readers/read-instant-date
+   'uuid #'data-readers/default-uuid-reader})
 
 (defn read
   "Reads the first object from an IPushbackReader or a java.io.PushbackReader.
@@ -646,7 +656,7 @@ Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns
                         res))
                     (read-symbol reader ch)))))
        (catch Exception e
-         (if (instance? clojure.lang.ExceptionInfo e)
+         (if (ex-info? e)
            (throw e)
            (throw (ex-info (.getMessage e)
                            (merge {:type :reader-exception}

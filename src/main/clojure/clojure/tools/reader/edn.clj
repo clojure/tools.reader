@@ -1,8 +1,9 @@
 (ns clojure.tools.reader.edn
-  (:refer-clojure :exclude [read read-line read-string char])
+  (:refer-clojure :exclude [read read-line read-string char default-data-readers])
   (:use clojure.tools.reader.reader-types
-        [clojure.tools.reader.impl utils commons])
-  (:import (clojure.lang PersistentHashSet IMeta  RT PersistentVector)))
+        [clojure.tools.reader.impl utils commons]
+        [clojure.tools.reader :only [default-data-readers]])
+  (:import (clojure.lang PersistentHashSet IMeta RT PersistentVector)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; helpers
@@ -141,8 +142,8 @@
 
 (defn ^PersistentVector read-delimited
   [delim rdr opts]
-  (let [first-line  (when (indexing-reader? rdr)
-                      (get-line-number rdr))
+  (let [first-line (when (indexing-reader? rdr)
+                     (get-line-number rdr))
         delim (char delim)]
     (loop [a (transient [])]
       (let [ch (read-past whitespace? rdr)]
@@ -321,7 +322,6 @@
   ;; Public API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
 (defn read
   "Reads the first object from an IPushbackReader or a java.io.PushbackReader.
 Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns eof."
@@ -346,7 +346,7 @@ Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns
                         res))
                     (read-symbol reader ch)))))
        (catch Exception e
-         (if (instance? clojure.lang.ExceptionInfo e)
+         (if (ex-info? e)
            (throw e)
            (throw (ex-info (.getMessage e)
                            (merge {:type :reader-exception}
@@ -357,7 +357,7 @@ Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns
 
 (defn read-string
   "Reads one object from the string s"
-  ([s]  (read-string {:eof nil} s))
+  ([s] (read-string {:eof nil} s))
   ([opts s]
      (when s
        (read opts (string-push-back-reader s)))))
