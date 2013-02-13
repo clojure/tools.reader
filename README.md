@@ -3,6 +3,17 @@ clojure.tools.reader
 
 A complete Clojure reader and an EDN-only reader, works with clojure versions >= 1.3.0
 
+Rationale
+========================================
+
+clojure.tools.reader offers all functionality of the reader from the upcoming clojure-1.5.0, and more.
+
+This means safer read/read-string, an edn-only reader, tagged-literals support, default-data-reader-fn support for every clojure version >=1.3.0
+
+For a list of additional features of the reader, read the "Differences from LispReader.java" section from the README.
+
+Moreover, by using reader types from `clojure.tools.reader.reader-types`, if using an IndexingReader, column info is available and both line and column metadata is attached not only to lists, but to symbols, vectors and maps too, when additional debugging info is needed (note that the edn reader doesnt add any line/column metadata at all).
+
 Note that it uses `ex-info` which is available on `clojure.core` only from clojure-1.4.0.
 If using clojure-1.3.0 and needing access to ex-data, use `clojure.tools.reader.impl.utils/ex-data`
 
@@ -61,6 +72,12 @@ Note that since no code-execution is permitted, reader literals are also disable
 ;=> 1
 ```
 
+To switch from using `clojure.core/read-string` to `clojure.tools.reader.end/read-string` in your projects, put this in your namespace declaration:
+```clojure
+(:refer-clojure :exclude [read read-string])
+(:use [clojure.tools.reader.edn [read read-string]])
+```
+
 If (and only if) reading from a *trusted* source, and advanced features that need some level of code-execution during read are needed, functions from `clojure.tools.reader` should be used.
 ```clojure
 (require '[clojure.tools.reader.edn :as r])
@@ -73,6 +90,12 @@ If (and only if) reading from a *trusted* source, and advanced features that nee
 (binding [r/*read-eval* false]
   (r/read-string "#=(+ 1 2)))
 => ExceptionInfo #= not allowed when *read-eval* is false
+```
+
+To switch from using `clojure.core/read-string` to `clojure.tools.reader/read-string` in your projects, put this in your namespace declaration:
+```clojure
+(:refer-clojure :exclude [read read-string *default-data-reader-fn* *read-eval* *data-readers*])
+(:use [clojure.tools.reader [read read-string *default-data-reader-fn* *read-eval* *data-readers*]])
 ```
 
 Reaader types example usage:
@@ -118,13 +141,10 @@ Differences from LispReader.java
 There are small differences from clojure.lang.LispReader:
 
 * `read` throws an `ex-info` for almost every exception, whereas `clojure.lang.LispReader/read` throws a `ReaderException` wrapping the causing exception.
-
 * `read` is capable of reading `\x` escaped chars
-
 * `read` is capable of reading `Infinity` `+Infinity` `-Infinity` and `NaN` as per #CLJ-1074
-
 * `read` is capable of reading literal tags contaning periods, fixing #CLJ-1100
-
+* `clojure.tools.reader/read` adds additional line/column info to symbols, vectors and maps when possible
 * `read-line` has an additional arity with which is possible to specify the reader to read from
 
 Changelog
