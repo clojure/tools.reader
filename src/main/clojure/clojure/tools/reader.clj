@@ -135,7 +135,7 @@
 
 (defn ^PersistentVector read-delimited
   [delim rdr recursive?]
-  (let [first-line  (when (indexing-reader? rdr)
+  (let [first-line (when (indexing-reader? rdr)
                       (get-line-number rdr))
         delim (char delim)]
     (loop [a (transient [])]
@@ -625,16 +625,54 @@
 ;; Public API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(def ^:dynamic *read-eval* true)
-(def ^:dynamic *data-readers* {})
-(def ^:dynamic *default-data-reader-fn* nil)
+(def ^:dynamic *read-eval* true
+  "Defaults to true.
+
+   ***WARNING***
+   This setting implies that the full power of the reader is in play,
+   including syntax that can cause code to execute. It should never be
+   used with untrusted sources. See also: clojure.tools.reader.edn/read.
+
+   When set to logical false in the thread-local binding,
+   the eval reader (#=) and *record/type literal syntax* are disabled in read/load.
+   Example (will fail): (binding [*read-eval* false] (read-string \"#=(* 2 21)\"))
+
+   When set to :unknown all reads will fail in contexts where *read-eval*
+   has not been explicitly bound to either true or false. This setting
+   can be a useful diagnostic tool to ensure that all of your reads
+   occur in considered contexts.")
+
+(def ^:dynamic *data-readers* {}
+  "Map from reader tag symbols to data reader Vars.
+   Reader tags without namespace qualifiers are reserved for Clojure.
+   Default reader tags are defined in clojure.tools.reader/default-data-readers
+   and may be overridden by binding this Var.")
+
+(def ^:dynamic *default-data-reader-fn* nil
+  "When no data reader is found for a tag and *default-data-reader-fn*
+   is non-nil, it will be called with two arguments, the tag and the value.
+   If *default-data-reader-fn* is nil (the default value), an exception
+   will be thrown for the unknown tag.")
+
 (def  default-data-readers
   {'inst #'data-readers/read-instant-date
-   'uuid #'data-readers/default-uuid-reader})
+   'uuid #'data-readers/default-uuid-reader}
+  "Default map of data reader functions provided by Clojure.
+   May be overridden by binding *data-readers*")
 
 (defn read
   "Reads the first object from an IPushbackReader or a java.io.PushbackReader.
-Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns sentinel."
+   Returns the object read. If EOF, throws if eof-error? is true.
+   Otherwise returns sentinel. If no stream is providen, *in* will be used.
+
+   ***WARNING***
+   Note that read can execute code (controlled by *read-eval*),
+   and as such should be used only with trusted sources.
+
+   To read data structures only, use clojure.tools.reader.edn/read
+
+   Note that the function signature of clojure.tools.reader/read and
+   clojure.tools.reader.edn/read is not the same for eof-handling"
   ([] (read *in*))
   ([reader] (read reader true nil))
   ([reader eof-error? sentinel] (read reader eof-error? sentinel false))
@@ -666,6 +704,17 @@ Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns
                            e)))))))
 
 (defn read-string
-  "Reads one object from the string s"
+  "Reads one object from the string s.
+   Returns nil when s is nil or empty.
+
+   ***WARNING***
+   Note that read-string can execute code (controlled by *read-eval*),
+   and as such should be used only with trusted sources.
+
+   To read data structures only, use clojure.tools.reader.edn/read-string
+
+   Note that the function signature of clojure.tools.reader/read-string and
+   clojure.tools.reader.edn/read-string is not the same for eof-handling"
   [s]
-  (read (string-push-back-reader s) true nil false))
+  (when s
+    (read (string-push-back-reader s) true nil false)))

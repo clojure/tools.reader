@@ -12,15 +12,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defprotocol Reader
-  (read-char [reader] "Returns the next char from the Reader, nil if the end of stream has been reached")
-  (peek-char [reader] "Returns the next char from the Reader without removing it from the reader stream"))
+  (read-char [reader]
+    "Returns the next char from the Reader, nil if the end of stream has been reached")
+  (peek-char [reader]
+    "Returns the next char from the Reader without removing it from the reader stream"))
 
 (defprotocol IPushbackReader
-  (unread [reader ch] "Push back a single character on to the stream"))
+  (unread [reader ch]
+    "Pushes back a single character on to the stream"))
 
 (defprotocol IndexingReader
-  (get-line-number [reader])
-  (get-column-number [reader]))
+  (get-line-number [reader]
+    "Returns the line number of the next character to be read from the stream")
+  (get-column-number [reader]
+    "Returns the line number of the next character to be read from the stream"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; reader deftypes
@@ -199,7 +204,8 @@
            (recur (read-char rdr) (.append s c)))))))
 
 (defn reader-error
-  "Throws an Exception info, if rdr is an IndexingReader, additional information about column and line number is provided"
+  "Throws an ExceptionInfo with the given message.
+   If rdr is an IndexingReader, additional information about column and line number is provided"
   [rdr & msg]
   (throw (ex-info (apply str msg)
                   (merge {:type :reader-exception}

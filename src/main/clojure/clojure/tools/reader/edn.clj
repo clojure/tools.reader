@@ -324,7 +324,21 @@
 
 (defn read
   "Reads the first object from an IPushbackReader or a java.io.PushbackReader.
-Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns eof."
+   Returns the object read. If EOF, throws if eof-error? is true otherwise returns eof.
+   If no reader is provided, *in* will be used.
+
+   Reads data in the edn format (subset of Clojure data):
+   http://edn-format.org
+
+   clojure.tools.reader.edn/read doesn't depend on dynamic Vars, all configuration
+   is done by passing an opt map.
+
+   opts is a map that can include the following keys:
+   :eof - value to return on end-of-file. When not supplied, eof throws an exception.
+   :readers  - a map of tag symbols to data-reader functions to be considered before default-data-readers.
+              When not supplied, only the default-data-readers will be used.
+   :default - A function of two args, that will, if present and no reader is found for a tag,
+              be called with the tag and the value."
   ([] (read *in*))
   ([reader] (read {} reader))
   ([{:keys [eof] :as opts} reader]
@@ -356,7 +370,13 @@ Returns the object read. If EOF, throws if eof-error? is true. Otherwise returns
                            e)))))))
 
 (defn read-string
-  "Reads one object from the string s"
+  "Reads one object from the string s.
+   Returns nil when s is nil or empty.
+
+   Reads data in the edn format (subset of Clojure data):
+   http://edn-format.org
+
+   opts is a map as per clojure.tools.reader.edn/read"
   ([s] (read-string {:eof nil} s))
   ([opts s]
      (when s
