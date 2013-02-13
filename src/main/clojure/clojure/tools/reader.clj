@@ -625,7 +625,7 @@
 ;; Public API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(def ^:dynamic *read-eval* true
+(def ^:dynamic *read-eval*
   "Defaults to true.
 
    ***WARNING***
@@ -640,25 +640,28 @@
    When set to :unknown all reads will fail in contexts where *read-eval*
    has not been explicitly bound to either true or false. This setting
    can be a useful diagnostic tool to ensure that all of your reads
-   occur in considered contexts.")
+   occur in considered contexts."
+  true)
 
-(def ^:dynamic *data-readers* {}
+(def ^:dynamic *data-readers*
   "Map from reader tag symbols to data reader Vars.
    Reader tags without namespace qualifiers are reserved for Clojure.
    Default reader tags are defined in clojure.tools.reader/default-data-readers
-   and may be overridden by binding this Var.")
+   and may be overridden by binding this Var."
+  {})
 
-(def ^:dynamic *default-data-reader-fn* nil
+(def ^:dynamic *default-data-reader-fn*
   "When no data reader is found for a tag and *default-data-reader-fn*
    is non-nil, it will be called with two arguments, the tag and the value.
    If *default-data-reader-fn* is nil (the default value), an exception
-   will be thrown for the unknown tag.")
+   will be thrown for the unknown tag."
+  nil)
 
-(def  default-data-readers
-  {'inst #'data-readers/read-instant-date
-   'uuid #'data-readers/default-uuid-reader}
+(def default-data-readers
   "Default map of data reader functions provided by Clojure.
-   May be overridden by binding *data-readers*")
+   May be overridden by binding *data-readers*"
+  {'inst #'data-readers/read-instant-date
+   'uuid #'data-readers/default-uuid-reader})
 
 (defn read
   "Reads the first object from an IPushbackReader or a java.io.PushbackReader.
@@ -716,5 +719,5 @@
    Note that the function signature of clojure.tools.reader/read-string and
    clojure.tools.reader.edn/read-string is not the same for eof-handling"
   [s]
-  (when s
+  (when (and s (not (identical? s "")))
     (read (string-push-back-reader s) true nil false)))

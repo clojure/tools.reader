@@ -379,5 +379,5 @@
    opts is a map as per clojure.tools.reader.edn/read"
   ([s] (read-string {:eof nil} s))
   ([opts s]
-     (when s
+     (when (and s (not (identical? s "")))
        (read opts (string-push-back-reader s)))))
