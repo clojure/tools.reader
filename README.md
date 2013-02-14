@@ -1,18 +1,18 @@
 clojure.tools.reader
 ========================================
 
-A complete Clojure reader and an EDN-only reader, works with clojure versions >= 1.3.0
+A complete Clojure reader and an EDN-only reader, works with Clojure versions >= 1.3.0
 
 Rationale
 ========================================
 
 clojure.tools.reader offers all functionality of the reader from the upcoming clojure-1.5.0, and more.
 
-This means safer read/read-string, an edn-only reader, tagged-literals support, default-data-reader-fn support for every clojure version >=1.3.0
+This means safer read/read-string, an edn-only reader, tagged-literals support, default-data-reader-fn support for every Clojure version >=1.3.0
 
 For a list of additional features of the reader, read the "Differences from LispReader.java" section from the README.
 
-Moreover, by using reader types from `clojure.tools.reader.reader-types`, if using an IndexingReader, column info is available and both line and column metadata is attached not only to lists, but to symbols, vectors and maps too, when additional debugging info is needed (note that the edn reader doesnt add any line/column metadata at all).
+Moreover, by using reader types from `clojure.tools.reader.reader-types`, if using an IndexingReader, column info is available and both line and column metadata is attached not only to lists, but to symbols, vectors and maps too, when additional debugging info is needed (note that the edn reader doesn't add any line/column metadata at all).
 
 Note that it uses `ex-info` which is available on `clojure.core` only from clojure-1.4.0.
 If using clojure-1.3.0 and needing access to ex-data, use `clojure.tools.reader.impl.utils/ex-data`
@@ -21,9 +21,9 @@ Public API
 ========================================
 
 There are three public namespaces:
-* `clojure.tools.reader.reader-types` offers protocols, implementations and conveniente constructors for some reader types.
-* `clojure.tools.reader.edn` offers a feature-complete EDN reader, whose api matches clojure.edn's one, those functions are *safe*.
-* `clojure.tools.reader` offers a feature-complete clojure reader, whose api matches clojure.core's one, those functions are *unsafe* and may allow code exection if not used properly.
+* `clojure.tools.reader.reader-types` offers protocols, implementations and convenient constructors for some reader types.
+* `clojure.tools.reader.edn` offers a feature-complete EDN reader, whose API matches clojure.edn's one, those functions are *safe*.
+* `clojure.tools.reader` offers a feature-complete clojure reader, whose API matches clojure.core's one, those functions are *unsafe* and may allow code execution if not used properly.
 * `clojure.tools.reader.default-data-readers` offers implementations for the #inst and #uuid tagged literals, copied from the clojure source.
 
 Refer to docstrings in each namespace for more documentation.
@@ -51,6 +51,7 @@ Latest stable release: 0.7.0
   <version>0.7.0</version>
 </dependency>
 ```
+
 Example Usage
 ========================================
 
@@ -98,7 +99,7 @@ To switch from using `clojure.core/read-string` to `clojure.tools.reader/read-st
 (:use [clojure.tools.reader [read read-string *default-data-reader-fn* *read-eval* *data-readers*]])
 ```
 
-Reaader types example usage:
+Reader types example usage:
 ```clojure
 (require '[clojure.tools.reader.reader-types :as t])
 ;=> nil
@@ -118,7 +119,7 @@ Reaader types example usage:
 Note that the pushback buffer is of dimension 1 by default, and an exception will be thrown if trying to
 unread more chars than the pushback buffer dimension.
 
-Every predefined rader type has an addictional arity that allows to specify the pushback buffer dimension.
+Every predefined reader type has an additional arity that allows to specify the pushback buffer dimension.
 
 ```clojure
 (def reader (t/string-push-back-reader "" 2))
@@ -143,7 +144,7 @@ There are small differences from clojure.lang.LispReader:
 * `read` throws an `ex-info` for almost every exception, whereas `clojure.lang.LispReader/read` throws a `ReaderException` wrapping the causing exception.
 * `read` is capable of reading `\x` escaped chars
 * `read` is capable of reading `Infinity` `+Infinity` `-Infinity` and `NaN` as per #CLJ-1074
-* `read` is capable of reading literal tags contaning periods, fixing #CLJ-1100
+* `read` is capable of reading literal tags containing periods, fixing #CLJ-1100
 * `clojure.tools.reader/read` adds additional line/column info to symbols, vectors and maps when possible
 * `read-line` has an additional arity with which is possible to specify the reader to read from
 
@@ -155,12 +156,12 @@ Changelog
 * Release 0.6.2 on Feb 04, 2013
   * Add line/column metadata on vectors, maps and symbols
 * Release 0.6.4 on Feb 08, 2013
-  * Fix unicode char reading
+  * Fix Unicode char reading
   * Add \*default-data-reader-fn\* support
   * Add an EDN-only reader
   * Disable record literals reading when \*read-eval\* is bound to false
   * Made \% a symbol constituent char
-  * Made the EDN reader api match the clojure.edn one
+  * Made the EDN reader API match the clojure.edn one
 * Release 0.6.5 on Feb 09, 2013
   * Fixed reading \@ \~ and \`
 * Release 0.7.0 on Feb 14, 2013
