@@ -138,7 +138,7 @@ specified.
 
 (defn validated
   "Return a function which constructs and instant by calling constructor
-after first validting that those arguments are in range and otherwise
+after first validating that those arguments are in range and otherwise
 plausible. The resulting function will throw an exception if called
 with invalid arguments."
   [new-instance]
@@ -238,7 +238,7 @@ with invalid arguments."
 ;;; reader integration
 
 (defn- construct-calendar
-  "Construct a java.util.Calendar, which preserves, preserving the timezone
+  "Construct a java.util.Calendar, preserving the timezone
 offset, but truncating the subsecond fraction to milliseconds."
   ^GregorianCalendar
   [years months days hours minutes seconds nanoseconds
@@ -252,7 +252,7 @@ offset, but truncating the subsecond fraction to milliseconds."
 
 (defn- construct-date
   "Construct a java.util.Date, which expresses the original instant as
-milliseconds since the epoch, GMT."
+milliseconds since the epoch, UTC."
   [years months days hours minutes seconds nanoseconds
    offset-sign offset-hours offset-minutes]
   (.getTime (construct-calendar years months days
