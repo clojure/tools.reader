@@ -31,7 +31,7 @@ Refer to docstrings in each namespace for more documentation.
 Releases and Dependency Information
 ========================================
 
-Latest stable release: 0.6.5
+Latest stable release: 0.7.0
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
@@ -40,7 +40,7 @@ Latest stable release: 0.6.5
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "0.6.5"]
+[org.clojure/tools.reader "0.7.0"]
 ```
 [Maven](http://maven.apache.org/) dependency information:
 
@@ -48,13 +48,13 @@ Latest stable release: 0.6.5
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>0.6.5</version>
+  <version>0.7.0</version>
 </dependency>
 ```
 Example Usage
 ========================================
 
-To read data structures, functions from `clojure.tools.reader.edn` should be used, since those are *safe* and don't allow any code execution at all.
+To read data structures, functions from `clojure.tools.reader.edn` should be used, since those are **safe** and don't allow any code execution at all.
 
 Note that since no code-execution is permitted, reader literals are also disabled.
 
@@ -78,7 +78,7 @@ To switch from using `clojure.core/read-string` to `clojure.tools.reader.end/rea
 (:use [clojure.tools.reader.edn [read read-string]])
 ```
 
-If (and only if) reading from a *trusted* source, and advanced features that need some level of code-execution during read are needed, functions from `clojure.tools.reader` should be used.
+If (and only if) reading from a **trusted** source, and advanced features that need some level of code-execution during read are needed, functions from `clojure.tools.reader` should be used.
 ```clojure
 (require '[clojure.tools.reader.edn :as r])
 ;=> nil
@@ -156,17 +156,17 @@ Changelog
   * Add line/column metadata on vectors, maps and symbols
 * Release 0.6.4 on Feb 08, 2013
   * Fix unicode char reading
-  * Add *default-data-reader-fn* support
+  * Add \*default-data-reader-fn\* support
   * Add an EDN-only reader
-  * Disable record literals reading when *read-eval* is bound to false
+  * Disable record literals reading when \*read-eval\* is bound to false
   * Made \% a symbol constituent char
   * Made the EDN reader api match the clojure.edn one
 * Release 0.6.5 on Feb 09, 2013
   * Fixed reading \@ \~ and \`
-* Release 0.7.0 on ???
+* Release 0.7.0 on Feb 14, 2013
   * Fixed #TRDR-1 by @jafingerhut
   * Made compatible with clojure-1.3.0
-  * Decoupled from clojure.core vars (*read-eval*, *default-data-reader-fn*, *data-readers*)
+  * Decoupled from clojure.core vars (\*read-eval\*, \*default-data-reader-fn\*, \*data-readers\*)
   * clojure.tools.reader/read-string and clojure.tools.reader.edn/read-string return nil if string is nil or empty
   * Added comprehensive docstrings
 
