@@ -20,12 +20,12 @@
          ^:dynamic *default-data-reader-fn*
          default-data-readers)
 
-(defn macro-terminating? [ch]
+(defn- macro-terminating? [ch]
   (case ch
     (\" \; \@ \^ \` \~ \( \) \[ \] \{ \} \\) true
     false))
 
-(defn ^String read-token
+(defn- ^String read-token
   [rdr initch]
   (if-not initch
     (reader-error rdr "EOF while reading")
@@ -40,7 +40,7 @@
 
 (declare read-tagged)
 
-(defn read-dispatch
+(defn- read-dispatch
   [rdr _]
   (if-let [ch (read-char rdr)]
     (if-let [dm (dispatch-macros ch)]
@@ -50,7 +50,7 @@
         (reader-error rdr "No dispatch macro for " ch)))
     (reader-error rdr "EOF while reading character")))
 
-(defn read-unmatched-delimiter
+(defn- read-unmatched-delimiter
   [rdr ch]
   (reader-error rdr "Unmatched delimiter " ch))
 
@@ -58,7 +58,7 @@
 ;; readers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn read-unicode-char
+(defn- read-unicode-char
   ([^String token offset length base]
      (let [l (+ offset length)]
        (when-not (== (count token) l)
@@ -94,7 +94,7 @@
 (def ^:private ^:const upper-limit (int \uD7ff))
 (def ^:private ^:const lower-limit (int \uE000))
 
-(defn read-char*
+(defn- read-char*
   [rdr backslash]
   (let [ch (read-char rdr)]
     (if-not (nil? ch)
@@ -134,7 +134,7 @@
          :else (reader-error rdr "Unsupported character: \\" token)))
       (reader-error rdr "EOF while reading character"))))
 
-(defn ^PersistentVector read-delimited
+(defn- ^PersistentVector read-delimited
   [delim rdr recursive?]
   (let [first-line (when (indexing-reader? rdr)
                       (get-line-number rdr))
@@ -152,7 +152,7 @@
                       (when first-line
                         (str ", starting at line" first-line)))))))
 
-(defn read-list
+(defn- read-list
   [rdr _]
   (let [[line column] (when (indexing-reader? rdr)
                         [(get-line-number rdr) (dec (get-column-number rdr))])
@@ -163,7 +163,7 @@
         (when line
           {:line line :column column})))))
 
-(defn read-vector
+(defn- read-vector
   [rdr _]
   (let [[line column] (when (indexing-reader? rdr)
                         [(get-line-number rdr) (dec (get-column-number rdr))])
@@ -172,7 +172,7 @@
       (when line
         {:line line :column column}))))
 
-(defn read-map
+(defn- read-map
   [rdr _]
   (let [[line column] (when (indexing-reader? rdr)
                         [(get-line-number rdr) (dec (get-column-number rdr))])
@@ -187,7 +187,7 @@
       (when line
         {:line line :column column}))))
 
-(defn read-number
+(defn- read-number
   [reader initch]
   (loop [sb (doto (StringBuilder.) (.append initch))
          ch (read-char reader)]
@@ -198,7 +198,7 @@
             (reader-error reader "Invalid number format [" s "]")))
       (recur (doto sb (.append ch)) (read-char reader)))))
 
-(defn escape-char [sb rdr]
+(defn- escape-char [sb rdr]
   (let [ch (read-char rdr)]
     (case ch
       \t "\t"
@@ -223,7 +223,7 @@
             ch))
         (reader-error rdr "Unsupported escape character: \\" ch)))))
 
-(defn read-string*
+(defn- read-string*
   [reader _]
   (loop [sb (StringBuilder.)
          ch (read-char reader)]
@@ -234,7 +234,7 @@
       \" (str sb)
       (recur (doto sb (.append ch)) (read-char reader)))))
 
-(defn read-symbol
+(defn- read-symbol
   [rdr initch]
   (when-let [token (read-token rdr initch)]
     (let [[line column] (when (indexing-reader? rdr)
@@ -260,7 +260,7 @@
   (or ((ns-aliases *ns*) sym)
       (find-ns sym)))
 
-(defn read-keyword
+(defn- read-keyword
   [reader initch]
   (let [ch (read-char reader)]
     (if-not (whitespace? ch)
@@ -280,12 +280,12 @@
           (reader-error reader "Invalid token: :" token)))
       (reader-error reader "Invalid token: :"))))
 
-(defn wrapping-reader
+(defn- wrapping-reader
   [sym]
   (fn [rdr _]
     (list sym (read rdr true nil true))))
 
-(defn read-meta
+(defn- read-meta
   [rdr _]
   (let [[line column] (when (indexing-reader? rdr)
                         [(get-line-number rdr) (dec (get-column-number rdr))])
@@ -304,11 +304,11 @@
             (reset-meta! o m)))
         (reader-error rdr "Metadata can only be applied to IMetas")))))
 
-(defn read-set
+(defn- read-set
   [rdr _]
   (PersistentHashSet/createWithCheck (read-delimited \} rdr true)))
 
-(defn read-discard
+(defn- read-discard
   [rdr _]
   (read rdr true nil true)
   rdr)
@@ -319,7 +319,7 @@
   (symbol (str (if (== -1 n) "rest" (str "p" n))
                "__" (RT/nextID) "#")))
 
-(defn read-fn
+(defn- read-fn
   [rdr _]
   (if (thread-bound? #'arg-env)
     (throw (IllegalStateException. "Nested #()s are not allowed")))
@@ -341,7 +341,7 @@
                  [])]
       (list 'fn* args form))))
 
-(defn register-arg [n]
+(defn- register-arg [n]
   (if (thread-bound? #'arg-env)
     (if-let [ret (arg-env n)]
       ret
@@ -352,7 +352,7 @@
 
 (declare read-symbol)
 
-(defn read-arg
+(defn- read-arg
   [rdr pct]
   (if-not (thread-bound? #'arg-env)
     (read-symbol rdr pct)
@@ -373,7 +373,7 @@
             (throw (IllegalStateException. "Arg literal must be %, %& or %integer"))
             (register-arg n)))))))
 
-(defn read-eval
+(defn- read-eval
   [rdr _]
   (when-not *read-eval*
     (reader-error rdr "#= not allowed when *read-eval* is false"))
@@ -405,7 +405,7 @@
 
 (def ^:private ^:dynamic gensym-env nil)
 
-(defn read-unquote
+(defn- read-unquote
   [rdr comma]
   (if-let [ch (peek-char rdr)]
     (if (identical? \@ ch)
@@ -413,11 +413,11 @@
       ((wrapping-reader 'clojure.core/unquote) rdr \~))))
 
 (declare syntax-quote)
-(defn unquote-splicing? [form]
+(defn- unquote-splicing? [form]
   (and (seq? form)
        (= (first form) 'clojure.core/unquote-splicing)))
 
-(defn unquote? [form]
+(defn- unquote? [form]
   (and (seq? form)
        (= (first form) 'clojure.core/unquote)))
 
@@ -482,7 +482,7 @@
       (list 'clojure.core/apply type res)
       res)))
 
-(defn syntax-quote [form]
+(defn- syntax-quote [form]
   (->>
    (cond
     (special-symbol? form) (list 'quote form)
@@ -533,13 +533,13 @@
     :else (list 'quote form))
    (add-meta form)))
 
-(defn read-syntax-quote
+(defn- read-syntax-quote
   [rdr backquote]
-  (with-bindings {#'gensym-env {}}
+  (binding [gensym-env {}]
     (-> (read rdr true nil true)
         syntax-quote)))
 
-(defn macros [ch]
+(defn- macros [ch]
   (case ch
     \" read-string*
     \: read-keyword
@@ -560,7 +560,7 @@
     \# read-dispatch
     nil))
 
-(defn dispatch-macros [ch]
+(defn- dispatch-macros [ch]
   (case ch
     \^ read-meta                ;deprecated
     \' (wrapping-reader 'var)
@@ -573,11 +573,11 @@
     \_ read-discard
     nil))
 
-(defn read-tagged* [rdr tag f]
+(defn- read-tagged* [rdr tag f]
   (let [o (read rdr true nil true)]
     (f o)))
 
-(defn read-ctor [rdr class-name]
+(defn- read-ctor [rdr class-name]
   (when-not *read-eval*
     (reader-error "Record construction syntax can only be used when *read-eval* == true"))
   (let [class (Class/forName (name class-name) false (RT/baseLoader))
@@ -609,7 +609,7 @@
             (Reflector/invokeStaticMethod class "create" (object-array [vals])))))
       (reader-error rdr "Invalid reader constructor form"))))
 
-(defn read-tagged [rdr initch]
+(defn- read-tagged [rdr initch]
   (let [tag (read rdr true nil false)]
     (if-not (symbol? tag)
       (reader-error rdr "Reader tag must be a symbol"))

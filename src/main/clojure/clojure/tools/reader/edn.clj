@@ -11,18 +11,18 @@
 
 (declare read macros dispatch-macros)
 
-(defn macro-terminating? [ch]
+(defn- macro-terminating? [ch]
   (and (not (identical? \# ch))
        (not (identical? \' ch))
        (not (identical? \: ch))
        (macros ch)))
 
-(defn not-constituent? [ch]
+(defn- not-constituent? [ch]
   (or (identical? \@ ch)
       (identical? \` ch)
       (identical? \~ ch)))
 
-(defn ^String read-token
+(defn- ^String read-token
   ([rdr initch]
      (read-token rdr initch true))
   ([rdr initch validate-leading?]
@@ -47,7 +47,7 @@
 
 (declare read-tagged)
 
-(defn read-dispatch
+(defn- read-dispatch
   [rdr _ opts]
   (if-let [ch (read-char rdr)]
     (if-let [dm (dispatch-macros ch)]
@@ -57,7 +57,7 @@
         (reader-error rdr "No dispatch macro for " ch)))
     (reader-error rdr "EOF while reading character")))
 
-(defn read-unmatched-delimiter
+(defn- read-unmatched-delimiter
   [rdr ch opts]
   (reader-error rdr "Unmatched delimiter " ch))
 
@@ -65,7 +65,7 @@
 ;; readers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn read-unicode-char
+(defn- read-unicode-char
   ([^String token offset length base]
      (let [l (+ offset length)]
        (when-not (== (count token) l)
@@ -101,7 +101,7 @@
 (def ^:private ^:const upper-limit (int \uD7ff))
 (def ^:private ^:const lower-limit (int \uE000))
 
-(defn read-char*
+(defn- read-char*
   [rdr backslash opts]
   (let [ch (read-char rdr)]
     (if-not (nil? ch)
@@ -141,7 +141,7 @@
          :else (reader-error rdr "Unsupported character: \\" token)))
       (reader-error rdr "EOF while reading character"))))
 
-(defn ^PersistentVector read-delimited
+(defn- ^PersistentVector read-delimited
   [delim rdr opts]
   (let [first-line (when (indexing-reader? rdr)
                      (get-line-number rdr))
@@ -160,25 +160,25 @@
             (let [o (read (doto rdr (unread ch)) true nil opts)]
               (recur (if-not (identical? o rdr) (conj! a o) a)))))))))
 
-(defn read-list
+(defn- read-list
   [rdr _ opts]
   (let [the-list (read-delimited \) rdr opts)]
     (if (empty? the-list)
       '()
       (clojure.lang.PersistentList/create the-list))))
 
-(defn read-vector
+(defn- read-vector
   [rdr _ opts]
   (read-delimited \] rdr opts))
 
-(defn read-map
+(defn- read-map
   [rdr _ opts]
   (let [l (to-array (read-delimited \} rdr opts))]
     (when (== 1 (bit-and (alength l) 1))
       (reader-error rdr "Map literal must contain an even number of forms"))
     (RT/map l)))
 
-(defn read-number
+(defn- read-number
   [reader initch opts]
   (loop [sb (doto (StringBuilder.) (.append initch))
          ch (read-char reader)]
@@ -189,7 +189,7 @@
             (reader-error reader "Invalid number format [" s "]")))
       (recur (doto sb (.append ch)) (read-char reader)))))
 
-(defn escape-char [sb rdr]
+(defn- escape-char [sb rdr]
   (let [ch (read-char rdr)]
     (case ch
       \t "\t"
@@ -214,7 +214,7 @@
             ch))
         (reader-error rdr "Unsupported escape character: \\" ch)))))
 
-(defn read-string*
+(defn- read-string*
   [reader _ opts]
   (loop [sb (StringBuilder.)
          ch (read-char reader)]
@@ -225,7 +225,7 @@
       \" (str sb)
       (recur (doto sb (.append ch)) (read-char reader)))))
 
-(defn read-symbol
+(defn- read-symbol
   [rdr initch]
   (when-let [token (read-token rdr initch)]
     (case token
@@ -243,7 +243,7 @@
             (symbol (p 0) (p 1)))
           (reader-error rdr "Invalid token: " token)))))
 
-(defn read-keyword
+(defn- read-keyword
   [reader initch opts]
   (let [ch (read-char reader)]
     (if-not (whitespace? ch)
@@ -258,12 +258,12 @@
           (reader-error reader "Invalid token: :" token)))
       (reader-error reader "Invalid token: :"))))
 
-(defn wrapping-reader
+(defn- wrapping-reader
   [sym]
   (fn [rdr _ opts]
     (list sym (read rdr true nil opts))))
 
-(defn read-meta
+(defn- read-meta
   [rdr _ opts]
   (let [m (desugar-meta (read rdr true nil opts))]
     (when-not (map? m)
@@ -273,16 +273,16 @@
         (with-meta o (merge (meta o) m))
         (reader-error rdr "Metadata can only be applied to IMetas")))))
 
-(defn read-set
+(defn- read-set
   [rdr _ opts]
   (PersistentHashSet/createWithCheck (read-delimited \} rdr opts)))
 
-(defn read-discard
+(defn- read-discard
   [rdr _ opts]
   (read rdr true nil opts)
   rdr)
 
-(defn macros [ch]
+(defn- macros [ch]
   (case ch
     \" read-string*
     \: read-keyword
@@ -298,7 +298,7 @@
     \# read-dispatch
     nil))
 
-(defn dispatch-macros [ch]
+(defn- dispatch-macros [ch]
   (case ch
     \^ read-meta                ;deprecated
     \{ read-set
@@ -307,7 +307,7 @@
     \_ read-discard
     nil))
 
-(defn read-tagged [rdr initch opts]
+(defn- read-tagged [rdr initch opts]
   (let [tag (read rdr true nil opts)
         object (read rdr true nil opts)]
     (if-not (symbol? tag)
