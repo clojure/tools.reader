@@ -96,7 +96,7 @@ If (and only if) reading from a **trusted** source, and advanced features that n
 To switch from using `clojure.core/read-string` to `clojure.tools.reader/read-string` in your projects, put this in your namespace declaration:
 ```clojure
 (:refer-clojure :exclude [read read-string *default-data-reader-fn* *read-eval* *data-readers*])
-(:use [clojure.tools.reader [read read-string *default-data-reader-fn* *read-eval* *data-readers*]])
+(:use [clojure.tools.reader :only [read read-string *default-data-reader-fn* *read-eval* *data-readers*]])
 ```
 
 Reader types example usage:
