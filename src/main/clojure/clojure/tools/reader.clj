@@ -412,7 +412,7 @@
       ((wrapping-reader 'clojure.core/unquote-splicing) (doto rdr read-char) \@)
       ((wrapping-reader 'clojure.core/unquote) rdr \~))))
 
-(declare syntax-quote)
+(declare syntax-quote*)
 (defn- unquote-splicing? [form]
   (and (seq? form)
        (= (first form) 'clojure.core/unquote-splicing)))
@@ -429,7 +429,7 @@
                        (cond
                         (unquote? item)          (list 'clojure.core/list (second item))
                         (unquote-splicing? item) (second item)
-                        :else                    (list 'clojure.core/list (syntax-quote item))))]
+                        :else                    (list 'clojure.core/list (syntax-quote* item))))]
         (recur (next s) ret))
       (seq (persistent! r)))))
 
@@ -471,7 +471,7 @@
 (defn- add-meta [form ret]
   (if (and (instance? IObj form)
            (dissoc (meta form) :line :column))
-    (list 'clojure.core/with-meta ret (syntax-quote (meta form)))
+    (list 'clojure.core/with-meta ret (syntax-quote* (meta form)))
     ret))
 
 (defn- syntax-quote-coll [type coll]
@@ -482,7 +482,7 @@
       (list 'clojure.core/apply type res)
       res)))
 
-(defn- syntax-quote [form]
+(defn- syntax-quote* [form]
   (->>
    (cond
     (special-symbol? form) (list 'quote form)
@@ -537,7 +537,7 @@
   [rdr backquote]
   (binding [gensym-env {}]
     (-> (read rdr true nil true)
-        syntax-quote)))
+        syntax-quote*)))
 
 (defn- macros [ch]
   (case ch
@@ -722,3 +722,8 @@
   [s]
   (when (and s (not (identical? s "")))
     (read (string-push-back-reader s) true nil false)))
+
+(defmacro syntax-quote [form]
+  "Macro equivalent to the syntax-quote reader macro (`)."
+  (binding [gensym-env {}]
+    (syntax-quote* form)))

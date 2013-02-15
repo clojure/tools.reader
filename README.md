@@ -170,6 +170,8 @@ Changelog
   * Decoupled from clojure.core vars (\*read-eval\*, \*default-data-reader-fn\*, \*data-readers\*)
   * clojure.tools.reader/read-string and clojure.tools.reader.edn/read-string return nil if string is nil or empty
   * Added comprehensive docstrings
+* Release 0.7.1 on ???
+  * Added the syntax-quote macro to the public API
 
 Developer Information
 ========================================
