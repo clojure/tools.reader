@@ -81,7 +81,7 @@ To switch from using `clojure.core/read-string` to `clojure.tools.reader.end/rea
 
 If (and only if) reading from a **trusted** source, and advanced features that need some level of code-execution during read are needed, functions from `clojure.tools.reader` should be used.
 ```clojure
-(require '[clojure.tools.reader.edn :as r])
+(require '[clojure.tools.reader :as r])
 ;=> nil
 (r/read-string "1")
 ;=> 1
