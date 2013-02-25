@@ -76,7 +76,7 @@ Note that since no code-execution is permitted, reader literals are also disable
 To switch from using `clojure.core/read-string` to `clojure.tools.reader.end/read-string` in your projects, put this in your namespace declaration:
 ```clojure
 (:refer-clojure :exclude [read read-string])
-(:use [clojure.tools.reader.edn [read read-string]])
+(:use [clojure.tools.reader.edn :only [read read-string]])
 ```
 
 If (and only if) reading from a **trusted** source, and advanced features that need some level of code-execution during read are needed, functions from `clojure.tools.reader` should be used.
