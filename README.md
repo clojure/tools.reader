@@ -31,7 +31,7 @@ Refer to docstrings in each namespace for more documentation.
 Releases and Dependency Information
 ========================================
 
-Latest stable release: 0.7.1
+Latest stable release: 0.7.2
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
@@ -40,7 +40,7 @@ Latest stable release: 0.7.1
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "0.7.1"]
+[org.clojure/tools.reader "0.7.2"]
 ```
 [Maven](http://maven.apache.org/) dependency information:
 
@@ -48,7 +48,7 @@ Latest stable release: 0.7.1
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>0.7.1</version>
+  <version>0.7.2</version>
 </dependency>
 ```
 
@@ -172,6 +172,8 @@ Changelog
   * Added comprehensive docstrings
 * Release 0.7.1 on Mar 02, 2013
   * Added the syntax-quote macro to the public API
+* Release 0.7.2 on Mar 02, 2013
+  * Fixed evaling read objects for clojure 1.5
 
 Developer Information
 ========================================
