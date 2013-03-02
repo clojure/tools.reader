@@ -1,4 +1,4 @@
-(ns clojure.tools.reader.impl.utils
+(ns ^:skip-wiki clojure.tools.reader.impl.utils
   (:require clojure.tools.reader.impl.ExceptionInfo) ;; force loading
   (:refer-clojure :exclude [char]))
 

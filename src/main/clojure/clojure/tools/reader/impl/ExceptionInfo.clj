@@ -1,4 +1,4 @@
-(ns clojure.tools.reader.impl.ExceptionInfo
+(ns ^:skip-wiki clojure.tools.reader.impl.ExceptionInfo
   (:gen-class :extends java.lang.Exception
               :init init
               :constructors {[String clojure.lang.IPersistentMap] [String]

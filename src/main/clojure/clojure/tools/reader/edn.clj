@@ -1,4 +1,6 @@
-(ns clojure.tools.reader.edn
+(ns ^{:doc "An EDN reader in clojure"
+     :author "Bronsa"}
+  clojure.tools.reader.edn
   (:refer-clojure :exclude [read read-line read-string char default-data-readers])
   (:use clojure.tools.reader.reader-types
         [clojure.tools.reader.impl utils commons]

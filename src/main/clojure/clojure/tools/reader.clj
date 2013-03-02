@@ -1,4 +1,6 @@
-(ns clojure.tools.reader
+(ns ^{:doc "A clojure reader in clojure"
+      :author "Bronsa"}
+  clojure.tools.reader
   (:refer-clojure :exclude [read read-line read-string char
                             default-data-readers *default-data-reader-fn*
                             *read-eval* *data-readers*])

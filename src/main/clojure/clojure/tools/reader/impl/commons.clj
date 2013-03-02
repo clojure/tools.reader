@@ -1,4 +1,4 @@
-(ns clojure.tools.reader.impl.commons
+(ns ^:skip-wiki clojure.tools.reader.impl.commons
   (:refer-clojure :exclude [char read-line])
   (:use clojure.tools.reader.reader-types
         clojure.tools.reader.impl.utils)

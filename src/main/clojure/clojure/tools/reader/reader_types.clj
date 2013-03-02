@@ -1,4 +1,6 @@
-(ns clojure.tools.reader.reader-types
+(ns ^{:doc "Protocols and default Reader types implementation"
+      :author "Bronsa"}
+  clojure.tools.reader.reader-types
   (:refer-clojure :exclude [char read-line])
   (:use clojure.tools.reader.impl.utils)
   (:import clojure.lang.LineNumberingPushbackReader
