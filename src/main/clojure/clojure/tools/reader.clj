@@ -139,7 +139,7 @@
 (defn- ^PersistentVector read-delimited
   [delim rdr recursive?]
   (let [first-line (when (indexing-reader? rdr)
-                      (get-line-number rdr))
+                     (get-line-number rdr))
         delim (char delim)]
     (loop [a (transient [])]
       (if-let [ch (read-past whitespace? rdr)]
@@ -157,7 +157,7 @@
 (defn- read-list
   [rdr _]
   (let [[line column] (when (indexing-reader? rdr)
-                        [(get-line-number rdr) (dec (get-column-number rdr))])
+                        [(get-line-number rdr) (int (dec (get-column-number rdr)))])
         the-list (read-delimited \) rdr true)]
     (if (empty? the-list)
       '()
@@ -168,7 +168,7 @@
 (defn- read-vector
   [rdr _]
   (let [[line column] (when (indexing-reader? rdr)
-                        [(get-line-number rdr) (dec (get-column-number rdr))])
+                        [(get-line-number rdr) (int (dec (get-column-number rdr)))])
         the-vector (read-delimited \] rdr true)]
     (with-meta the-vector
       (when line
@@ -177,7 +177,7 @@
 (defn- read-map
   [rdr _]
   (let [[line column] (when (indexing-reader? rdr)
-                        [(get-line-number rdr) (dec (get-column-number rdr))])
+                        [(get-line-number rdr) (int (dec (get-column-number rdr)))])
         the-map (read-delimited \} rdr true)
         map-count (count the-map)]
     (when (odd? map-count)
@@ -240,7 +240,7 @@
   [rdr initch]
   (when-let [token (read-token rdr initch)]
     (let [[line column] (when (indexing-reader? rdr)
-                          [(get-line-number rdr) (dec (get-column-number rdr))])]
+                          [(get-line-number rdr) (int (dec (get-column-number rdr)))])]
       (case token
 
         ;; special symbols
@@ -290,7 +290,7 @@
 (defn- read-meta
   [rdr _]
   (let [[line column] (when (indexing-reader? rdr)
-                        [(get-line-number rdr) (dec (get-column-number rdr))])
+                        [(get-line-number rdr) (int (dec (get-column-number rdr)))])
         m (desugar-meta (read rdr true nil true))]
     (when-not (map? m)
       (reader-error rdr "Metadata must be Symbol, Keyword, String or Map"))
