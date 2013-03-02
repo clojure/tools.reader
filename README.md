@@ -31,7 +31,7 @@ Refer to docstrings in each namespace for more documentation.
 Releases and Dependency Information
 ========================================
 
-Latest stable release: 0.7.0
+Latest stable release: 0.7.1
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
@@ -40,7 +40,7 @@ Latest stable release: 0.7.0
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "0.7.0"]
+[org.clojure/tools.reader "0.7.1"]
 ```
 [Maven](http://maven.apache.org/) dependency information:
 
@@ -48,7 +48,7 @@ Latest stable release: 0.7.0
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>0.7.0</version>
+  <version>0.7.1</version>
 </dependency>
 ```
 
@@ -170,7 +170,7 @@ Changelog
   * Decoupled from clojure.core vars (\*read-eval\*, \*default-data-reader-fn\*, \*data-readers\*)
   * clojure.tools.reader/read-string and clojure.tools.reader.edn/read-string return nil if string is nil or empty
   * Added comprehensive docstrings
-* Release 0.7.1 on ???
+* Release 0.7.1 on Mar 02, 2013
   * Added the syntax-quote macro to the public API
 
 Developer Information
