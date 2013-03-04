@@ -6,7 +6,7 @@ A complete Clojure reader and an EDN-only reader, works with Clojure versions >=
 Rationale
 ========================================
 
-clojure.tools.reader offers all functionality of the reader from the upcoming clojure-1.5.0, and more.
+clojure.tools.reader offers all functionality of the reader from clojure-1.5.0, and more.
 
 This means safer read/read-string, an edn-only reader, tagged-literals support, default-data-reader-fn support for every Clojure version >=1.3.0
 
