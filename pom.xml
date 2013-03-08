@@ -14,9 +14,23 @@
         <artifactId>clojure-maven-plugin</artifactId>
         <version>1.3.13</version>
         <configuration>
-          <!-- needed for clojure-1.3 compatibility -->
-          <temporaryOutputDirectory>false</temporaryOutputDirectory>
+            <temporaryOutputDirectory>false</temporaryOutputDirectory>
         </configuration>
+        <executions>
+          <execution>
+            <id>clojure-compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+              <compileDeclaredNamespaceOnly>true</compileDeclaredNamespaceOnly>
+              <namespaces>
+                <namespace>clojure.tools.reader.impl.ExceptionInfo</namespace>
+              </namespaces>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
