@@ -31,7 +31,7 @@ Refer to docstrings in each namespace for more documentation.
 Releases and Dependency Information
 ========================================
 
-Latest stable release: 0.7.2
+Latest stable release: 0.7.3
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
@@ -40,7 +40,7 @@ Latest stable release: 0.7.2
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "0.7.2"]
+[org.clojure/tools.reader "0.7.3"]
 ```
 [Maven](http://maven.apache.org/) dependency information:
 
@@ -48,7 +48,7 @@ Latest stable release: 0.7.2
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>0.7.2</version>
+  <version>0.7.3</version>
 </dependency>
 ```
 
@@ -174,6 +174,8 @@ Changelog
   * Added the syntax-quote macro to the public API
 * Release 0.7.2 on Mar 02, 2013
   * Fixed evaling read objects for clojure 1.5
+* Release 0.7.3 on Mar 08, 2013
+  * AOT compile only ExceptionInfo.
 
 Developer Information
 ========================================
