@@ -9,10 +9,11 @@
 ;; getColumnNumber and *default-data-reader-fn* are available only since clojure-1.5.0-beta1
 (def >=clojure-1-5-alpha*?
   (let [{:keys [minor qualifier]} *clojure-version*]
-    (and (>= minor 5)
-         (not= "alpha"
-               (when qualifier
-                 (subs qualifier 0 (dec (count qualifier))))))))
+    (or (and (= minor 5)
+             (not= "alpha"
+                   (when qualifier
+                     (subs qualifier 0 (dec (count qualifier))))))
+        (> minor 5))))
 
 (defmacro ^:private compile-if [cond then else]
   (if (eval cond)
