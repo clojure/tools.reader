@@ -20,13 +20,13 @@ If using clojure-1.3.0 and needing access to ex-data, use `clojure.tools.reader.
 Public API
 ========================================
 
-There are three public namespaces:
-* `clojure.tools.reader.reader-types` offers protocols, implementations and convenient constructors for some reader types.
-* `clojure.tools.reader.edn` offers a feature-complete EDN reader, whose API matches clojure.edn's one, those functions are *safe*.
-* `clojure.tools.reader` offers a feature-complete clojure reader, whose API matches clojure.core's one, those functions are *unsafe* and may allow code execution if not used properly.
-* `clojure.tools.reader.default-data-readers` offers implementations for the #inst and #uuid tagged literals, copied from the clojure source.
+There are four public namespaces:
+* [`clojure.tools.reader.reader-types`](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types) offers protocols, implementations and convenient function helpers for some reader types.
+* [`clojure.tools.reader.edn`](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.edn) offers a feature-complete EDN reader, whose API matches clojure.edn's one, those functions are *safe*.
+* [`clojure.tools.reader`](http://clojure.github.com/tools.reader/index.html#toc0) offers a feature-complete clojure reader, whose API matches clojure.core's one, those functions are *unsafe* and may allow code execution if not used properly.
+* [`clojure.tools.reader.default-data-readers`](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.default-data-readers) offers implementations for the #inst and #uuid tagged literals, copied from the clojure source.
 
-Refer to docstrings in each namespace for more documentation.
+Refer to docstrings in each namespace and to the project's [autodoc](http://clojure.github.com/tools.reader/index.html) for more documentation.
 
 Releases and Dependency Information
 ========================================
@@ -146,7 +146,7 @@ There are small differences from clojure.lang.LispReader:
 * `read` is capable of reading `Infinity` `+Infinity` `-Infinity` and `NaN` as per #CLJ-1074
 * `read` is capable of reading literal tags containing periods, fixing #CLJ-1100
 * `clojure.tools.reader/read` adds additional line/column info to symbols, vectors and maps when possible
-* `read-line` has an additional arity with which is possible to specify the reader to read from
+* `clojure.tools.reader.reader-types/read-line` has an additional arity with which is possible to specify the reader to read from
 
 Changelog
 ========================================
