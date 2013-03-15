@@ -73,7 +73,7 @@ Note that since no code-execution is permitted, reader literals are also disable
 ;=> 1
 ```
 
-To switch from using `clojure.core/read-string` to `clojure.tools.reader.end/read-string` in your projects, put this in your namespace declaration:
+To switch from using `clojure.core/read-string` to `clojure.tools.reader.edn/read-string` in your projects, put this in your namespace declaration:
 ```clojure
 (:refer-clojure :exclude [read read-string])
 (:use [clojure.tools.reader.edn :only [read read-string]])
