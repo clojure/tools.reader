@@ -725,7 +725,8 @@
   (when (and s (not (identical? s "")))
     (read (string-push-back-reader s) true nil false)))
 
-(defmacro syntax-quote [form]
+(defmacro syntax-quote
   "Macro equivalent to the syntax-quote reader macro (`)."
+  [form]
   (binding [gensym-env {}]
     (syntax-quote* form)))

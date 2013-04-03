@@ -152,8 +152,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; fast check for provided implementations
-(defn indexing-reader? [rdr]
+(defn indexing-reader?
   "Returns true if the reader satisfies IndexingReader"
+  [rdr]
   (or (instance? clojure.tools.reader.reader_types.IndexingReader rdr)
       (instance? LineNumberingPushbackReader rdr)
       (and (not (instance? clojure.tools.reader.reader_types.PushbackReader rdr))
