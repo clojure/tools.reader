@@ -88,7 +88,8 @@
               (match-ratio ratio-matcher))))))))
 
 (defn parse-symbol [^String token]
-  (when-not (identical? "" token)
+  (when-not (or (identical? "" token)
+                (not= -1 (.indexOf token "::")))
     (let [ns-idx (.indexOf token "/")]
       (if-let [ns (and (pos? ns-idx)
                        (subs token 0 ns-idx))]

@@ -268,7 +268,7 @@
     (if-not (whitespace? ch)
       (let [token (read-token reader ch)
             s (parse-symbol token)]
-        (if (and s (== -1 (.indexOf token "::")))
+        (if s
           (let [^String ns (s 0)
                 ^String name (s 1)]
             (if (identical? \: (nth token 0))
