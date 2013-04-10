@@ -183,8 +183,10 @@ There are small differences from clojure.lang.LispReader:
 
 * `read` throws an `ex-info` for almost every exception, whereas `clojure.lang.LispReader/read` throws a `ReaderException` wrapping the causing exception.
 * `read` is capable of reading `\x` escaped chars
-* `read` is capable of reading `Infinity` `+Infinity` `-Infinity` and `NaN` as per #CLJ-1074
-* `read` is capable of reading literal tags containing periods, fixing #CLJ-1100
+* `read` is capable of reading `Infinity` `+Infinity` `-Infinity` and `NaN` as per [#CLJ-1074](http://dev.clojure.org/jira/browse/CLJ-1074)
+* `read` is capable of reading literal tags containing periods, fixing [#CLJ-1100](http://dev.clojure.org/jira/browse/CLJ-1100)
+* `read` is capable of reading the symbol / with an explicit namespace, e.g. foo//, whereas `clojure.lang.LispReader/read` throws an exception. Refer to [#CLJ-873](http://dev.clojure.org/jira/browse/CLJ-873).
+Except for this special case, `read` throws an exception if a symbol contains more than one / character, whereas `clojure.lang.LispReader/read` allows them, returning a symbol with one or more / characters in its namespace name.
 * `clojure.tools.reader/read` adds additional line/column info to symbols, vectors and maps when possible
 * `clojure.tools.reader.reader-types/read-line` has an additional arity with which is possible to specify the reader to read from
 
