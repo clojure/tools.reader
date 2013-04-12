@@ -101,7 +101,9 @@
                          (or (= sym "/")
                              (== -1 (.indexOf sym "/"))))
                 [ns sym]))))
-        [nil token]))))
+        (when (or (= token "/")
+                  (== -1 (.indexOf token "/")))
+            [nil token])))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; readers
