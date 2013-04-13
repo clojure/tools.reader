@@ -142,7 +142,7 @@
 (extend LineNumberingPushbackReader
   IndexingReader
   {:get-line-number (fn [rdr] (.getLineNumber ^LineNumberingPushbackReader rdr))
-   :get-column-number (if >=clojure-1-5-alpha*?
+   :get-column-number (compile-if >=clojure-1-5-alpha*?
                         (fn [rdr]
                           (.getColumnNumber ^LineNumberingPushbackReader rdr))
                         (fn [rdr] 0))})

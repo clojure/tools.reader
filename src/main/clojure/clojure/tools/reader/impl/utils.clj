@@ -2,10 +2,6 @@
   (:require clojure.tools.reader.impl.ExceptionInfo) ;; force loading
   (:refer-clojure :exclude [char]))
 
-(defn char [x]
-  (when x
-    (clojure.core/char x)))
-
 ;; getColumnNumber and *default-data-reader-fn* are available only since clojure-1.5.0-beta1
 (def >=clojure-1-5-alpha*?
   (let [{:keys [minor qualifier]} *clojure-version*]
@@ -15,7 +11,7 @@
                      (subs qualifier 0 (dec (count qualifier))))))
         (> minor 5))))
 
-(defmacro ^:private compile-if [cond then else]
+(defmacro compile-if [cond then else]
   (if (eval cond)
     then
     else))
@@ -28,13 +24,23 @@
       ([msg map cause]
          (clojure.tools.reader.impl.ExceptionInfo. msg map cause)))
     (defn ex-data
-      [ex]
+      [^clojure.tools.reader.impl.ExceptionInfo ex]
       (.getData ex))
     (defn ex-info? [ex]
-      (instance? clojure.tools.reader.impl.ExceptionInfo ex)))
+      (instance? clojure.tools.reader.impl.ExceptionInfo ex))
 
-  (defn ex-info? [ex]
-    (instance? clojure.lang.ExceptionInfo ex)))
+    (defn char [x]
+      (when x
+        (clojure.core/char x))))
+
+
+  (do
+    (defn ^{:tag 'char} char [x]
+      (when x
+        (clojure.core/char x)))
+
+    (defn ex-info? [ex]
+      (instance? clojure.lang.ExceptionInfo ex))))
 
 (defn whitespace?
   "Checks whether a given character is whitespace"
