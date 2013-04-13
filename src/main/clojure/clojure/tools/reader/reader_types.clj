@@ -175,12 +175,12 @@
      (PushbackReader. (string-reader s) (object-array buf-len) buf-len buf-len)))
 
 (defn input-stream-reader
-  "Creates an InputStreamReader from an InputString"
+  "Creates an InputStreamReader from an InputStream"
   [is]
   (InputStreamReader. is nil))
 
 (defn input-stream-push-back-reader
-  "Creates a PushbackReader from a given InputString"
+  "Creates a PushbackReader from a given InputStream"
   ([is]
      (input-stream-push-back-reader is 1))
   ([^InputStream is buf-len]

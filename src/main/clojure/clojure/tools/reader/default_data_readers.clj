@@ -160,7 +160,7 @@ with invalid arguments."
 ;;; ------------------------------------------------------------------------
 ;;; print integration
 
-(def ^:private thread-local-utc-date-format
+(def ^:private ^ThreadLocal thread-local-utc-date-format
   ;; SimpleDateFormat is not thread-safe, so we use a ThreadLocal proxy for access.
   ;; http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4228335
   (proxy [ThreadLocal] []
@@ -174,7 +174,7 @@ with invalid arguments."
   [^java.util.Date d, ^java.io.Writer w]
   (let [utc-format (.get thread-local-utc-date-format)]
     (.write w "#inst \"")
-    (.write w (.format utc-format d))
+    (.write w ^String (.format ^java.text.SimpleDateFormat utc-format d))
     (.write w "\"")))
 
 (defmethod print-method java.util.Date
@@ -206,7 +206,7 @@ with invalid arguments."
   (print-calendar c w))
 
 
-(def ^:private thread-local-utc-timestamp-format
+(def ^:private ^ThreadLocal thread-local-utc-timestamp-format
   ;; SimpleDateFormat is not thread-safe, so we use a ThreadLocal proxy for access.
   ;; http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4228335
   (proxy [ThreadLocal] []
@@ -219,7 +219,7 @@ with invalid arguments."
   [^java.sql.Timestamp ts, ^java.io.Writer w]
   (let [utc-format (.get thread-local-utc-timestamp-format)]
     (.write w "#inst \"")
-    (.write w (.format utc-format ts))
+    (.write w ^String (.format ^java.text.SimpleDateFormat utc-format ts))
     ;; add on nanos and offset
     ;; RFC3339 says to use -00:00 when the timezone is unknown (+00:00 implies a known GMT)
     (.write w (format ".%09d-00:00" (.getNanos ts)))
