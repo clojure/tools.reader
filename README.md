@@ -218,6 +218,12 @@ Changelog
   * Fixed evaling read objects for clojure 1.5
 * Release 0.7.3 on Mar 08, 2013
   * AOT compile only ExceptionInfo.
+* Release 0.7.4 on Apr ??, 2013
+  * Fixed docstrings position and typos
+  * Fixed a bug that would have prevented future alpha versions of clojure to have column metadata
+  * Made symbols containing two consecutive ':' illegal, as per [clojure.org](http://clojure.org/reader#The%20Reader--Reader%20forms)
+  * Made symbols containing two consecutive '/' illegal
+  * Removed reflection warnings
 
 Developer Information
 ========================================
