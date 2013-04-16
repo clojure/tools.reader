@@ -12,8 +12,8 @@
   ([s data throwable]
      [[s throwable] data]))
 
-(defn -getData [this]
+(defn -getData [^clojure.tools.reader.impl.ExceptionInfo this]
   (.data this))
 
-(defn -toString [this]
-  (str "clojure.toold.reader.ExceptionInfo: " (.getMessage this) " " (str (.data this))))
+(defn -toString [^clojure.tools.reader.impl.ExceptionInfo this]
+  (str "clojure.tools.reader.ExceptionInfo: " (.getMessage this) " " (str (.data this))))
