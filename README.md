@@ -71,7 +71,7 @@ Refer to docstrings in each namespace and to the project's [autodoc](http://cloj
 Releases and Dependency Information
 ========================================
 
-Latest stable release: 0.7.3
+Latest stable release: 0.7.4
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
@@ -80,7 +80,7 @@ Latest stable release: 0.7.3
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "0.7.3"]
+[org.clojure/tools.reader "0.7.4"]
 ```
 [Maven](http://maven.apache.org/) dependency information:
 
@@ -88,7 +88,7 @@ Latest stable release: 0.7.3
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>0.7.3</version>
+  <version>0.7.4</version>
 </dependency>
 ```
 
@@ -218,7 +218,7 @@ Changelog
   * Fixed evaling read objects for clojure 1.5
 * Release 0.7.3 on Mar 08, 2013
   * AOT compile only ExceptionInfo.
-* Release 0.7.4 on Apr ??, 2013
+* Release 0.7.4 on Apr 19, 2013
   * Fixed docstrings position and typos
   * Fixed a bug that would have prevented future alpha versions of clojure to have column metadata
   * Made symbols containing two consecutive ':' illegal, as per [clojure.org](http://clojure.org/reader#The%20Reader--Reader%20forms)
