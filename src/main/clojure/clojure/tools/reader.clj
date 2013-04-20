@@ -68,13 +68,13 @@
        (loop [i offset uc 0]
          (if (== i l)
            (char uc)
-           (let [d (Character/digit (char (nth token i)) (int base))]
+           (let [d (Character/digit (int (nth token i)) (int base))]
              (if (== d -1)
                (throw (IllegalArgumentException. (str "Invalid digit: " (nth token i))))
                (recur (inc i) (long (+ d (* uc base))))))))))
 
   ([rdr initch base length exact?]
-     (loop [i 1 uc (Character/digit (char initch) (int base))]
+     (loop [i 1 uc (Character/digit (int initch) (int base))]
        (if (== uc -1)
          (throw (IllegalArgumentException. (str "Invalid digit: " initch)))
          (if-not (== i length)
@@ -86,7 +86,7 @@
                  (throw (IllegalArgumentException.
                          (str "Invalid character length: " i ", should be: " length)))
                  (char uc))
-               (let [d (Character/digit (char ch) (int base))]
+               (let [d (Character/digit (int ch) (int base))]
                  (read-char rdr)
                  (if (== d -1)
                    (throw (IllegalArgumentException. (str "Invalid digit: " ch)))
@@ -211,11 +211,11 @@
       \b "\b"
       \f "\f"
       \u (let [ch (read-char rdr)]
-           (if (== -1 (Character/digit (char ch) 16))
+           (if (== -1 (Character/digit (int ch) 16))
              (reader-error rdr "Invalid unicode escape: \\u" ch)
              (read-unicode-char rdr ch 16 4 true)))
       \x (let [ch (read-char rdr)]
-           (if (== -1 (Character/digit (char ch) 16))
+           (if (== -1 (Character/digit (int ch) 16))
              (reader-error rdr "Invalid unicode escape: \\x" ch)
              (read-unicode-char rdr ch 16 2 true)))
       (if (numeric? ch)
