@@ -1,6 +1,6 @@
 (defproject org.clojure/tools.reader "0.7.5-SNAPSHOT"
   :description "A Clojure reader in Clojure"
-  :parent [org.clojure/pom.contrib "0.0.26"]
+  :parent [org.clojure/pom.contrib "0.1.2"]
   :url "https://github.com/clojure/tools.reader"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
