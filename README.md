@@ -97,6 +97,8 @@ Example Usage
 
 To read data structures, functions from `clojure.tools.reader.edn` should be used, since those are **safe** and don't allow any code execution at all.
 
+Remember that when using `read` you *need* to use a reader that implements `IPushbackReader` such as `string-push-back-reader`.
+
 Note that since no code-execution is permitted, reader literals are also disabled.
 
 ```clojure
