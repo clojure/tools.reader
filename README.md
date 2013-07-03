@@ -71,7 +71,7 @@ Refer to docstrings in each namespace and to the project's [autodoc](http://cloj
 Releases and Dependency Information
 ========================================
 
-Latest stable release: 0.7.4
+Latest stable release: 0.7.5
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
@@ -80,7 +80,7 @@ Latest stable release: 0.7.4
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "0.7.4"]
+[org.clojure/tools.reader "0.7.5"]
 ```
 [Maven](http://maven.apache.org/) dependency information:
 
@@ -88,7 +88,7 @@ Latest stable release: 0.7.4
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>0.7.4</version>
+  <version>0.7.5</version>
 </dependency>
 ```
 
@@ -142,6 +142,7 @@ To switch from using `clojure.core/read-string` to `clojure.tools.reader/read-st
 ```
 
 Reader types example usage:
+
 ```clojure
 (require '[clojure.tools.reader.reader-types :as t])
 ;=> nil
@@ -226,6 +227,9 @@ Changelog
   * Made symbols containing two consecutive ':' illegal, as per [clojure.org](http://clojure.org/reader#The%20Reader--Reader%20forms)
   * Made symbols containing two consecutive '/' illegal
   * Removed reflection warnings
+* Release 0.7.4 on Jun 03, 2013
+  * Removed all reflection for clojure 1.3
+  * Fixed :column metadata handling on symbols
 
 Developer Information
 ========================================
