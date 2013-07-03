@@ -238,9 +238,9 @@
 
 (defn- read-symbol
   [rdr initch]
-  (when-let [token (read-token rdr initch)]
-    (let [[line column] (when (indexing-reader? rdr)
-                          [(get-line-number rdr) (int (dec (get-column-number rdr)))])]
+  (let [[line column] (when (indexing-reader? rdr)
+                        [(get-line-number rdr) (int (dec (get-column-number rdr)))])]
+    (when-let [token (read-token rdr initch)]
       (case token
 
         ;; special symbols
