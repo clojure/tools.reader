@@ -227,7 +227,7 @@ Changelog
   * Made symbols containing two consecutive ':' illegal, as per [clojure.org](http://clojure.org/reader#The%20Reader--Reader%20forms)
   * Made symbols containing two consecutive '/' illegal
   * Removed reflection warnings
-* Release 0.7.4 on Jun 03, 2013
+* Release 0.7.5 on Jun 03, 2013
   * Removed all reflection for clojure 1.3
   * Fixed :column metadata handling on symbols
 
