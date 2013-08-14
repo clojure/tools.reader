@@ -71,7 +71,7 @@ Refer to docstrings in each namespace and to the project's [autodoc](http://cloj
 Releases and Dependency Information
 ========================================
 
-Latest stable release: 0.7.5
+Latest stable release: 0.7.6
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
@@ -80,7 +80,7 @@ Latest stable release: 0.7.5
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "0.7.5"]
+[org.clojure/tools.reader "0.7.6"]
 ```
 [Maven](http://maven.apache.org/) dependency information:
 
@@ -88,7 +88,7 @@ Latest stable release: 0.7.5
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>0.7.5</version>
+  <version>0.7.6</version>
 </dependency>
 ```
 
@@ -230,6 +230,8 @@ Changelog
 * Release 0.7.5 on Jun 03, 2013
   * Removed all reflection for clojure 1.3
   * Fixed :column metadata handling on symbols
+* Release 0.7.6 on Aug 14, 2013
+  * Fixed #TRDR-7
 
 Developer Information
 ========================================
