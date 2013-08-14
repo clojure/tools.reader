@@ -330,16 +330,15 @@
           rargs (rseq arg-env)
           args (if rargs
                  (let [higharg (key (first rargs))]
-                   (if (pos? higharg)
-                     (let [args (loop [i 1 args (transient [])]
-                                  (if (> i higharg)
-                                    (persistent! args)
-                                    (recur (inc i) (conj! args (or (get arg-env i)
-                                                                   (garg i))))))
-                           args (if (arg-env -1)
-                                  (conj args '& (arg-env -1))
-                                  args)]
-                       args)))
+                   (let [args (loop [i 1 args (transient [])]
+                                (if (> i higharg)
+                                  (persistent! args)
+                                  (recur (inc i) (conj! args (or (get arg-env i)
+                                                                 (garg i))))))
+                         args (if (arg-env -1)
+                                (conj args '& (arg-env -1))
+                                args)]
+                     args))
                  [])]
       (list 'fn* args form))))
 

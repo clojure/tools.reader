@@ -46,7 +46,8 @@
   (is (= '(fn* [] (foo bar baz)) (read-string "#(foo bar baz)"))))
 
 (deftest read-arg
-  (is (= 14 ((eval (read-string "#(apply + % %1 %3 %&)")) 1 2 3 4 5))))
+  (is (= 14 ((eval (read-string "#(apply + % %1 %3 %&)")) 1 2 3 4 5)))
+  (is (= 4 ((eval (read-string "#(last %&)")) 1 2 3 4))))
 
 (deftest read-eval
   (is (= 3 (read-string "#=(+ 1 2)"))))
