@@ -84,3 +84,6 @@
   (is (= (bar. 1 nil) (read-string "#clojure.tools.reader_test.bar{:baz 1}")))
   (is (= (bar. 1 nil) (read-string "#clojure.tools.reader_test.bar[1 nil]")))
   (is (= (bar. 1 2) (read-string "#clojure.tools.reader_test.bar[1 2]"))))
+
+(deftest read-ctor
+  (is (= "foo" (read-string "#java.lang.String[\"foo\"]"))))
