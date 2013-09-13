@@ -232,6 +232,9 @@ Changelog
   * Fixed :column metadata handling on symbols
 * Release 0.7.6 on Aug 14, 2013
   * Fixed #TRDR-7
+* Release 0.7.7 on Sep 13, 2013
+  * Fixed #TRDR-8
+  * Fixed out-of-bound exception in ctor-reader args mismatch
 
 Developer Information
 ========================================
