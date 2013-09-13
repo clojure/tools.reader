@@ -588,6 +588,7 @@
                              \{ [\} :extended]
                              nil)]
       (let [entries (to-array (read-delimited end-ch rdr true))
+            numargs (count entries)
             all-ctors (.getConstructors class)
             ctors-num (count all-ctors)]
         (case form
@@ -595,9 +596,9 @@
           (loop [i 0]
             (if (> i ctors-num)
               (reader-error rdr "Unexpected number of constructor arguments to " (str class)
-                            ": got" (count entries))
+                            ": got" numargs)
               (if (== (count (.getParameterTypes ^Constructor (aget all-ctors i)))
-                      ctors-num)
+                      numargs)
                 (Reflector/invokeConstructor class entries)
                 (recur (inc i)))))
           :extended
