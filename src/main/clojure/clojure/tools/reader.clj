@@ -594,7 +594,7 @@
         (case form
           :short
           (loop [i 0]
-            (if (> i ctors-num)
+            (if (>= i ctors-num)
               (reader-error rdr "Unexpected number of constructor arguments to " (str class)
                             ": got" numargs)
               (if (== (count (.getParameterTypes ^Constructor (aget all-ctors i)))
