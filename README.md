@@ -71,7 +71,7 @@ Refer to docstrings in each namespace and to the project's [autodoc](http://cloj
 Releases and Dependency Information
 ========================================
 
-Latest stable release: 0.7.6
+Latest stable release: 0.7.7
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
@@ -80,7 +80,7 @@ Latest stable release: 0.7.6
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "0.7.6"]
+[org.clojure/tools.reader "0.7.7"]
 ```
 [Maven](http://maven.apache.org/) dependency information:
 
@@ -88,7 +88,7 @@ Latest stable release: 0.7.6
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>0.7.6</version>
+  <version>0.7.7</version>
 </dependency>
 ```
 
