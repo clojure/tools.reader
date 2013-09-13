@@ -131,7 +131,7 @@ If (and only if) reading from a **trusted** source, and advanced features that n
 (r/read-string "#=(+ 1 2)")
 ;=> 3
 (binding [r/*read-eval* false]
-  (r/read-string "#=(+ 1 2)))
+  (r/read-string "#=(+ 1 2)"))
 => ExceptionInfo #= not allowed when *read-eval* is false
 ```
 
