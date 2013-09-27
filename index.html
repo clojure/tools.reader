@@ -96,6 +96,8 @@ namespace.
       <div style="margin-left: 1em;" class="toc-subentry">
         <a class="toc-subentry-anchor" href="#clojure.tools.reader.reader-types/get-column-number">get-column-number</a>
       </div><div style="margin-left: 1em;" class="toc-subentry">
+        <a class="toc-subentry-anchor" href="#clojure.tools.reader.reader-types/get-file-name">get-file-name</a>
+      </div><div style="margin-left: 1em;" class="toc-subentry">
         <a class="toc-subentry-anchor" href="#clojure.tools.reader.reader-types/get-line-number">get-line-number</a>
       </div>
     </div><div style="margin-left: 1em;" class="toc-entry">
@@ -384,7 +386,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     </div>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/reader_types.clj#L22" id="proto-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/ecfad60412a028359626fbd033b43eaa30a6eba4/src/main/clojure/clojure/tools/reader/reader_types.clj#L22" id="proto-source">Source</a>
   </div><div id="proto-entry">
     <br />
     <hr />
@@ -404,6 +406,16 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
       
     </div><div id="proto-var-entry">
       <br />
+      <h3 id="clojure.tools.reader.reader-types/get-file-name">get-file-name</h3>
+      <span id="var-type">function</span><br />
+      <pre id="var-usage">Usage: (get-file-name reader)
+</pre>
+      <pre id="var-docstr">Returns the file name the reader is reading from, or nil</pre>
+      
+      
+      
+    </div><div id="proto-var-entry">
+      <br />
       <h3 id="clojure.tools.reader.reader-types/get-line-number">get-line-number</h3>
       <span id="var-type">function</span><br />
       <pre id="var-usage">Usage: (get-line-number reader)
@@ -415,7 +427,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     </div>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/reader_types.clj#L26" id="proto-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/ecfad60412a028359626fbd033b43eaa30a6eba4/src/main/clojure/clojure/tools/reader/reader_types.clj#L26" id="proto-source">Source</a>
   </div><div id="proto-entry">
     <br />
     <hr />
@@ -446,7 +458,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     </div>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/reader_types.clj#L16" id="proto-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/ecfad60412a028359626fbd033b43eaa30a6eba4/src/main/clojure/clojure/tools/reader/reader_types.clj#L16" id="proto-source">Source</a>
   </div>
 </div>
 <div id="type-section">
@@ -458,7 +470,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <h2 id="clojure.tools.reader.reader-types/IndexingPushbackReader">IndexingPushbackReader</h2>
     <span id="type-type">type</span><br />
     <pre id="type-docstr"></pre>
-    Fields: <span id="type-fields">[rdr line column line-start? prev]</span><br />
+    Fields: <span id="type-fields">[rdr line column line-start? prev file-name]</span><br />
     Protocols: <span id="type-protocols"><a href="#clojure.tools.reader.reader-types/IPushbackReader">IPushbackReader</a>, <a href="#clojure.tools.reader.reader-types/IndexingReader">IndexingReader</a>, <a href="#clojure.tools.reader.reader-types/Reader">Reader</a></span><br />
     Interfaces: <span id="type-interfaces"></span><br />
   </div><div id="type-entry">
@@ -498,12 +510,12 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <hr />
     <h2 id="clojure.tools.reader.reader-types/-&gt;IndexingPushbackReader">-&gt;IndexingPushbackReader</h2>
     <span id="var-type">function</span><br />
-    <pre id="var-usage">Usage: (-&gt;IndexingPushbackReader rdr line column line-start? prev)
+    <pre id="var-usage">Usage: (-&gt;IndexingPushbackReader rdr line column line-start? prev file-name)
 </pre>
     <pre id="var-docstr">Positional factory function for class clojure.tools.reader.reader_types.IndexingPushbackReader.</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/reader_types.clj#L96" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/ecfad60412a028359626fbd033b43eaa30a6eba4/src/main/clojure/clojure/tools/reader/reader_types.clj#L98" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -514,7 +526,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <pre id="var-docstr">Positional factory function for class clojure.tools.reader.reader_types.InputStreamReader.</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/reader_types.clj#L48" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/ecfad60412a028359626fbd033b43eaa30a6eba4/src/main/clojure/clojure/tools/reader/reader_types.clj#L50" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -525,7 +537,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <pre id="var-docstr">Positional factory function for class clojure.tools.reader.reader_types.PushbackReader.</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/reader_types.clj#L66" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/ecfad60412a028359626fbd033b43eaa30a6eba4/src/main/clojure/clojure/tools/reader/reader_types.clj#L68" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -536,7 +548,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <pre id="var-docstr">Positional factory function for class clojure.tools.reader.reader_types.StringReader.</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/reader_types.clj#L36" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/ecfad60412a028359626fbd033b43eaa30a6eba4/src/main/clojure/clojure/tools/reader/reader_types.clj#L38" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -544,11 +556,12 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <span id="var-type">function</span><br />
     <pre id="var-usage">Usage: (indexing-push-back-reader s-or-rdr)
        (indexing-push-back-reader s-or-rdr buf-len)
+       (indexing-push-back-reader s-or-rdr buf-len file-name)
 </pre>
     <pre id="var-docstr">Creates an IndexingPushbackReader from a given string or Reader</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/reader_types.clj#L189" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/ecfad60412a028359626fbd033b43eaa30a6eba4/src/main/clojure/clojure/tools/reader/reader_types.clj#L193" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -559,7 +572,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <pre id="var-docstr">Returns true if the reader satisfies IndexingReader</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/reader_types.clj#L155" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/ecfad60412a028359626fbd033b43eaa30a6eba4/src/main/clojure/clojure/tools/reader/reader_types.clj#L159" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -571,7 +584,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <pre id="var-docstr">Creates a PushbackReader from a given InputStream</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/reader_types.clj#L182" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/ecfad60412a028359626fbd033b43eaa30a6eba4/src/main/clojure/clojure/tools/reader/reader_types.clj#L186" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -582,7 +595,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <pre id="var-docstr">Creates an InputStreamReader from an InputStream</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/reader_types.clj#L177" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/ecfad60412a028359626fbd033b43eaa30a6eba4/src/main/clojure/clojure/tools/reader/reader_types.clj#L181" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -594,7 +607,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <pre id="var-docstr">Reads a line from the reader or from *in* if no reader is specified</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/reader_types.clj#L197" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/ecfad60412a028359626fbd033b43eaa30a6eba4/src/main/clojure/clojure/tools/reader/reader_types.clj#L203" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -606,7 +619,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
 If rdr is an IndexingReader, additional information about column and line number is provided</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/reader_types.clj#L209" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/ecfad60412a028359626fbd033b43eaa30a6eba4/src/main/clojure/clojure/tools/reader/reader_types.clj#L215" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -618,7 +631,7 @@ If rdr is an IndexingReader, additional information about column and line number
     <pre id="var-docstr">Creates a PushbackReader from a given string</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/reader_types.clj#L170" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/ecfad60412a028359626fbd033b43eaa30a6eba4/src/main/clojure/clojure/tools/reader/reader_types.clj#L174" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -629,7 +642,7 @@ If rdr is an IndexingReader, additional information about column and line number
     <pre id="var-docstr">Creates a StringReader from a given string</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/reader_types.clj#L165" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/ecfad60412a028359626fbd033b43eaa30a6eba4/src/main/clojure/clojure/tools/reader/reader_types.clj#L169" id="var-source">Source</a>
   </div>
 </div>
 
