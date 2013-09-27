@@ -27,7 +27,9 @@
   (get-line-number [reader]
     "Returns the line number of the next character to be read from the stream")
   (get-column-number [reader]
-    "Returns the line number of the next character to be read from the stream"))
+    "Returns the line number of the next character to be read from the stream")
+  (get-file-name [reader]
+    "Returns the file name the reader is reading from, or nil"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; reader deftypes
@@ -95,7 +97,7 @@
 
 (deftype IndexingPushbackReader
     [rdr ^:unsynchronized-mutable line ^:unsynchronized-mutable column
-     ^:unsynchronized-mutable line-start? ^:unsynchronized-mutable prev]
+     ^:unsynchronized-mutable line-start? ^:unsynchronized-mutable prev file-name]
   Reader
   (read-char [reader]
     (when-let [ch (read-char rdr)]
@@ -120,7 +122,8 @@
 
   IndexingReader
   (get-line-number [reader] (int (inc line)))
-  (get-column-number [reader] (int column)))
+  (get-column-number [reader] (int column))
+  (get-file-name [reader] file-name))
 
 (extend-type java.io.PushbackReader
   Reader
@@ -145,7 +148,8 @@
    :get-column-number (compile-if >=clojure-1-5-alpha*?
                         (fn [rdr]
                           (.getColumnNumber ^LineNumberingPushbackReader rdr))
-                        (fn [rdr] 0))})
+                        (fn [rdr] 0))
+   :get-file-name (constantly nil)})
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public API
@@ -191,8 +195,10 @@
   ([s-or-rdr]
      (indexing-push-back-reader s-or-rdr 1))
   ([s-or-rdr buf-len]
+     (indexing-push-back-reader s-or-rdr buf-len nil))
+  ([s-or-rdr buf-len file-name]
      (IndexingPushbackReader.
-      (if (string? s-or-rdr) (string-push-back-reader s-or-rdr buf-len) s-or-rdr) 0 1 true nil)))
+      (if (string? s-or-rdr) (string-push-back-reader s-or-rdr buf-len) s-or-rdr) 0 1 true nil file-name)))
 
 (defn read-line
   "Reads a line from the reader or from *in* if no reader is specified"
@@ -213,5 +219,8 @@
   (throw (ex-info (apply str msg)
                   (merge {:type :reader-exception}
                          (when (indexing-reader? rdr)
-                           {:line (get-line-number rdr)
-                            :column (get-column-number rdr)})))))
+                           (merge
+                            {:line (get-line-number rdr)
+                             :column (get-column-number rdr)}
+                            (when-let [file-name (get-file-name rdr)]
+                              {:file file-name})))))))
