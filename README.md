@@ -71,7 +71,7 @@ Refer to docstrings in each namespace and to the project's [autodoc](http://cloj
 Releases and Dependency Information
 ========================================
 
-Latest stable release: 0.7.7
+Latest stable release: 0.7.8
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
@@ -80,7 +80,7 @@ Latest stable release: 0.7.7
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "0.7.7"]
+[org.clojure/tools.reader "0.7.8"]
 ```
 [Maven](http://maven.apache.org/) dependency information:
 
@@ -88,7 +88,7 @@ Latest stable release: 0.7.7
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>0.7.7</version>
+  <version>0.7.8</version>
 </dependency>
 ```
 
@@ -235,6 +235,9 @@ Changelog
 * Release 0.7.7 on Sep 13, 2013
   * Fixed #TRDR-8
   * Fixed out-of-bound exception in ctor-reader args mismatch
+* Release 0.7.8 on Sep 27, 2013
+  * Added missing whitespace in exception message
+  * Added get-file-name to IndexingReader
 
 Developer Information
 ========================================
