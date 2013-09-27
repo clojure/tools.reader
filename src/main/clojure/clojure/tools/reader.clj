@@ -152,7 +152,7 @@
               (recur (if-not (identical? o rdr) (conj! a o) a)))))
         (reader-error rdr "EOF while reading"
                       (when first-line
-                        (str ", starting at line" first-line)))))))
+                        (str ", starting at line " first-line)))))))
 
 (defn- read-list
   [rdr _]
