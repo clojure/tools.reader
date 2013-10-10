@@ -98,7 +98,8 @@
 (defn- normalize-newline [rdr ch]
   (if (identical? \return ch)
     (let [c (peek-char rdr)]
-      (when (identical? \formfeed c)
+      (when (or (identical? \formfeed c)
+                (identical? \newline c))
         (read-char rdr))
       \newline)
     ch))
