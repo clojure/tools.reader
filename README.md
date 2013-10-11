@@ -71,7 +71,7 @@ Refer to docstrings in each namespace and to the project's [autodoc](http://cloj
 Releases and Dependency Information
 ========================================
 
-Latest stable release: 0.7.8
+Latest stable release: 0.7.9
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
@@ -80,7 +80,7 @@ Latest stable release: 0.7.8
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "0.7.8"]
+[org.clojure/tools.reader "0.7.9"]
 ```
 [Maven](http://maven.apache.org/) dependency information:
 
@@ -88,7 +88,7 @@ Latest stable release: 0.7.8
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>0.7.8</version>
+  <version>0.7.9</version>
 </dependency>
 ```
 
@@ -238,6 +238,8 @@ Changelog
 * Release 0.7.8 on Sep 27, 2013
   * Added missing whitespace in exception message
   * Added get-file-name to IndexingReader
+* Release 0.7.9 on Oct 11, 2013
+  * Fixed \r\n handling
 
 Developer Information
 ========================================
