@@ -266,8 +266,11 @@
                   {:line line :column column})))
             (reader-error rdr "Invalid token: " token))))))
 
+(def ^:dynamic *alias-map* nil)
+
 (defn- resolve-ns [sym]
-  (or ((ns-aliases *ns*) sym)
+  (or ((or *alias-map*
+           (ns-aliases *ns*)) sym)
       (find-ns sym)))
 
 (defn- read-keyword
