@@ -54,6 +54,9 @@ namespace.
   </div><div style="margin-left: 1em;" class="toc-section">
     <a href="#var-section" style="margin-top: 3px;">Vars and Functions</a>
     <div style="margin-left: 1em;" class="toc-entry">
+      <a class="toc-entry-anchor" href="#clojure.tools.reader/*alias-map*">*alias-map*</a>
+      
+    </div><div style="margin-left: 1em;" class="toc-entry">
       <a class="toc-entry-anchor" href="#clojure.tools.reader/*data-readers*">*data-readers*</a>
       
     </div><div style="margin-left: 1em;" class="toc-entry">
@@ -180,6 +183,19 @@ namespace.
   <div id="var-entry">
     <br />
     <hr />
+    <h2 id="clojure.tools.reader/*alias-map*">*alias-map*</h2>
+    <span id="var-type">dynamic var</span><br />
+    <pre id="var-usage"></pre>
+    <pre id="var-docstr">Map from ns alias to ns, if non-nil, it will be used to resolve read-time
+ns aliases instead of (ns-aliases *ns*).
+
+Defaults to nil</pre>
+    
+    
+    <a href="https://github.com/clojure/tools.reader/blob/5af69534bc67c96349df6a74a58cce97d57f03d9/src/main/clojure/clojure/tools/reader.clj#L269" id="var-source">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
     <h2 id="clojure.tools.reader/*data-readers*">*data-readers*</h2>
     <span id="var-type">dynamic var</span><br />
     <pre id="var-usage"></pre>
@@ -189,7 +205,7 @@ Default reader tags are defined in clojure.tools.reader/default-data-readers
 and may be overridden by binding this Var.</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/68857b40c27cecccb9b5246956c768148918cf96/src/main/clojure/clojure/tools/reader.clj#L660" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/5af69534bc67c96349df6a74a58cce97d57f03d9/src/main/clojure/clojure/tools/reader.clj#L665" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -202,7 +218,7 @@ If *default-data-reader-fn* is nil (the default value), an exception
 will be thrown for the unknown tag.</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/68857b40c27cecccb9b5246956c768148918cf96/src/main/clojure/clojure/tools/reader.clj#L667" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/5af69534bc67c96349df6a74a58cce97d57f03d9/src/main/clojure/clojure/tools/reader.clj#L672" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -226,7 +242,7 @@ can be a useful diagnostic tool to ensure that all of your reads
 occur in considered contexts.</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/68857b40c27cecccb9b5246956c768148918cf96/src/main/clojure/clojure/tools/reader.clj#L642" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/5af69534bc67c96349df6a74a58cce97d57f03d9/src/main/clojure/clojure/tools/reader.clj#L647" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -237,7 +253,7 @@ occur in considered contexts.</pre>
 May be overridden by binding *data-readers*</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/68857b40c27cecccb9b5246956c768148918cf96/src/main/clojure/clojure/tools/reader.clj#L674" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/5af69534bc67c96349df6a74a58cce97d57f03d9/src/main/clojure/clojure/tools/reader.clj#L679" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -262,7 +278,7 @@ Note that the function signature of clojure.tools.reader/read and
 clojure.tools.reader.edn/read is not the same for eof-handling</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/68857b40c27cecccb9b5246956c768148918cf96/src/main/clojure/clojure/tools/reader.clj#L680" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/5af69534bc67c96349df6a74a58cce97d57f03d9/src/main/clojure/clojure/tools/reader.clj#L685" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -283,7 +299,7 @@ Note that the function signature of clojure.tools.reader/read-string and
 clojure.tools.reader.edn/read-string is not the same for eof-handling</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/68857b40c27cecccb9b5246956c768148918cf96/src/main/clojure/clojure/tools/reader.clj#L723" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/5af69534bc67c96349df6a74a58cce97d57f03d9/src/main/clojure/clojure/tools/reader.clj#L728" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -294,7 +310,7 @@ clojure.tools.reader.edn/read-string is not the same for eof-handling</pre>
     <pre id="var-docstr">Macro equivalent to the syntax-quote reader macro (`).</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/68857b40c27cecccb9b5246956c768148918cf96/src/main/clojure/clojure/tools/reader.clj#L739" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/5af69534bc67c96349df6a74a58cce97d57f03d9/src/main/clojure/clojure/tools/reader.clj#L744" id="var-source">Source</a>
   </div>
 </div>
 <br />
