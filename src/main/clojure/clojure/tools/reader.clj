@@ -266,7 +266,12 @@
                   {:line line :column column})))
             (reader-error rdr "Invalid token: " token))))))
 
-(def ^:dynamic *alias-map* nil)
+(def ^:dynamic *alias-map*
+  "Map from ns alias to ns, if non-nil, it will be used to resolve read-time
+   ns aliases instead of (ns-aliases *ns*).
+
+   Defaults to nil"
+  nil)
 
 (defn- resolve-ns [sym]
   (or ((or *alias-map*
