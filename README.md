@@ -71,7 +71,7 @@ Refer to docstrings in each namespace and to the project's [autodoc](http://cloj
 Releases and Dependency Information
 ========================================
 
-Latest stable release: 0.7.9
+Latest stable release: 0.7.10
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
@@ -80,7 +80,7 @@ Latest stable release: 0.7.9
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "0.7.9"]
+[org.clojure/tools.reader "0.7.10"]
 ```
 [Maven](http://maven.apache.org/) dependency information:
 
@@ -88,7 +88,7 @@ Latest stable release: 0.7.9
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>0.7.9</version>
+  <version>0.7.10</version>
 </dependency>
 ```
 
@@ -190,6 +190,7 @@ There are small differences from clojure.lang.LispReader:
 * `read` is capable of reading literal tags containing periods, fixing [#CLJ-1100](http://dev.clojure.org/jira/browse/CLJ-1100)
 * `read` is capable of reading the symbol / with an explicit namespace, e.g. foo//, whereas `clojure.lang.LispReader/read` throws an exception. Refer to [#CLJ-873](http://dev.clojure.org/jira/browse/CLJ-873).
 Except for this special case, `read` throws an exception if a symbol contains more than one / character, whereas `clojure.lang.LispReader/read` allows them, returning a symbol with one or more / characters in its namespace name.
+* `clojure.tools.reader/read` checks if `clojure.tools.reader/*alias-map*` is bound, if that's the case, aliases will be resolved by querying it (must be a map), otherwhise (ns-aliases *ns*) will be used
 * `clojure.tools.reader/read` adds additional line/column info to symbols, vectors and maps when possible
 * `clojure.tools.reader.reader-types/read-line` has an additional arity with which is possible to specify the reader to read from
 
@@ -240,6 +241,8 @@ Changelog
   * Added get-file-name to IndexingReader
 * Release 0.7.9 on Oct 11, 2013
   * Fixed \r\n handling
+* Release 0.7.10 on Oct 24, 2013
+  * Add \*alias-map\*
 
 Developer Information
 ========================================
