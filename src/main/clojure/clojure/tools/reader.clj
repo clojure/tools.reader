@@ -164,38 +164,53 @@
 
 (defn- read-list
   [rdr _]
-  (let [[line column] (when (indexing-reader? rdr)
-                        [(get-line-number rdr) (int (dec (get-column-number rdr)))])
-        the-list (read-delimited \) rdr true)]
+  (let [[start-line start-column] (when (indexing-reader? rdr)
+                                    [(get-line-number rdr) (int (dec (get-column-number rdr)))])
+        the-list (read-delimited \) rdr true)
+        [end-line end-column] (when (indexing-reader? rdr)
+                                [(get-line-number rdr) (int (get-column-number rdr))])]
     (if (empty? the-list)
       '()
       (with-meta (clojure.lang.PersistentList/create the-list)
-        (when line
-          {:line line :column column})))))
+        (when start-line
+          {:line start-line
+           :column start-column
+           :end-line end-line
+           :end-column end-column})))))
 
 (defn- read-vector
   [rdr _]
-  (let [[line column] (when (indexing-reader? rdr)
+  (let [[start-line start-column] (when (indexing-reader? rdr)
                         [(get-line-number rdr) (int (dec (get-column-number rdr)))])
-        the-vector (read-delimited \] rdr true)]
+        the-vector (read-delimited \] rdr true)
+        [end-line end-column] (when (indexing-reader? rdr)
+                                [(get-line-number rdr) (int (get-column-number rdr))])]
     (with-meta the-vector
-      (when line
-        {:line line :column column}))))
+      (when start-line
+        {:line start-line
+         :column start-column
+         :end-line end-line
+         :end-column end-column}))))
 
 (defn- read-map
   [rdr _]
-  (let [[line column] (when (indexing-reader? rdr)
-                        [(get-line-number rdr) (int (dec (get-column-number rdr)))])
+  (let [[start-line start-column] (when (indexing-reader? rdr)
+                                    [(get-line-number rdr) (int (dec (get-column-number rdr)))])
         the-map (read-delimited \} rdr true)
-        map-count (count the-map)]
+        map-count (count the-map)
+        [end-line end-column] (when (indexing-reader? rdr)
+                                [(get-line-number rdr) (int (dec (get-column-number rdr)))])]
     (when (odd? map-count)
       (reader-error rdr "Map literal must contain an even number of forms"))
     (with-meta
       (if (zero? map-count)
         {}
         (RT/map (to-array the-map)))
-      (when line
-        {:line line :column column}))))
+      (when start-line
+        {:line start-line
+         :column start-column
+         :end-line end-line
+         :end-column end-column}))))
 
 (defn- read-number
   [reader initch]
@@ -263,7 +278,9 @@
         (or (when-let [p (parse-symbol token)]
               (with-meta (symbol (p 0) (p 1))
                 (when line
-                  {:line line :column column})))
+                  {:line line :column column
+                   :end-line (get-line-number rdr)
+                   :end-column (int (get-column-number rdr))})))
             (reader-error rdr "Invalid token: " token))))))
 
 (def ^:dynamic *alias-map*

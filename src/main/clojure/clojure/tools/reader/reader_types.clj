@@ -106,7 +106,8 @@
 
 (deftype IndexingPushbackReader
     [rdr ^:unsynchronized-mutable line ^:unsynchronized-mutable column
-     ^:unsynchronized-mutable line-start? ^:unsynchronized-mutable prev file-name]
+     ^:unsynchronized-mutable line-start? ^:unsynchronized-mutable prev
+     ^:unsynchronized-mutable prev-column file-name]
   Reader
   (read-char [reader]
     (when-let [ch (read-char rdr)]
@@ -114,6 +115,7 @@
         (set! prev line-start?)
         (set! line-start? (newline? ch))
         (when line-start?
+          (set! prev-column column)
           (set! column 0)
           (update! line inc))
         (update! column inc)
@@ -124,9 +126,11 @@
 
   IPushbackReader
   (unread [reader ch]
-    (when line-start? (update! line dec))
+    (if line-start?
+      (do (update! line dec)
+          (set! column prev-column))
+      (update! column dec))
     (set! line-start? prev)
-    (update! column dec)
     (unread rdr ch))
 
   IndexingReader
@@ -207,7 +211,7 @@
      (indexing-push-back-reader s-or-rdr buf-len nil))
   ([s-or-rdr buf-len file-name]
      (IndexingPushbackReader.
-      (if (string? s-or-rdr) (string-push-back-reader s-or-rdr buf-len) s-or-rdr) 0 1 true nil file-name)))
+      (if (string? s-or-rdr) (string-push-back-reader s-or-rdr buf-len) s-or-rdr) 0 1 true nil 0 file-name)))
 
 (defn read-line
   "Reads a line from the reader or from *in* if no reader is specified"
