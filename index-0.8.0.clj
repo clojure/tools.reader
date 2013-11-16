@@ -1,6 +1,6 @@
 {:namespaces
  ({:source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader/clojure.tools.reader-api.html",
    :name "clojure.tools.reader",
@@ -14,7 +14,7 @@
    :author "Bronsa",
    :doc "An EDN reader in clojure"}
   {:source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader/clojure.tools.reader.reader-types-api.html",
    :name "clojure.tools.reader.reader-types",
@@ -24,10 +24,10 @@
  ({:name "*alias-map*",
    :namespace "clojure.tools.reader",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader.clj#L286",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj#L286",
    :dynamic true,
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader/*alias-map*",
    :doc
@@ -38,10 +38,10 @@
   {:name "*data-readers*",
    :namespace "clojure.tools.reader",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader.clj#L682",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj#L682",
    :dynamic true,
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader/*data-readers*",
    :doc
@@ -52,10 +52,10 @@
   {:name "*default-data-reader-fn*",
    :namespace "clojure.tools.reader",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader.clj#L689",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj#L689",
    :dynamic true,
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader/*default-data-reader-fn*",
    :doc
@@ -66,10 +66,10 @@
   {:name "*read-eval*",
    :namespace "clojure.tools.reader",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader.clj#L664",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj#L664",
    :dynamic true,
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader/*read-eval*",
    :doc
@@ -79,9 +79,9 @@
    :file "src/main/clojure/clojure/tools/reader.clj"}
   {:file "src/main/clojure/clojure/tools/reader.clj",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader.clj#L696",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj#L696",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader/default-data-readers",
    :namespace "clojure.tools.reader",
@@ -98,9 +98,9 @@
    :name "read",
    :namespace "clojure.tools.reader",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader.clj#L702",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj#L702",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader/read",
    :doc
@@ -112,9 +112,9 @@
    :name "read-string",
    :namespace "clojure.tools.reader",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader.clj#L745",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj#L745",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader/read-string",
    :doc
@@ -126,9 +126,9 @@
    :name "syntax-quote",
    :namespace "clojure.tools.reader",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader.clj#L761",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj#L761",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader/syntax-quote",
    :doc "Macro equivalent to the syntax-quote reader macro (`).",
@@ -172,9 +172,9 @@
    :name "->IndexingPushbackReader",
    :namespace "clojure.tools.reader.reader-types",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj#L107",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L107",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.reader-types/->IndexingPushbackReader",
    :doc
@@ -186,9 +186,9 @@
    :name "->InputStreamReader",
    :namespace "clojure.tools.reader.reader-types",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj#L58",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L58",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.reader-types/->InputStreamReader",
    :doc
@@ -200,9 +200,9 @@
    :name "->PushbackReader",
    :namespace "clojure.tools.reader.reader-types",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj#L76",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L76",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.reader-types/->PushbackReader",
    :doc
@@ -214,9 +214,9 @@
    :name "->StringReader",
    :namespace "clojure.tools.reader.reader-types",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj#L46",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L46",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.reader-types/->StringReader",
    :doc
@@ -229,9 +229,9 @@
    :name "indexing-push-back-reader",
    :namespace "clojure.tools.reader.reader-types",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj#L206",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L206",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.reader-types/indexing-push-back-reader",
    :doc
@@ -243,9 +243,9 @@
    :name "indexing-reader?",
    :namespace "clojure.tools.reader.reader-types",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj#L172",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L172",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.reader-types/indexing-reader?",
    :doc "Returns true if the reader satisfies IndexingReader",
@@ -256,9 +256,9 @@
    :name "input-stream-push-back-reader",
    :namespace "clojure.tools.reader.reader-types",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj#L199",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L199",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.reader-types/input-stream-push-back-reader",
    :doc "Creates a PushbackReader from a given InputStream",
@@ -269,9 +269,9 @@
    :name "input-stream-reader",
    :namespace "clojure.tools.reader.reader-types",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj#L194",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L194",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.reader-types/input-stream-reader",
    :doc "Creates an InputStreamReader from an InputStream",
@@ -282,9 +282,9 @@
    :name "read-line",
    :namespace "clojure.tools.reader.reader-types",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj#L216",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L216",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.reader-types/read-line",
    :doc
@@ -296,9 +296,9 @@
    :name "reader-error",
    :namespace "clojure.tools.reader.reader-types",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj#L228",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L228",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.reader-types/reader-error",
    :doc
@@ -310,9 +310,9 @@
    :name "string-push-back-reader",
    :namespace "clojure.tools.reader.reader-types",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj#L187",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L187",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.reader-types/string-push-back-reader",
    :doc "Creates a PushbackReader from a given string",
@@ -323,9 +323,9 @@
    :name "string-reader",
    :namespace "clojure.tools.reader.reader-types",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj#L182",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L182",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.reader-types/string-reader",
    :doc "Creates a StringReader from a given string",
@@ -366,9 +366,9 @@
    :name "StringReader"}
   {:file "src/main/clojure/clojure/tools/reader/reader_types.clj",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj#L30",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L30",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.reader-types/IPushbackReader",
    :namespace "clojure.tools.reader.reader-types",
@@ -378,9 +378,9 @@
    :name "IPushbackReader"}
   {:file "src/main/clojure/clojure/tools/reader/reader_types.clj",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj#L34",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L34",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.reader-types/IndexingReader",
    :namespace "clojure.tools.reader.reader-types",
@@ -390,9 +390,9 @@
    :name "IndexingReader"}
   {:file "src/main/clojure/clojure/tools/reader/reader_types.clj",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj",
+   "https://github.com/clojure/tools.reader/raw/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/a7251e87c5530e04c3c7c4a983f30030f38730df/src/main/clojure/clojure/tools/reader/reader_types.clj#L24",
+   "https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L24",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.reader-types/Reader",
    :namespace "clojure.tools.reader.reader-types",
