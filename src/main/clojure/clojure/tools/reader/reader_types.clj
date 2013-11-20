@@ -292,7 +292,7 @@ logging frames. Called when pushing a character back."
       (if (string? s-or-rdr) (string-push-back-reader s-or-rdr buf-len) s-or-rdr) 0 1 true nil 0 file-name)))
 
 (defn source-logging-push-back-reader
-  "Creates an IndexingPushbackReader from a given string or Reader"
+  "Creates a SourceLoggingPushbackReader from a given string or Reader"
   ([s-or-rdr]
      (source-logging-push-back-reader s-or-rdr 1))
   ([s-or-rdr buf-len]
