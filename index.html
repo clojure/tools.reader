@@ -120,6 +120,9 @@ namespace.
       <a class="toc-entry-anchor" href="#clojure.tools.reader.reader-types/PushbackReader">PushbackReader</a>
       
     </div><div style="margin-left: 1em;" class="toc-entry">
+      <a class="toc-entry-anchor" href="#clojure.tools.reader.reader-types/SourceLoggingPushbackReader">SourceLoggingPushbackReader</a>
+      
+    </div><div style="margin-left: 1em;" class="toc-entry">
       <a class="toc-entry-anchor" href="#clojure.tools.reader.reader-types/StringReader">StringReader</a>
       
     </div><div style="margin-left: 1em;" class="toc-entry">
@@ -130,6 +133,9 @@ namespace.
       
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a class="toc-entry-anchor" href="#clojure.tools.reader.reader-types/-&gt;PushbackReader">-&gt;PushbackReader</a>
+      
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a class="toc-entry-anchor" href="#clojure.tools.reader.reader-types/-&gt;SourceLoggingPushbackReader">-&gt;SourceLoggingPushbackReader</a>
       
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a class="toc-entry-anchor" href="#clojure.tools.reader.reader-types/-&gt;StringReader">-&gt;StringReader</a>
@@ -147,10 +153,22 @@ namespace.
       <a class="toc-entry-anchor" href="#clojure.tools.reader.reader-types/input-stream-reader">input-stream-reader</a>
       
     </div><div style="margin-left: 1em;" class="toc-entry">
+      <a class="toc-entry-anchor" href="#clojure.tools.reader.reader-types/log-source">log-source</a>
+      
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a class="toc-entry-anchor" href="#clojure.tools.reader.reader-types/log-source-unread">log-source-unread</a>
+      
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a class="toc-entry-anchor" href="#clojure.tools.reader.reader-types/merge-meta">merge-meta</a>
+      
+    </div><div style="margin-left: 1em;" class="toc-entry">
       <a class="toc-entry-anchor" href="#clojure.tools.reader.reader-types/read-line">read-line</a>
       
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a class="toc-entry-anchor" href="#clojure.tools.reader.reader-types/reader-error">reader-error</a>
+      
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a class="toc-entry-anchor" href="#clojure.tools.reader.reader-types/source-logging-push-back-reader">source-logging-push-back-reader</a>
       
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a class="toc-entry-anchor" href="#clojure.tools.reader.reader-types/string-push-back-reader">string-push-back-reader</a>
@@ -192,7 +210,7 @@ ns aliases instead of (ns-aliases *ns*).
 Defaults to nil</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj#L286" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader.clj#L287" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -205,7 +223,7 @@ Default reader tags are defined in clojure.tools.reader/default-data-readers
 and may be overridden by binding this Var.</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj#L682" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader.clj#L684" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -218,7 +236,7 @@ If *default-data-reader-fn* is nil (the default value), an exception
 will be thrown for the unknown tag.</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj#L689" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader.clj#L691" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -242,7 +260,7 @@ can be a useful diagnostic tool to ensure that all of your reads
 occur in considered contexts.</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj#L664" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader.clj#L666" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -253,7 +271,7 @@ occur in considered contexts.</pre>
 May be overridden by binding *data-readers*</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj#L696" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader.clj#L698" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -278,7 +296,7 @@ Note that the function signature of clojure.tools.reader/read and
 clojure.tools.reader.edn/read is not the same for eof-handling</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj#L702" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader.clj#L704" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -299,7 +317,7 @@ Note that the function signature of clojure.tools.reader/read-string and
 clojure.tools.reader.edn/read-string is not the same for eof-handling</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj#L745" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader.clj#L748" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -310,7 +328,7 @@ clojure.tools.reader.edn/read-string is not the same for eof-handling</pre>
     <pre id="var-docstr">Macro equivalent to the syntax-quote reader macro (`).</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader.clj#L761" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader.clj#L764" id="var-source">Source</a>
   </div>
 </div>
 <br />
@@ -388,7 +406,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <h2 id="clojure.tools.reader.reader-types/IPushbackReader">IPushbackReader</h2>
     <span id="proto-type">Protocol</span><br />
     <pre id="proto-docstr"></pre>
-    Known implementations: <span id="proto-impls"><a href="#clojure.tools.reader.reader-types/IndexingPushbackReader">IndexingPushbackReader</a>, java.io.PushbackReader, <a href="#clojure.tools.reader.reader-types/PushbackReader">PushbackReader</a></span>
+    Known implementations: <span id="proto-impls"><a href="#clojure.tools.reader.reader-types/IndexingPushbackReader">IndexingPushbackReader</a>, java.io.PushbackReader, <a href="#clojure.tools.reader.reader-types/PushbackReader">PushbackReader</a>, <a href="#clojure.tools.reader.reader-types/SourceLoggingPushbackReader">SourceLoggingPushbackReader</a></span>
     <div id="proto-var-entry">
       <br />
       <h3 id="clojure.tools.reader.reader-types/unread">unread</h3>
@@ -402,14 +420,14 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     </div>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L30" id="proto-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L30" id="proto-source">Source</a>
   </div><div id="proto-entry">
     <br />
     <hr />
     <h2 id="clojure.tools.reader.reader-types/IndexingReader">IndexingReader</h2>
     <span id="proto-type">Protocol</span><br />
     <pre id="proto-docstr"></pre>
-    Known implementations: <span id="proto-impls">clojure.lang.LineNumberingPushbackReader, <a href="#clojure.tools.reader.reader-types/IndexingPushbackReader">IndexingPushbackReader</a></span>
+    Known implementations: <span id="proto-impls">clojure.lang.LineNumberingPushbackReader, <a href="#clojure.tools.reader.reader-types/IndexingPushbackReader">IndexingPushbackReader</a>, <a href="#clojure.tools.reader.reader-types/SourceLoggingPushbackReader">SourceLoggingPushbackReader</a></span>
     <div id="proto-var-entry">
       <br />
       <h3 id="clojure.tools.reader.reader-types/get-column-number">get-column-number</h3>
@@ -443,14 +461,14 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     </div>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L34" id="proto-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L34" id="proto-source">Source</a>
   </div><div id="proto-entry">
     <br />
     <hr />
     <h2 id="clojure.tools.reader.reader-types/Reader">Reader</h2>
     <span id="proto-type">Protocol</span><br />
     <pre id="proto-docstr"></pre>
-    Known implementations: <span id="proto-impls"><a href="#clojure.tools.reader.reader-types/IndexingPushbackReader">IndexingPushbackReader</a>, <a href="#clojure.tools.reader.reader-types/InputStreamReader">InputStreamReader</a>, java.io.PushbackReader, <a href="#clojure.tools.reader.reader-types/PushbackReader">PushbackReader</a>, <a href="#clojure.tools.reader.reader-types/StringReader">StringReader</a></span>
+    Known implementations: <span id="proto-impls"><a href="#clojure.tools.reader.reader-types/IndexingPushbackReader">IndexingPushbackReader</a>, <a href="#clojure.tools.reader.reader-types/InputStreamReader">InputStreamReader</a>, java.io.PushbackReader, <a href="#clojure.tools.reader.reader-types/PushbackReader">PushbackReader</a>, <a href="#clojure.tools.reader.reader-types/SourceLoggingPushbackReader">SourceLoggingPushbackReader</a>, <a href="#clojure.tools.reader.reader-types/StringReader">StringReader</a></span>
     <div id="proto-var-entry">
       <br />
       <h3 id="clojure.tools.reader.reader-types/peek-char">peek-char</h3>
@@ -474,7 +492,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     </div>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L24" id="proto-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L24" id="proto-source">Source</a>
   </div>
 </div>
 <div id="type-section">
@@ -510,6 +528,15 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
   </div><div id="type-entry">
     <br />
     <hr />
+    <h2 id="clojure.tools.reader.reader-types/SourceLoggingPushbackReader">SourceLoggingPushbackReader</h2>
+    <span id="type-type">type</span><br />
+    <pre id="type-docstr"></pre>
+    Fields: <span id="type-fields">[rdr line column line-start? prev prev-column file-name source-log-frames]</span><br />
+    Protocols: <span id="type-protocols"><a href="#clojure.tools.reader.reader-types/IPushbackReader">IPushbackReader</a>, <a href="#clojure.tools.reader.reader-types/IndexingReader">IndexingReader</a>, <a href="#clojure.tools.reader.reader-types/Reader">Reader</a></span><br />
+    Interfaces: <span id="type-interfaces"></span><br />
+  </div><div id="type-entry">
+    <br />
+    <hr />
     <h2 id="clojure.tools.reader.reader-types/StringReader">StringReader</h2>
     <span id="type-type">type</span><br />
     <pre id="type-docstr"></pre>
@@ -531,7 +558,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <pre id="var-docstr">Positional factory function for class clojure.tools.reader.reader_types.IndexingPushbackReader.</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L107" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L107" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -542,7 +569,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <pre id="var-docstr">Positional factory function for class clojure.tools.reader.reader_types.InputStreamReader.</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L58" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L58" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -553,7 +580,18 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <pre id="var-docstr">Positional factory function for class clojure.tools.reader.reader_types.PushbackReader.</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L76" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L76" id="var-source">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.reader-types/-&gt;SourceLoggingPushbackReader">-&gt;SourceLoggingPushbackReader</h2>
+    <span id="var-type">function</span><br />
+    <pre id="var-usage">Usage: (-&gt;SourceLoggingPushbackReader rdr line column line-start? prev prev-column file-name source-log-frames)
+</pre>
+    <pre id="var-docstr">Positional factory function for class clojure.tools.reader.reader_types.SourceLoggingPushbackReader.</pre>
+    
+    
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L197" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -564,7 +602,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <pre id="var-docstr">Positional factory function for class clojure.tools.reader.reader_types.StringReader.</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L46" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L46" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -577,7 +615,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <pre id="var-docstr">Creates an IndexingPushbackReader from a given string or Reader</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L206" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L284" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -588,7 +626,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <pre id="var-docstr">Returns true if the reader satisfies IndexingReader</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L172" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L250" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -600,7 +638,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <pre id="var-docstr">Creates a PushbackReader from a given InputStream</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L199" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L277" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -611,7 +649,43 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <pre id="var-docstr">Creates an InputStreamReader from an InputStream</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L194" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L272" id="var-source">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.reader-types/log-source">log-source</h2>
+    <span id="var-type">macro</span><br />
+    <pre id="var-usage">Usage: (log-source reader &amp; body)
+</pre>
+    <pre id="var-docstr">If reader implements SourceLoggingReader, execute body in a source
+logging context. Otherwise, execute body, returning the result.</pre>
+    
+    
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L343" id="var-source">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.reader-types/log-source-unread">log-source-unread</h2>
+    <span id="var-type">macro</span><br />
+    <pre id="var-usage">Usage: (log-source-unread reader &amp; body)
+</pre>
+    <pre id="var-docstr">If reader implements SourceLoggingReader, execute body in a source
+logging context. Otherwise, execute body, returning the result.</pre>
+    
+    
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L352" id="var-source">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.reader-types/merge-meta">merge-meta</h2>
+    <span id="var-type">function</span><br />
+    <pre id="var-usage">Usage: (merge-meta obj m)
+</pre>
+    <pre id="var-docstr">Returns an object of the same type and value as `obj`, with its
+metadata merged over `m`.</pre>
+    
+    
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L170" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -623,7 +697,7 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
     <pre id="var-docstr">Reads a line from the reader or from *in* if no reader is specified</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L216" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L314" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -635,7 +709,20 @@ opts is a map as per clojure.tools.reader.edn/read</pre>
 If rdr is an IndexingReader, additional information about column and line number is provided</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L228" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L326" id="var-source">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.reader-types/source-logging-push-back-reader">source-logging-push-back-reader</h2>
+    <span id="var-type">function</span><br />
+    <pre id="var-usage">Usage: (source-logging-push-back-reader s-or-rdr)
+       (source-logging-push-back-reader s-or-rdr buf-len)
+       (source-logging-push-back-reader s-or-rdr buf-len file-name)
+</pre>
+    <pre id="var-docstr">Creates an IndexingPushbackReader from a given string or Reader</pre>
+    
+    
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L294" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -647,7 +734,7 @@ If rdr is an IndexingReader, additional information about column and line number
     <pre id="var-docstr">Creates a PushbackReader from a given string</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L187" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L265" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -658,7 +745,7 @@ If rdr is an IndexingReader, additional information about column and line number
     <pre id="var-docstr">Creates a StringReader from a given string</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/5aaf03e9e2ebb2ee6da04daad022ade8a065cd82/src/main/clojure/clojure/tools/reader/reader_types.clj#L182" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/f9e55071d82a443db3fac1c2feda059d0215bb90/src/main/clojure/clojure/tools/reader/reader_types.clj#L260" id="var-source">Source</a>
   </div>
 </div>
 
