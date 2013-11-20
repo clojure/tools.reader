@@ -1,4 +1,4 @@
-;:   Copyright (c) Nicola Mometto, Rich Hickey & contributors.
+;;   Copyright (c) Nicola Mometto, Rich Hickey & contributors.
 ;;   The use and distribution terms for this software are covered by the
 ;;   Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
 ;;   which can be found in the file epl-v10.html at the root of this distribution.
@@ -7,7 +7,7 @@
 ;;   You must not remove this notice, or any other, from this software.
 
 (ns ^{:doc "An EDN reader in clojure"
-     :author "Bronsa"}
+      :author "Bronsa"}
   clojure.tools.reader.edn
   (:refer-clojure :exclude [read read-line read-string char default-data-readers])
   (:use clojure.tools.reader.reader-types
@@ -330,7 +330,7 @@
         (reader-error rdr "No reader function for tag " (name tag))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;; Public API
+;; Public API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn read

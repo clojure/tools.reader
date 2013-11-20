@@ -182,7 +182,7 @@
 (defn- read-vector
   [rdr _]
   (let [[start-line start-column] (when (indexing-reader? rdr)
-                        [(get-line-number rdr) (int (dec (get-column-number rdr)))])
+                                    [(get-line-number rdr) (int (dec (get-column-number rdr)))])
         the-vector (read-delimited \] rdr true)
         [end-line end-column] (when (indexing-reader? rdr)
                                 [(get-line-number rdr) (int (get-column-number rdr))])]
@@ -394,20 +394,20 @@
     (read-symbol rdr pct)
     (let [ch (peek-char rdr)]
       (cond
-        (or (whitespace? ch)
-            (macro-terminating? ch)
-            (nil? ch))
-        (register-arg 1)
+       (or (whitespace? ch)
+           (macro-terminating? ch)
+           (nil? ch))
+       (register-arg 1)
 
-        (identical? ch \&)
-        (do (read-char rdr)
-            (register-arg -1))
+       (identical? ch \&)
+       (do (read-char rdr)
+           (register-arg -1))
 
-        :else
-        (let [n (read rdr true nil true)]
-          (if-not (integer? n)
-            (throw (IllegalStateException. "Arg literal must be %, %& or %integer"))
-            (register-arg n)))))))
+       :else
+       (let [n (read rdr true nil true)]
+         (if-not (integer? n)
+           (throw (IllegalStateException. "Arg literal must be %, %& or %integer"))
+           (register-arg n)))))))
 
 (defn- read-eval
   [rdr _]
@@ -426,7 +426,7 @@
            (.endsWith fs-name ".")
            (let [args (to-array o)]
              (-> fs-name (subs 0 (dec (count fs-name)))
-                 RT/classForName (Reflector/invokeConstructor args)))
+                RT/classForName (Reflector/invokeConstructor args)))
 
            (Compiler/namesStaticMember fs)
            (let [args (to-array o)]
@@ -474,8 +474,8 @@
     (if s
       (let [e (first s)]
         (recur (next s) (-> key-vals
-                            (conj! (key e))
-                            (conj! (val e)))))
+                          (conj! (key e))
+                          (conj! (val e)))))
       (seq (persistent! key-vals)))))
 
 (defn- register-gensym [sym]
@@ -573,7 +573,7 @@
   [rdr backquote]
   (binding [gensym-env {}]
     (-> (read rdr true nil true)
-        syntax-quote*)))
+      syntax-quote*)))
 
 (defn- macros [ch]
   (case ch
@@ -722,19 +722,19 @@
        (reader-error "Reading disallowed - *read-eval* bound to :unknown"))
      (try
        (log-source reader
-                   (let [ch (read-char reader)]
-                     (cond
-                      (whitespace? ch) (read reader eof-error? sentinel recursive?)
-                      (nil? ch) (if eof-error? (reader-error reader "EOF") sentinel)
-                      (number-literal? reader ch) (read-number reader ch)
-                      (comment-prefix? ch) (read (read-comment reader ch) eof-error? sentinel recursive?)
-                      :else (let [f (macros ch)]
-                              (if f
-                                (let [res (f reader ch)]
-                                  (if (identical? res reader)
-                                    (read reader eof-error? sentinel recursive?)
-                                    res))
-                                (read-symbol reader ch))))))
+         (let [ch (read-char reader)]
+           (cond
+            (whitespace? ch) (read reader eof-error? sentinel recursive?)
+            (nil? ch) (if eof-error? (reader-error reader "EOF") sentinel)
+            (number-literal? reader ch) (read-number reader ch)
+            (comment-prefix? ch) (read (read-comment reader ch) eof-error? sentinel recursive?)
+            :else (let [f (macros ch)]
+                    (if f
+                      (let [res (f reader ch)]
+                        (if (identical? res reader)
+                          (read reader eof-error? sentinel recursive?)
+                          res))
+                      (read-symbol reader ch))))))
        (catch Exception e
          (if (ex-info? e)
            (throw e)
