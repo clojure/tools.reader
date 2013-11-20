@@ -742,7 +742,9 @@
                            (merge {:type :reader-exception}
                                   (if (indexing-reader? reader)
                                     {:line (get-line-number reader)
-                                     :column (get-column-number reader)}))
+                                     :column (get-column-number reader)})
+                                  (when-let [file-name (get-file-name reader)]
+                                    {:file file-name}))
                            e)))))))
 
 (defn read-string
