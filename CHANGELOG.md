@@ -1,8 +1,10 @@
 Changelog
 ========================================
-
+* Release 0.8.0 on Nov 20, 2013
+  * Added SourceLoggingPushbackReader (#TRDR-9)
+  * Added end-line/column-line metadata info (#TRDR-10)
 * Release 0.7.10 on Oct 24, 2013
-  * Add \*alias-map\*
+  * Added \*alias-map\*
 * Release 0.7.9 on Oct 11, 2013
   * Fixed \r\n handling
 * Release 0.7.8 on Sep 27, 2013
@@ -37,13 +39,13 @@ Changelog
 * Release 0.6.5 on Feb 09, 2013
   * Fixed reading \@ \~ and \`
 * Release 0.6.4 on Feb 08, 2013
-  * Fix Unicode char reading
-  * Add \*default-data-reader-fn\* support
-  * Add an EDN-only reader
-  * Disable record literals reading when \*read-eval\* is bound to false
+  * Fixed Unicode char reading
+  * Added \*default-data-reader-fn\* support
+  * Added an EDN-only reader
+  * Disabled record literals reading when \*read-eval\* is bound to false
   * Made \% a symbol constituent char
   * Made the EDN reader API match the clojure.edn one
 * Release 0.6.2 on Feb 04, 2013
-  * Add line/column metadata on vectors, maps and symbols
+  * Added line/column metadata on vectors, maps and symbols
 * Release 0.6.0 on Feb 03, 2013
   * Initial release.
