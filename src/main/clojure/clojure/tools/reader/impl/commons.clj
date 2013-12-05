@@ -36,7 +36,7 @@
 
 (defn skip-line
   "Advances the reader to the end of a line. Returns the reader"
-  [reader _]
+  [reader]
   (loop []
     (when-not (newline? (read-char reader))
       (recur)))
@@ -119,7 +119,7 @@
 
 (defn read-comment
   [rdr & _]
-  (skip-line rdr _))
+  (skip-line rdr))
 
 (defn throwing-reader
   [msg]

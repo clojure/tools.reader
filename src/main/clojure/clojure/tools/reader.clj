@@ -721,20 +721,21 @@
      (when (= :unknown *read-eval*)
        (reader-error "Reading disallowed - *read-eval* bound to :unknown"))
      (try
-       (log-source reader
-         (let [ch (read-char reader)]
-           (cond
-            (whitespace? ch) (read reader eof-error? sentinel recursive?)
-            (nil? ch) (if eof-error? (reader-error reader "EOF") sentinel)
-            (number-literal? reader ch) (read-number reader ch)
-            (comment-prefix? ch) (read (read-comment reader ch) eof-error? sentinel recursive?)
-            :else (let [f (macros ch)]
-                    (if f
-                      (let [res (f reader ch)]
-                        (if (identical? res reader)
-                          (read reader eof-error? sentinel recursive?)
-                          res))
-                      (read-symbol reader ch))))))
+       (loop []
+         (log-source reader
+           (let [ch (read-char reader)]
+             (cond
+              (whitespace? ch) (recur)
+              (nil? ch) (if eof-error? (reader-error reader "EOF") sentinel)
+              (number-literal? reader ch) (read-number reader ch)
+              (comment-prefix? ch) (do (read-comment reader) (recur))
+              :else (let [f (macros ch)]
+                      (if f
+                        (let [res (f reader ch)]
+                          (if (identical? res reader)
+                            (recur)
+                            res))
+                        (read-symbol reader ch)))))))
        (catch Exception e
          (if (ex-info? e)
            (throw e)

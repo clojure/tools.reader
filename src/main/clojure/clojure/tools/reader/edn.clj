@@ -357,19 +357,20 @@
        (read reader eof-error? eof opts)))
   ([reader eof-error? eof opts]
      (try
-       (let [ch (read-char reader)]
-         (cond
-          (whitespace? ch) (read opts reader)
-          (nil? ch) (if eof-error? (reader-error reader "EOF") eof)
-          (number-literal? reader ch) (read-number reader ch opts)
-          (comment-prefix? ch) (read opts (read-comment reader ch opts))
-          :else (let [f (macros ch)]
-                  (if f
-                    (let [res (f reader ch opts)]
-                      (if (identical? res reader)
-                        (read opts reader)
-                        res))
-                    (read-symbol reader ch)))))
+       (loop []
+         (let [ch (read-char reader)]
+           (cond
+            (whitespace? ch) (recur)
+            (nil? ch) (if eof-error? (reader-error reader "EOF") eof)
+            (number-literal? reader ch) (read-number reader ch opts)
+            (comment-prefix? ch) (do (read-comment reader) (recur))
+            :else (let [f (macros ch)]
+                    (if f
+                      (let [res (f reader ch opts)]
+                        (if (identical? res reader)
+                          (recur)
+                          res))
+                      (read-symbol reader ch))))))
        (catch Exception e
          (if (ex-info? e)
            (throw e)
