@@ -1,5 +1,7 @@
 Changelog
 ========================================
+* Release 0.8.1 on Dec 05, 2013
+  * Fixed possible stack overflow in read (#TRDR-11)
 * Release 0.8.0 on Nov 20, 2013
   * Added SourceLoggingPushbackReader (#TRDR-9)
   * Added end-line/column-line metadata info (#TRDR-10)
