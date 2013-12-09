@@ -738,14 +738,23 @@
                         (read-symbol reader ch)))))))
        (catch Exception e
          (if (ex-info? e)
-           (throw e)
+           (let [d (ex-data e)]
+             (if (= :reader-exception (:type d))
+               (throw e)
+               (throw (ex-info (.getMessage e)
+                               (merge {:type :reader-exception}
+                                      d
+                                      (if (indexing-reader? reader)
+                                        {:line   (get-line-number reader)
+                                         :column (get-column-number reader)
+                                         :file   (get-file-name reader)}))
+                               e))))
            (throw (ex-info (.getMessage e)
                            (merge {:type :reader-exception}
                                   (if (indexing-reader? reader)
-                                    {:line (get-line-number reader)
-                                     :column (get-column-number reader)})
-                                  (when-let [file-name (get-file-name reader)]
-                                    {:file file-name}))
+                                    {:line   (get-line-number reader)
+                                     :column (get-column-number reader)
+                                     :file   (get-file-name reader)}))
                            e)))))))
 
 (defn read-string

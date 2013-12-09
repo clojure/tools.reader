@@ -1,5 +1,7 @@
 Changelog
 ========================================
+* Release 0.8.2 on ???
+  * Richer error reporting
 * Release 0.8.1 on Dec 05, 2013
   * Fixed possible stack overflow in read (#TRDR-11)
 * Release 0.8.0 on Nov 20, 2013
