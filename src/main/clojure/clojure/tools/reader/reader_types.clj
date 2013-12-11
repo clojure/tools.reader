@@ -317,7 +317,8 @@ logging frames. Called when pushing a character back."
   ([rdr]
      (if (or (instance? LineNumberingPushbackReader rdr)
              (instance? BufferedReader rdr))
-       (clojure.core/read-line rdr)
+       (binding [*in* rdr]
+         (clojure.core/read-line))
        (loop [c (read-char rdr) s (StringBuilder.)]
          (if (newline? c)
            (str s)
