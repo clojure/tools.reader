@@ -1,6 +1,7 @@
 Changelog
 ========================================
-* Release 0.8.2 on ???
+* Release 0.8.2 on Dec 11, 2013
+  * Fixed read-line implementation fallbacking to c.c/read-line
   * Richer error reporting
 * Release 0.8.1 on Dec 05, 2013
   * Fixed possible stack overflow in read (#TRDR-11)

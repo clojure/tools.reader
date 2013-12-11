@@ -29,7 +29,7 @@ If using clojure-1.3.0 and needing access to ex-data, use `clojure.tools.reader.
 Releases and Dependency Information
 ========================================
 
-Latest stable release: 0.8.1
+Latest stable release: 0.8.2
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
@@ -38,7 +38,7 @@ Latest stable release: 0.8.1
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "0.8.1"]
+[org.clojure/tools.reader "0.8.2"]
 ```
 [Maven](http://maven.apache.org/) dependency information:
 
@@ -46,7 +46,7 @@ Latest stable release: 0.8.1
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>0.8.1</version>
+  <version>0.8.2</version>
 </dependency>
 ```
 
