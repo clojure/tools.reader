@@ -26,6 +26,15 @@ Moreover, by using reader types from `clojure.tools.reader.reader-types`, if usi
 Note that it uses `ex-info` which is available on `clojure.core` only from clojure-1.4.0.
 If using clojure-1.3.0 and needing access to ex-data, use `clojure.tools.reader.impl.utils/ex-data`
 
+YourKit
+========================================
+YourKit has given an open source license for their profiler, greatly simplifying the profiling of tools.reader performance.
+
+YourKit is kindly supporting open source projects with its full-featured Java Profiler. YourKit, LLC is the creator of innovative and intelligent tools for profiling Java and .NET applications. Take a look at YourKit's leading software products:
+
+* <a href="http://www.yourkit.com/java/profiler/index.jsp">YourKit Java Profiler</a> and
+* <a href="http://www.yourkit.com/.net/profiler/index.jsp">YourKit .NET Profiler</a>.
+
 Releases and Dependency Information
 ========================================
 
