@@ -1,5 +1,7 @@
 Changelog
 ========================================
+* Release 0.8.3 on Dec 20, 2013
+  * Fixed a typo that caused syntax-quote to keep unqualified the classes in static calls
 * Release 0.8.2 on Dec 11, 2013
   * Fixed read-line implementation fallbacking to c.c/read-line
   * Richer error reporting
