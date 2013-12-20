@@ -528,7 +528,7 @@
           (if (namespace form)
             (let [maybe-class ((ns-map *ns*)
                                (symbol (namespace form)))]
-              (if (class? class)
+              (if (class? maybe-class)
                 (symbol (.getName ^Class maybe-class) (name form))
                 (resolve-symbol form)))
             (let [sym (name form)]
