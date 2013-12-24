@@ -62,8 +62,9 @@
   [ch]
   (identical? \;  ch))
 
-(defn newline? [c]
+(defn newline?
   "Checks whether the character is a newline"
+  [c]
   (or (identical? \newline c)
       (nil? c)))
 
