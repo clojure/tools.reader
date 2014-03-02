@@ -6,21 +6,25 @@ There are four public namespaces:
   * Protocols:
      * [Reader](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/Reader) ([read-char](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/read-char), [peek-char](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/peek-char))
      * [IPushbackReader](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/IPushbackReader) ([unread](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/unread))
-     * [IndexingReader](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/IndexingReader) ([get-line-number](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/get-line-number), [get-column-number](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/get-column-number))
+     * [IndexingReader](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/IndexingReader) ([get-line-number](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/get-line-number), [get-column-number](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/get-column-number), [get-file-name](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/get-file-name))
   * Types:
      * [StringReader](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/StringReader)
      * [PushbackReader](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/PushbackReader)
      * [IndexingPushbackReader](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/IndexingPushbackReader)
      * [InputStreamReader](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/InputStreamReader)
+     * [SourceLoggingPushbackReader](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/SourceLoggingPushbackReader)
   * Types Constructor Functions:
      * [string-reader](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/string-reader)
      * [string-push-back-reader](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/string-push-back-reader)
      * [indexing-push-back-reader](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/indexing-push-back-reader)
      * [input-stream-reader](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/input-stream-reader)
      * [input-stream-push-back-reader](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/input-stream-push-back-reader)
+     * [source-logging-push-back-reader](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/source-logging-push-back-reader)
   * Functions:
      * [read-line](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/read-line)
      * [reader-error](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.reader-types/reader-error)
+  * Macros:
+     * [log-source](http://clojure.github.io/tools.reader/index.html#clojure.tools.reader.reader-types/log-source)
 * [clojure.tools.reader.edn](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.edn) offers a feature-complete EDN reader, whose API matches clojure.edn's one, those functions are *safe*.
   * Functions:
      * [read](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader.edn/read)
@@ -30,7 +34,7 @@ There are four public namespaces:
      * [read](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader/read)
      * [read-string](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader/read-string)
   * Macros:
-     * syntax-quote
+     * [syntax-quote](http://clojure.github.io/tools.reader/index.html#clojure.tools.reader/syntax-quote)
   * Vars:
      * [\*read-eval\*](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader/*read-eval*)
      * [\*data-readers\*](http://clojure.github.com/tools.reader/index.html#clojure.tools.reader/*data-readers*)
