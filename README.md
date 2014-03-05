@@ -180,6 +180,6 @@ Except for this special case, `read` throws an exception if a symbol contains mo
 
 ## License
 
-Copyright © Nicola Mometto, Rich Hickey & contributors.
+Copyright © 2013-2014 Nicola Mometto, Rich Hickey & contributors.
 
 Licensed under the EPL. (See the file epl.html.)
