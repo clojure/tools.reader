@@ -170,17 +170,17 @@
         the-list (read-delimited \) rdr true)
         [end-line end-column] (when (indexing-reader? rdr)
                                 [(get-line-number rdr) (int (get-column-number rdr))])]
-    (if (empty? the-list)
-      '()
-      (with-meta (clojure.lang.PersistentList/create the-list)
-        (when start-line
-          (merge
-           (when-let [file (get-file-name rdr)]
-             {:file file})
-           {:line start-line
-            :column start-column
-            :end-line end-line
-            :end-column end-column}))))))
+    (with-meta (if (empty? the-list)
+                 '()
+                 (clojure.lang.PersistentList/create the-list))
+      (when start-line
+        (merge
+         (when-let [file (get-file-name rdr)]
+           {:file file})
+         {:line start-line
+          :column start-column
+          :end-line end-line
+          :end-column end-column})))))
 
 (defn- read-vector
   [rdr _]
@@ -206,7 +206,7 @@
         the-map (read-delimited \} rdr true)
         map-count (count the-map)
         [end-line end-column] (when (indexing-reader? rdr)
-                                [(get-line-number rdr) (int (dec (get-column-number rdr)))])]
+                                [(get-line-number rdr) (int (get-column-number rdr))])]
     (when (odd? map-count)
       (reader-error rdr "Map literal must contain an even number of forms"))
     (with-meta
@@ -294,7 +294,7 @@
                    {:line line
                     :column column
                     :end-line (get-line-number rdr)
-                    :end-column (int (get-column-number rdr))}))))
+                    :end-column (int (inc (get-column-number rdr)))}))))
             (reader-error rdr "Invalid token: " token))))))
 
 (def ^:dynamic *alias-map*
