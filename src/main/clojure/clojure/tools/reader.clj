@@ -174,10 +174,13 @@
       '()
       (with-meta (clojure.lang.PersistentList/create the-list)
         (when start-line
-          {:line start-line
-           :column start-column
-           :end-line end-line
-           :end-column end-column})))))
+          (merge
+           (when-let [file (get-file-name rdr)]
+             {:file file})
+           {:line start-line
+            :column start-column
+            :end-line end-line
+            :end-column end-column}))))))
 
 (defn- read-vector
   [rdr _]
@@ -188,10 +191,13 @@
                                 [(get-line-number rdr) (int (get-column-number rdr))])]
     (with-meta the-vector
       (when start-line
-        {:line start-line
-         :column start-column
-         :end-line end-line
-         :end-column end-column}))))
+        (merge
+         (when-let [file (get-file-name rdr)]
+           {:file file})
+         {:line start-line
+          :column start-column
+          :end-line end-line
+          :end-column end-column})))))
 
 (defn- read-map
   [rdr _]
@@ -208,10 +214,13 @@
         {}
         (RT/map (to-array the-map)))
       (when start-line
-        {:line start-line
-         :column start-column
-         :end-line end-line
-         :end-column end-column}))))
+        (merge
+         (when-let [file (get-file-name rdr)]
+           {:file file})
+         {:line start-line
+          :column start-column
+          :end-line end-line
+          :end-column end-column})))))
 
 (defn- read-number
   [reader initch]
@@ -279,9 +288,13 @@
         (or (when-let [p (parse-symbol token)]
               (with-meta (symbol (p 0) (p 1))
                 (when line
-                  {:line line :column column
-                   :end-line (get-line-number rdr)
-                   :end-column (int (get-column-number rdr))})))
+                  (merge
+                   (when-let [file (get-file-name rdr)]
+                     {:file file})
+                   {:line line
+                    :column column
+                    :end-line (get-line-number rdr)
+                    :end-column (int (get-column-number rdr))}))))
             (reader-error rdr "Invalid token: " token))))))
 
 (def ^:dynamic *alias-map*
@@ -331,10 +344,8 @@
         (reader-error rdr "Metadata must be Symbol, Keyword, String or Map"))
       (let [o (read rdr true nil true)]
         (if (instance? IMeta o)
-          (let [m (if (and line
-                           (seq? o))
-                    (assoc m :line line
-                           :column column)
+          (let [m (if (and line (seq? o))
+                    (assoc m :line line :column column)
                     m)]
             (if (instance? IObj o)
               (with-meta o (merge (meta o) m))
@@ -506,7 +517,7 @@
 
 (defn- add-meta [form ret]
   (if (and (instance? IObj form)
-           (dissoc (meta form) :line :column))
+           (dissoc (meta form) :line :column :end-line :end-column :file))
     (list 'clojure.core/with-meta ret (syntax-quote* (meta form)))
     ret))
 
