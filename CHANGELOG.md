@@ -1,5 +1,9 @@
 Changelog
 ========================================
+* Release 0.8.4 on Apr 04, 2014
+  * Fixed misplached docstring
+  * Added file metadata info
+  * Fixed end-column offset
 * Release 0.8.3 on Dec 20, 2013
   * Fixed a typo that caused syntax-quote to keep unqualified the classes in static calls
 * Release 0.8.2 on Dec 11, 2013
