@@ -1,7 +1,7 @@
 Changelog
 ========================================
 * Release 0.8.4 on Apr 04, 2014
-  * Fixed misplached docstring
+  * Fixed misplaced docstring
   * Added file metadata info
   * Fixed end-column offset
 * Release 0.8.3 on Dec 20, 2013
