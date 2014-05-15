@@ -354,7 +354,20 @@
 
 (defn- read-set
   [rdr _]
-  (PersistentHashSet/createWithCheck (read-delimited \} rdr true)))
+  (let [[start-line start-column] (when (indexing-reader? rdr)
+                                    [(get-line-number rdr) (int (dec (get-column-number rdr)))])
+        the-set (PersistentHashSet/createWithCheck (read-delimited \} rdr true))
+        [end-line end-column] (when (indexing-reader? rdr)
+                                [(get-line-number rdr) (int (get-column-number rdr))])]
+    (with-meta the-set
+      (when start-line
+        (merge
+         (when-let [file (get-file-name rdr)]
+           {:file file})
+         {:line start-line
+          :column start-column
+          :end-line end-line
+          :end-column end-column})))))
 
 (defn- read-discard
   [rdr _]
