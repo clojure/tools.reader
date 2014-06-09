@@ -289,8 +289,8 @@
 
 (defn- read-discard
   [rdr _ opts]
-  (read rdr true nil opts)
-  rdr)
+  (doto rdr
+    (read true nil true)))
 
 (defn- macros [ch]
   (case ch

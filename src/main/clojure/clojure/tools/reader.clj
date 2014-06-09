@@ -371,8 +371,8 @@
 
 (defn- read-discard
   [rdr _]
-  (read rdr true nil true)
-  rdr)
+  (doto rdr
+    (read true nil true)))
 
 (def ^:private ^:dynamic arg-env)
 
