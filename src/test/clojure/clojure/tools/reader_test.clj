@@ -31,6 +31,7 @@
 (deftest read-syntax-quote
   (is (= '`user/foo (binding [*ns* (the-ns 'user)]
                       (read-string "`foo"))))
+  (is (= () (read-string "`(~@[])")))
   (is (= '`+ (read-string "`+")))
   (is (= '`foo/bar (read-string "`foo/bar")))
   (is (= '`1 (read-string "`1")))

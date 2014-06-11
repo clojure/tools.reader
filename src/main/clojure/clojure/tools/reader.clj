@@ -535,7 +535,7 @@
     ret))
 
 (defn- syntax-quote-coll [type coll]
-  (let [res (list 'clojure.core/seq
+  (let [res (list 'clojure.core/sequence
                   (cons 'clojure.core/concat
                         (expand-list coll)))]
     (if type
