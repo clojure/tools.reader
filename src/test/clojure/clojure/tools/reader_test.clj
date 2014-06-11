@@ -31,11 +31,11 @@
 (deftest read-syntax-quote
   (is (= '`user/foo (binding [*ns* (the-ns 'user)]
                       (read-string "`foo"))))
-  (is (= () (read-string "`(~@[])")))
+  (is (= () (eval (read-string "`(~@[])"))))
   (is (= '`+ (read-string "`+")))
   (is (= '`foo/bar (read-string "`foo/bar")))
   (is (= '`1 (read-string "`1")))
-  (is (= '`(1 (~2 ~@(3))) (read-string "`(1 (~2 ~@(3)))"))))
+  (is (= `(1 (~2 ~@'(3))) (eval (read-string "`(1 (~2 ~@'(3)))")))))
 
 (deftest read-deref
   (is (= '@foo (read-string "@foo"))))
