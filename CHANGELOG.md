@@ -1,5 +1,8 @@
 Changelog
 ========================================
+* Release 0.8.5 on Jun 12, 2014
+  * Attach source info on literal sets too
+  * Fix how syntax-quoting handles splicing empty seqs into a list
 * Release 0.8.4 on Apr 04, 2014
   * Fixed misplaced docstring
   * Added file metadata info
