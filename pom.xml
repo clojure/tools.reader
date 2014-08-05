@@ -60,7 +60,7 @@
   <scm>
     <connection>scm:git:git://github.com/clojure/tools.reader.git</connection>
     <developerConnection>scm:git:git://github.com/clojure/tools.reader.git</developerConnection>
-    <url>git@github.com/clojure/tools.reader.git</url>
+    <url>http://github.com/clojure/tools.reader</url>
     <tag>HEAD</tag>
   </scm>
 </project>
