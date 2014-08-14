@@ -28,6 +28,7 @@
          ^:dynamic *read-eval*
          ^:dynamic *data-readers*
          ^:dynamic *default-data-reader-fn*
+         ^:dynamic ^:private gensym-env
          default-data-readers)
 
 (defn- macro-terminating? [ch]
@@ -199,6 +200,7 @@
           :end-line end-line
           :end-column end-column})))))
 
+(defrecord SyntaxQuotedMap [val])
 (defn- read-map
   [rdr _]
   (let [[start-line start-column] (when (indexing-reader? rdr)
@@ -207,12 +209,17 @@
         map-count (count the-map)
         [end-line end-column] (when (indexing-reader? rdr)
                                 [(get-line-number rdr) (int (get-column-number rdr))])]
-    (when (odd? map-count)
+    (when (and (odd? map-count)
+               (or (not gensym-env)
+                   (not-any? #(= 'clojure.core/unquote-splicing (first %))
+                           (filter seq? the-map))))
       (reader-error rdr "Map literal must contain an even number of forms"))
     (with-meta
       (if (zero? map-count)
         {}
-        (RT/map (to-array the-map)))
+        (if gensym-env
+          (SyntaxQuotedMap. the-map)
+          (RT/map (to-array the-map))))
       (when start-line
         (merge
          (when-let [file (get-file-name rdr)]
@@ -352,11 +359,14 @@
               (reset-meta! o m)))
           (reader-error rdr "Metadata can only be applied to IMetas"))))))
 
+(defrecord SyntaxQuotedSet [val])
 (defn- read-set
   [rdr _]
   (let [[start-line start-column] (when (indexing-reader? rdr)
                                     [(get-line-number rdr) (int (dec (get-column-number rdr)))])
-        the-set (PersistentHashSet/createWithCheck (read-delimited \} rdr true))
+        the-set (if gensym-env
+                  (SyntaxQuotedSet. (read-delimited \} rdr true))
+                  (PersistentHashSet/createWithCheck (read-delimited \} rdr true)))
         [end-line end-column] (when (indexing-reader? rdr)
                                 [(get-line-number rdr) (int (get-column-number rdr))])]
     (with-meta the-set
@@ -467,10 +477,11 @@
 
 (defn- read-unquote
   [rdr comma]
-  (if-let [ch (peek-char rdr)]
-    (if (identical? \@ ch)
-      ((wrapping-reader 'clojure.core/unquote-splicing) (doto rdr read-char) \@)
-      ((wrapping-reader 'clojure.core/unquote) rdr \~))))
+  (binding [gensym-env nil]
+    (if-let [ch (peek-char rdr)]
+      (if (identical? \@ ch)
+        ((wrapping-reader 'clojure.core/unquote-splicing) (doto rdr read-char) \@)
+        ((wrapping-reader 'clojure.core/unquote) rdr \~)))))
 
 (declare syntax-quote*)
 (defn- unquote-splicing? [form]
@@ -573,10 +584,14 @@
 
     (coll? form)
     (cond
+     (instance? SyntaxQuotedMap form) (syntax-quote-coll 'clojure.core/hash-map (:val form))
+     (instance? SyntaxQuotedSet form) (syntax-quote-coll 'clojure.core/hash-set (:val form))
+
      (instance? IRecord form) form
      (map? form) (syntax-quote-coll 'clojure.core/hash-map (flatten-map form))
      (vector? form) (syntax-quote-coll 'clojure.core/vector form)
      (set? form) (syntax-quote-coll 'clojure.core/hash-set form)
+
      (or (seq? form) (list? form))
      (let [seq (seq form)]
        (if seq
