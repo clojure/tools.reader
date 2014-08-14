@@ -49,8 +49,14 @@ namespace.
     <a href="#" style="margin-top: 3px;"></a>
     
   </div><div style="margin-left: 1em;" class="toc-section">
-    <a href="#" style="margin-top: 3px;"></a>
-    
+    <a href="#type-section" style="margin-top: 3px;">Types</a>
+    <div style="margin-left: 1em;" class="toc-entry">
+      <a class="toc-entry-anchor" href="#clojure.tools.reader/SyntaxQuotedMap">SyntaxQuotedMap</a>
+      
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a class="toc-entry-anchor" href="#clojure.tools.reader/SyntaxQuotedSet">SyntaxQuotedSet</a>
+      
+    </div>
   </div><div style="margin-left: 1em;" class="toc-section">
     <a href="#var-section" style="margin-top: 3px;">Vars and Functions</a>
     <div style="margin-left: 1em;" class="toc-entry">
@@ -66,7 +72,19 @@ namespace.
       <a class="toc-entry-anchor" href="#clojure.tools.reader/*read-eval*">*read-eval*</a>
       
     </div><div style="margin-left: 1em;" class="toc-entry">
+      <a class="toc-entry-anchor" href="#clojure.tools.reader/-&gt;SyntaxQuotedMap">-&gt;SyntaxQuotedMap</a>
+      
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a class="toc-entry-anchor" href="#clojure.tools.reader/-&gt;SyntaxQuotedSet">-&gt;SyntaxQuotedSet</a>
+      
+    </div><div style="margin-left: 1em;" class="toc-entry">
       <a class="toc-entry-anchor" href="#clojure.tools.reader/default-data-readers">default-data-readers</a>
+      
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a class="toc-entry-anchor" href="#clojure.tools.reader/map-&gt;SyntaxQuotedMap">map-&gt;SyntaxQuotedMap</a>
+      
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a class="toc-entry-anchor" href="#clojure.tools.reader/map-&gt;SyntaxQuotedSet">map-&gt;SyntaxQuotedSet</a>
       
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a class="toc-entry-anchor" href="#clojure.tools.reader/read">read</a>
@@ -194,7 +212,29 @@ namespace.
 <br />
 
 
-
+<div id="type-section">
+  <p></p>
+  <h2>Types</h2>
+  <div id="type-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader/SyntaxQuotedMap">SyntaxQuotedMap</h2>
+    <span id="type-type">record</span><br />
+    <pre id="type-docstr"></pre>
+    Fields: <span id="type-fields">[val]</span><br />
+    Protocols: <span id="type-protocols"></span><br />
+    Interfaces: <span id="type-interfaces">clojure.lang.IHashEq, clojure.lang.IKeywordLookup, clojure.lang.ILookup, clojure.lang.IObj, clojure.lang.IPersistentMap, java.io.Serializable, java.util.Map</span><br />
+  </div><div id="type-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader/SyntaxQuotedSet">SyntaxQuotedSet</h2>
+    <span id="type-type">record</span><br />
+    <pre id="type-docstr"></pre>
+    Fields: <span id="type-fields">[val]</span><br />
+    Protocols: <span id="type-protocols"></span><br />
+    Interfaces: <span id="type-interfaces">clojure.lang.IHashEq, clojure.lang.IKeywordLookup, clojure.lang.ILookup, clojure.lang.IObj, clojure.lang.IPersistentMap, java.io.Serializable, java.util.Map</span><br />
+  </div>
+</div>
 <div id="var-section">
   <p></p>
   <h2>Public Variables and Functions</h2>
@@ -210,7 +250,7 @@ ns aliases instead of (ns-aliases *ns*).
 Defaults to nil</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/bb744f4e5513cea57d85638c83bc193a2390f9b9/src/main/clojure/clojure/tools/reader.clj#L300" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/0d6d3024566447b9694f97a31e8179842bcad144/src/main/clojure/clojure/tools/reader.clj#L307" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -223,7 +263,7 @@ Default reader tags are defined in clojure.tools.reader/default-data-readers
 and may be overridden by binding this Var.</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/bb744f4e5513cea57d85638c83bc193a2390f9b9/src/main/clojure/clojure/tools/reader.clj#L708" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/0d6d3024566447b9694f97a31e8179842bcad144/src/main/clojure/clojure/tools/reader.clj#L723" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -236,7 +276,7 @@ If *default-data-reader-fn* is nil (the default value), an exception
 will be thrown for the unknown tag.</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/bb744f4e5513cea57d85638c83bc193a2390f9b9/src/main/clojure/clojure/tools/reader.clj#L715" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/0d6d3024566447b9694f97a31e8179842bcad144/src/main/clojure/clojure/tools/reader.clj#L730" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -260,7 +300,29 @@ can be a useful diagnostic tool to ensure that all of your reads
 occur in considered contexts.</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/bb744f4e5513cea57d85638c83bc193a2390f9b9/src/main/clojure/clojure/tools/reader.clj#L690" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/0d6d3024566447b9694f97a31e8179842bcad144/src/main/clojure/clojure/tools/reader.clj#L705" id="var-source">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader/-&gt;SyntaxQuotedMap">-&gt;SyntaxQuotedMap</h2>
+    <span id="var-type">function</span><br />
+    <pre id="var-usage">Usage: (-&gt;SyntaxQuotedMap val)
+</pre>
+    <pre id="var-docstr">Positional factory function for class clojure.tools.reader.SyntaxQuotedMap.</pre>
+    
+    
+    <a href="https://github.com/clojure/tools.reader/blob/0d6d3024566447b9694f97a31e8179842bcad144/src/main/clojure/clojure/tools/reader.clj#L203" id="var-source">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader/-&gt;SyntaxQuotedSet">-&gt;SyntaxQuotedSet</h2>
+    <span id="var-type">function</span><br />
+    <pre id="var-usage">Usage: (-&gt;SyntaxQuotedSet val)
+</pre>
+    <pre id="var-docstr">Positional factory function for class clojure.tools.reader.SyntaxQuotedSet.</pre>
+    
+    
+    <a href="https://github.com/clojure/tools.reader/blob/0d6d3024566447b9694f97a31e8179842bcad144/src/main/clojure/clojure/tools/reader.clj#L362" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -271,7 +333,29 @@ occur in considered contexts.</pre>
 May be overridden by binding *data-readers*</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/bb744f4e5513cea57d85638c83bc193a2390f9b9/src/main/clojure/clojure/tools/reader.clj#L722" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/0d6d3024566447b9694f97a31e8179842bcad144/src/main/clojure/clojure/tools/reader.clj#L737" id="var-source">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader/map-&gt;SyntaxQuotedMap">map-&gt;SyntaxQuotedMap</h2>
+    <span id="var-type">function</span><br />
+    <pre id="var-usage">Usage: (map-&gt;SyntaxQuotedMap m#)
+</pre>
+    <pre id="var-docstr">Factory function for class clojure.tools.reader.SyntaxQuotedMap, taking a map of keywords to field values.</pre>
+    
+    
+    <a href="https://github.com/clojure/tools.reader/blob/0d6d3024566447b9694f97a31e8179842bcad144/src/main/clojure/clojure/tools/reader.clj#L203" id="var-source">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader/map-&gt;SyntaxQuotedSet">map-&gt;SyntaxQuotedSet</h2>
+    <span id="var-type">function</span><br />
+    <pre id="var-usage">Usage: (map-&gt;SyntaxQuotedSet m#)
+</pre>
+    <pre id="var-docstr">Factory function for class clojure.tools.reader.SyntaxQuotedSet, taking a map of keywords to field values.</pre>
+    
+    
+    <a href="https://github.com/clojure/tools.reader/blob/0d6d3024566447b9694f97a31e8179842bcad144/src/main/clojure/clojure/tools/reader.clj#L362" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -296,7 +380,7 @@ Note that the function signature of clojure.tools.reader/read and
 clojure.tools.reader.edn/read is not the same for eof-handling</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/bb744f4e5513cea57d85638c83bc193a2390f9b9/src/main/clojure/clojure/tools/reader.clj#L728" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/0d6d3024566447b9694f97a31e8179842bcad144/src/main/clojure/clojure/tools/reader.clj#L743" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -317,7 +401,7 @@ Note that the function signature of clojure.tools.reader/read-string and
 clojure.tools.reader.edn/read-string is not the same for eof-handling</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/bb744f4e5513cea57d85638c83bc193a2390f9b9/src/main/clojure/clojure/tools/reader.clj#L784" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/0d6d3024566447b9694f97a31e8179842bcad144/src/main/clojure/clojure/tools/reader.clj#L799" id="var-source">Source</a>
   </div><div id="var-entry">
     <br />
     <hr />
@@ -328,7 +412,7 @@ clojure.tools.reader.edn/read-string is not the same for eof-handling</pre>
     <pre id="var-docstr">Macro equivalent to the syntax-quote reader macro (`).</pre>
     
     
-    <a href="https://github.com/clojure/tools.reader/blob/bb744f4e5513cea57d85638c83bc193a2390f9b9/src/main/clojure/clojure/tools/reader.clj#L800" id="var-source">Source</a>
+    <a href="https://github.com/clojure/tools.reader/blob/0d6d3024566447b9694f97a31e8179842bcad144/src/main/clojure/clojure/tools/reader.clj#L815" id="var-source">Source</a>
   </div>
 </div>
 <br />
