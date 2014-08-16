@@ -1,5 +1,8 @@
 Changelog
 ========================================
+* Release 0.8.6 on Aug 16, 2014
+  * Allow for `{~@foo} and `#{~(gensym) ~(gensym)}
+  * Performance enhancements in the code emitted by syntax-quote
 * Release 0.8.5 on Jun 12, 2014
   * Attach source info on literal sets too
   * Fix how syntax-quoting handles splicing empty seqs into a list
