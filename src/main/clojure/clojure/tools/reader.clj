@@ -594,7 +594,7 @@
      (instance? SyntaxQuotedSet form) (syntax-quote-coll 'clojure.core/hash-set (:val form))
 
      (instance? IRecord form) form
-     (vector? form) (syntax-quote-coll 'clojure.core/vector form)
+     (vector? form) (list 'clojure.core/vec (syntax-quote-coll nil form))
 
      (or (seq? form) (list? form))
      (let [seq (seq form)]
