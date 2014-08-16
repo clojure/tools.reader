@@ -18,7 +18,8 @@
   (:import (clojure.lang PersistentHashSet IMeta
                          RT Symbol Reflector Var IObj
                          PersistentVector IRecord Namespace)
-           java.lang.reflect.Constructor))
+           java.lang.reflect.Constructor
+           java.util.regex.Pattern))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; helpers
@@ -602,7 +603,10 @@
     (or (keyword? form)
         (number? form)
         (char? form)
-        (string? form))
+        (string? form)
+        (nil? form)
+        (instance? Boolean form)
+        (instance? Pattern form))
     form
 
     :else (list 'quote form))
