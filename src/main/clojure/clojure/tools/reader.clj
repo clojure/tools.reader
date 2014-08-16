@@ -448,31 +448,7 @@
   [rdr _]
   (when-not *read-eval*
     (reader-error rdr "#= not allowed when *read-eval* is false"))
-  (let [o (read rdr true nil true)]
-    (if (symbol? o)
-      (RT/classForName (str ^Symbol o))
-      (if (list? o)
-        (let [fs (first o)
-              o (rest o)
-              fs-name (name fs)]
-          (cond
-           (= fs 'var) (let [vs (first o)]
-                         (RT/var (namespace vs) (name vs)))
-           (.endsWith fs-name ".")
-           (let [args (to-array o)]
-             (-> fs-name (subs 0 (dec (count fs-name)))
-                RT/classForName (Reflector/invokeConstructor args)))
-
-           (Compiler/namesStaticMember fs)
-           (let [args (to-array o)]
-             (Reflector/invokeStaticMethod (namespace fs) fs-name args))
-
-           :else
-           (let [v (Compiler/maybeResolveIn *ns* fs)]
-             (if (var? v)
-               (apply v o)
-               (reader-error rdr "Can't resolve " fs)))))
-        (throw (IllegalArgumentException. "Unsupported #= form"))))))
+  (eval (read rdr true nil true)))
 
 (def ^:private ^:dynamic gensym-env nil)
 
