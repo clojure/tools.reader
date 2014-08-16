@@ -554,6 +554,11 @@
       (list 'clojure.core/apply type res)
       res)))
 
+(defn map-func [coll]
+  (if (>= (count (:val coll)) 16)
+    'clojure.core/hash-map
+    'clojure.core/array-map))
+
 (defn- syntax-quote* [form]
   (->>
    (cond
@@ -585,13 +590,11 @@
 
     (coll? form)
     (cond
-     (instance? SyntaxQuotedMap form) (syntax-quote-coll 'clojure.core/hash-map (:val form))
+     (instance? SyntaxQuotedMap form) (syntax-quote-coll (map-func form) (:val form))
      (instance? SyntaxQuotedSet form) (syntax-quote-coll 'clojure.core/hash-set (:val form))
 
      (instance? IRecord form) form
-     (map? form) (syntax-quote-coll 'clojure.core/hash-map (flatten-map form))
      (vector? form) (syntax-quote-coll 'clojure.core/vector form)
-     (set? form) (syntax-quote-coll 'clojure.core/hash-set form)
 
      (or (seq? form) (list? form))
      (let [seq (seq form)]
