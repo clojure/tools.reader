@@ -570,13 +570,16 @@
      (instance? SyntaxQuotedSet form) (syntax-quote-coll 'clojure.core/hash-set (:val form))
 
      (instance? IRecord form) form
+     (map? form) (syntax-quote-coll (map-func form) (flatten-map form))
      (vector? form) (list 'clojure.core/vec (syntax-quote-coll nil form))
+     (set? form) (syntax-quote-coll 'clojure.core/hash-set form)
 
      (or (seq? form) (list? form))
      (let [seq (seq form)]
        (if seq
          (syntax-quote-coll nil seq)
          '(clojure.core/list)))
+
      :else (throw (UnsupportedOperationException. "Unknown Collection type")))
 
     (or (keyword? form)
