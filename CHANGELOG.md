@@ -1,11 +1,14 @@
 Changelog
 ========================================
-* Release 0.8.6 on Aug 16, 2014
+* Release 0.8.7 on Aug 23
+  * Fixed a bug introduced in 0.8.6 in syntax-quote
+  * Cleaned up read-eval implementation
+* Release 0.8.6 on Aug 16, 2014 (BROKEN)
   * Allow for `{~@foo} and `#{~(gensym) ~(gensym)}
   * Performance enhancements in the code emitted by syntax-quote
 * Release 0.8.5 on Jun 12, 2014
   * Attach source info on literal sets too
-  * Fix how syntax-quoting handles splicing empty seqs into a list
+  * Fixed how syntax-quoting handles splicing empty seqs into a list
 * Release 0.8.4 on Apr 04, 2014
   * Fixed misplaced docstring
   * Added file metadata info
