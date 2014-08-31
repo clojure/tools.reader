@@ -500,7 +500,7 @@
         (set! gensym-env (assoc gensym-env sym gs))
         gs)))
 
-(defn- resolve-symbol [s]
+(defn ^:dynamic resolve-symbol [s]
   (if (pos? (.indexOf (name s) "."))
     s
     (if-let [ns-str (namespace s)]
