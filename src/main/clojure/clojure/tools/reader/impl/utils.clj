@@ -75,3 +75,8 @@
     (symbol? f)  {:tag f}
     (string? f)  {:tag f}
     :else        f))
+
+(defn make-var
+  "Returns an anonymous unbound Var"
+  []
+  (with-local-vars [x nil] x))
