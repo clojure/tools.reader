@@ -1,6 +1,8 @@
 Changelog
 ========================================
-* Release 0.8.7 on Aug 23
+* Release 0.8.8 on Aug 31 2014
+  * Made resolve-symbol a public ^:dynamic function
+* Release 0.8.7 on Aug 23 2014
   * Fixed a bug introduced in 0.8.6 in syntax-quote
   * Cleaned up read-eval implementation
 * Release 0.8.6 on Aug 16, 2014 (BROKEN)
