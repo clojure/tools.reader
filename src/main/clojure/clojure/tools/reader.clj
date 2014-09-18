@@ -518,7 +518,7 @@
 
 (defn- add-meta [form ret]
   (if (and (instance? IObj form)
-           (dissoc (meta form) :line :column :end-line :end-column :file))
+           (seq (dissoc (meta form) :line :column :end-line :end-column :file :source)))
     (list 'clojure.core/with-meta ret (syntax-quote* (meta form)))
     ret))
 
