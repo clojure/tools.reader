@@ -65,15 +65,13 @@ Latest stable release: 0.8.9
 API Index
 ========================================
 
-* [CrossClj Documentation](http://crossclj.info/doc/org.clojure/tools.reader/0.8.9/index.html)
+* [CrossClj Documentation](http://crossclj.info/doc/org.clojure/tools.reader/lastest/index.html)
 * [API index](http://clojure.github.io/tools.reader)
 
 Developer Information
 ========================================
 
 * [GitHub project](https://github.com/clojure/tools.reader)
-
-* [API index](http://clojure.github.io/tools.reader/)
 
 * [Bug Tracker](http://dev.clojure.org/jira/browse/TRDR)
 
