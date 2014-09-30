@@ -6,8 +6,8 @@ A complete Clojure reader and an EDN-only reader, works with Clojure versions >=
 * [Rationale](#rationale)
 * [Releases and Dependency Information](#releases-and-dependency-information)
 * [Changelog](#changelog)
+* [API Index](#api-index)
 * [Developer Information](#developer-information)
-* [Public API](#public-api)
 * [Example Usage](#example-usage)
 * [Differences from LispReader.java](#differences-from-lispreaderjava)
 * [License](#license)
@@ -62,6 +62,12 @@ Latest stable release: 0.8.9
 [Changelog](CHANGELOG.md)
 ========================================
 
+API Index
+========================================
+
+* [CrossClj Documentation](http://crossclj.info/doc/org.clojure/tools.reader/0.8.9/index.html)
+* [API index](http://clojure.github.io/tools.reader)
+
 Developer Information
 ========================================
 
@@ -74,9 +80,6 @@ Developer Information
 * [Continuous Integration](http://build.clojure.org/job/tools.reader/)
 
 * [Compatibility Test Matrix](http://build.clojure.org/job/tools.reader-test-matrix/)
-
-[Public API](API.md)
-========================================
 
 Example Usage
 ========================================
