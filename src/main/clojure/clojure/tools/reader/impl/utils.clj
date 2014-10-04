@@ -41,8 +41,8 @@
     (defn ex-info? [ex]
       (instance? clojure.tools.reader.impl.ExceptionInfo ex)))
 
-    (defn ex-info? [ex]
-      (instance? clojure.lang.ExceptionInfo ex)))
+  (defn ex-info? [ex]
+    (instance? clojure.lang.ExceptionInfo ex)))
 
 (defn whitespace?
   "Checks whether a given character is whitespace"
