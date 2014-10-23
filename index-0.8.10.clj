@@ -7,7 +7,7 @@
    :author "Bronsa",
    :doc "A clojure reader in clojure"}
   {:source-url
-   "https://github.com/clojure/tools.reader/blob/76b1df0fb884781bb03a0790a4548e5ed051f189/src/main/clojure/clojure/tools/reader/edn.clj",
+   "https://github.com/clojure/tools.reader/blob/2d9c9309147ae3d9a7b3ec4bc2aae12fd71596ce/src/main/clojure/clojure/tools/reader/edn.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader/clojure.tools.reader.edn-api.html",
    :name "clojure.tools.reader.edn",
@@ -143,29 +143,29 @@
    :name "read",
    :namespace "clojure.tools.reader.edn",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/76b1df0fb884781bb03a0790a4548e5ed051f189/src/main/clojure/clojure/tools/reader/edn.clj#L339",
+   "https://github.com/clojure/tools.reader/blob/2d9c9309147ae3d9a7b3ec4bc2aae12fd71596ce/src/main/clojure/clojure/tools/reader/edn.clj#L340",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/76b1df0fb884781bb03a0790a4548e5ed051f189/src/main/clojure/clojure/tools/reader/edn.clj",
+   "https://github.com/clojure/tools.reader/raw/2d9c9309147ae3d9a7b3ec4bc2aae12fd71596ce/src/main/clojure/clojure/tools/reader/edn.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.edn/read",
    :doc
    "Reads the first object from an IPushbackReader or a java.io.PushbackReader.\nReturns the object read. If EOF, throws if eof-error? is true otherwise returns eof.\nIf no reader is provided, *in* will be used.\n\nReads data in the edn format (subset of Clojure data):\nhttp://edn-format.org\n\nclojure.tools.reader.edn/read doesn't depend on dynamic Vars, all configuration\nis done by passing an opt map.\n\nopts is a map that can include the following keys:\n:eof - value to return on end-of-file. When not supplied, eof throws an exception.\n:readers  - a map of tag symbols to data-reader functions to be considered before default-data-readers.\n           When not supplied, only the default-data-readers will be used.\n:default - A function of two args, that will, if present and no reader is found for a tag,\n           be called with the tag and the value.",
    :var-type "function",
-   :line 339,
+   :line 340,
    :file "src/main/clojure/clojure/tools/reader/edn.clj"}
   {:arglists ([s] [opts s]),
    :name "read-string",
    :namespace "clojure.tools.reader.edn",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/76b1df0fb884781bb03a0790a4548e5ed051f189/src/main/clojure/clojure/tools/reader/edn.clj#L398",
+   "https://github.com/clojure/tools.reader/blob/2d9c9309147ae3d9a7b3ec4bc2aae12fd71596ce/src/main/clojure/clojure/tools/reader/edn.clj#L399",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/76b1df0fb884781bb03a0790a4548e5ed051f189/src/main/clojure/clojure/tools/reader/edn.clj",
+   "https://github.com/clojure/tools.reader/raw/2d9c9309147ae3d9a7b3ec4bc2aae12fd71596ce/src/main/clojure/clojure/tools/reader/edn.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.edn/read-string",
    :doc
    "Reads one object from the string s.\nReturns nil when s is nil or empty.\n\nReads data in the edn format (subset of Clojure data):\nhttp://edn-format.org\n\nopts is a map as per clojure.tools.reader.edn/read",
    :var-type "function",
-   :line 398,
+   :line 399,
    :file "src/main/clojure/clojure/tools/reader/edn.clj"}
   {:arglists
    ([rdr line column line-start? prev prev-column file-name]),
