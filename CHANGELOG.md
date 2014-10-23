@@ -1,5 +1,8 @@
 Changelog
 ========================================
+* Release 0.8.10 on 23 Oct 2014
+  * Reverted hack to allow `{~@foo} and `#{~(gensym) ~(gensym)}
+  * Fixed error reporting for keywords starting with macro-starting chars
 * Release 0.8.9 on 18 Sep 2014
   * Don't attach metadata on syntax-quoted forms if it's composed only by source-info
 * Release 0.8.8 on 31 Aug 2014
