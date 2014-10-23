@@ -45,8 +45,8 @@
       (reader-error rdr "Invalid leading character: " initch)
 
       :else
-      (loop [sb (doto (StringBuilder.) (.append initch))
-             ch (peek-char rdr)]
+      (loop [sb (StringBuilder.)
+             ch (do (unread rdr initch) initch)]
         (if (or (whitespace? ch)
                 (macro-terminating? ch)
                 (nil? ch))
