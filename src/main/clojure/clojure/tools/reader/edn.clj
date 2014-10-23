@@ -115,7 +115,10 @@
   [rdr backslash opts]
   (let [ch (read-char rdr)]
     (if-not (nil? ch)
-      (let [token (read-token rdr ch false)
+      (let [token (if (or (macro-terminating? ch)
+                          (whitespace? ch))
+                    ch
+                    (read-token rdr ch false))
             token-len (count token)]
         (cond
 
