@@ -40,8 +40,7 @@
   [rdr initch]
   (if-not initch
     (reader-error rdr "EOF while reading")
-    (loop [sb (doto (StringBuilder.) (.append initch))
-           ch (read-char rdr)]
+    (loop [sb (StringBuilder.) ch initch]
       (if (or (whitespace? ch)
               (macro-terminating? ch)
               (nil? ch))
