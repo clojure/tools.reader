@@ -7,7 +7,7 @@
    :author "Bronsa",
    :doc "A clojure reader in clojure"}
   {:source-url
-   "https://github.com/clojure/tools.reader/blob/0e806c5cb946c11924b33b2c7c3f1bdd63d60e0d/src/main/clojure/clojure/tools/reader/edn.clj",
+   "https://github.com/clojure/tools.reader/blob/9ee11ed5d7d45eca072afff7ee4a8e18af6d5a2c/src/main/clojure/clojure/tools/reader/edn.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader/clojure.tools.reader.edn-api.html",
    :name "clojure.tools.reader.edn",
@@ -143,9 +143,9 @@
    :name "read",
    :namespace "clojure.tools.reader.edn",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/0e806c5cb946c11924b33b2c7c3f1bdd63d60e0d/src/main/clojure/clojure/tools/reader/edn.clj#L336",
+   "https://github.com/clojure/tools.reader/blob/9ee11ed5d7d45eca072afff7ee4a8e18af6d5a2c/src/main/clojure/clojure/tools/reader/edn.clj#L336",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/0e806c5cb946c11924b33b2c7c3f1bdd63d60e0d/src/main/clojure/clojure/tools/reader/edn.clj",
+   "https://github.com/clojure/tools.reader/raw/9ee11ed5d7d45eca072afff7ee4a8e18af6d5a2c/src/main/clojure/clojure/tools/reader/edn.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.edn/read",
    :doc
@@ -157,9 +157,9 @@
    :name "read-string",
    :namespace "clojure.tools.reader.edn",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/0e806c5cb946c11924b33b2c7c3f1bdd63d60e0d/src/main/clojure/clojure/tools/reader/edn.clj#L395",
+   "https://github.com/clojure/tools.reader/blob/9ee11ed5d7d45eca072afff7ee4a8e18af6d5a2c/src/main/clojure/clojure/tools/reader/edn.clj#L395",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/0e806c5cb946c11924b33b2c7c3f1bdd63d60e0d/src/main/clojure/clojure/tools/reader/edn.clj",
+   "https://github.com/clojure/tools.reader/raw/9ee11ed5d7d45eca072afff7ee4a8e18af6d5a2c/src/main/clojure/clojure/tools/reader/edn.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.edn/read-string",
    :doc
