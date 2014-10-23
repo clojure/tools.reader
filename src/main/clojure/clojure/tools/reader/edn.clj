@@ -117,7 +117,7 @@
     (if-not (nil? ch)
       (let [token (if (or (macro-terminating? ch)
                           (whitespace? ch))
-                    ch
+                    (str ch)
                     (read-token rdr ch false))
             token-len (count token)]
         (cond
