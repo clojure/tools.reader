@@ -116,6 +116,7 @@
   (let [ch (read-char rdr)]
     (if-not (nil? ch)
       (let [token (if (or (macro-terminating? ch)
+                          (not-constituent? ch)
                           (whitespace? ch))
                     (str ch)
                     (read-token rdr ch false))
