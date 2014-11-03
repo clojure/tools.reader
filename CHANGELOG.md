@@ -1,5 +1,7 @@
 Changelog
 ========================================
+* Release 0.8.12 on 03 Nov 2014
+  * Fixed a bug when reading syntax-quoted map literals containing a :val key
 * Release 0.8.11 on 31 Oct 2014
   * Ensure metadata is not lost in syntax-quoted forms
 * Release 0.8.10 on 23 Oct 2014
