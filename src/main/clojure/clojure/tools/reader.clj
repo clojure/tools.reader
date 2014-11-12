@@ -514,6 +514,8 @@
     ret))
 
 (defn- syntax-quote-coll [type coll]
+  ;; We use sequence rather than seq here to fix http://dev.clojure.org/jira/browse/CLJ-1444
+  ;; But because of http://dev.clojure.org/jira/browse/CLJ-1586 we still need to call seq on the form
   (let [res (list 'clojure.core/sequence
                   (list 'clojure.core/seq
                         (cons 'clojure.core/concat
