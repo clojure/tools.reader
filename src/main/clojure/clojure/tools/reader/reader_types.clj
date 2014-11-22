@@ -282,7 +282,7 @@ logging frames. Called when pushing a character back."
      (PushbackReader. (input-stream-reader is) (object-array buf-len) buf-len buf-len)))
 
 (defn indexing-push-back-reader
-  "Creates an IndexingPushbackReader from a given string or Reader"
+  "Creates an IndexingPushbackReader from a given string or PushbackReader"
   ([s-or-rdr]
      (indexing-push-back-reader s-or-rdr 1))
   ([s-or-rdr buf-len]
@@ -292,7 +292,7 @@ logging frames. Called when pushing a character back."
       (if (string? s-or-rdr) (string-push-back-reader s-or-rdr buf-len) s-or-rdr) 0 1 true nil 0 file-name)))
 
 (defn source-logging-push-back-reader
-  "Creates a SourceLoggingPushbackReader from a given string or Reader"
+  "Creates a SourceLoggingPushbackReader from a given string or PushbackReader"
   ([s-or-rdr]
      (source-logging-push-back-reader s-or-rdr 1))
   ([s-or-rdr buf-len]
@@ -341,7 +341,7 @@ logging frames. Called when pushing a character back."
   (instance? SourceLoggingPushbackReader rdr))
 
 (defmacro log-source
-  "If reader implements SourceLoggingReader, execute body in a source
+  "If reader is a SourceLoggingPushbackReader, execute body in a source
   logging context. Otherwise, execute body, returning the result."
   [reader & body]
   `(if (and (source-logging-reader? ~reader)
@@ -350,7 +350,7 @@ logging frames. Called when pushing a character back."
      (do ~@body)))
 
 (defmacro log-source-unread
-  "If reader implements SourceLoggingReader, execute body in a source
+  "If reader is a SourceLoggingPushbackReader, execute body in a source
   logging context. Otherwise, execute body, returning the result."
   [reader & body]
   `(if (and (source-logging-reader? ~reader)
