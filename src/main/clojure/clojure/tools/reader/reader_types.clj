@@ -134,7 +134,7 @@
     (unread rdr ch))
 
   IndexingReader
-  (get-line-number [reader] (int (inc line)))
+  (get-line-number [reader] (int line))
   (get-column-number [reader] (int column))
   (get-file-name [reader] file-name))
 
@@ -227,13 +227,13 @@ logging frames. Called when pushing a character back."
     (unread rdr ch))
 
   IndexingReader
-  (get-line-number [reader] (int (inc line)))
+  (get-line-number [reader] (int line))
   (get-column-number [reader] (int column))
   (get-file-name [reader] file-name))
 
 (defn log-source*
   [reader f unread?]
-  (let [frame (.source_log_frames ^SourceLoggingPushbackReader reader)
+  (let [frame (.source-log-frames ^SourceLoggingPushbackReader reader)
         ^StringBuilder buffer (:buffer @frame)
         new-frame (assoc-in @frame [:offset] (+ (.length buffer) (if unread? -1 0)))]
     (with-bindings {frame new-frame}
@@ -289,7 +289,7 @@ logging frames. Called when pushing a character back."
      (indexing-push-back-reader s-or-rdr buf-len nil))
   ([s-or-rdr buf-len file-name]
      (IndexingPushbackReader.
-      (if (string? s-or-rdr) (string-push-back-reader s-or-rdr buf-len) s-or-rdr) 0 1 true nil 0 file-name)))
+      (if (string? s-or-rdr) (string-push-back-reader s-or-rdr buf-len) s-or-rdr) 1 1 true nil 0 file-name)))
 
 (defn source-logging-push-back-reader
   "Creates a SourceLoggingPushbackReader from a given string or PushbackReader"
@@ -300,7 +300,7 @@ logging frames. Called when pushing a character back."
   ([s-or-rdr buf-len file-name]
      (SourceLoggingPushbackReader.
       (if (string? s-or-rdr) (string-push-back-reader s-or-rdr buf-len) s-or-rdr)
-      0
+      1
       1
       true
       nil
