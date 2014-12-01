@@ -744,7 +744,6 @@
               (whitespace? ch) (recur)
               (nil? ch) (if eof-error? (reader-error reader "EOF") sentinel)
               (number-literal? reader ch) (read-number reader ch)
-              (comment-prefix? ch) (do (read-comment reader) (recur))
               :else (let [f (macros ch)]
                       (if f
                         (let [res (f reader ch)]
