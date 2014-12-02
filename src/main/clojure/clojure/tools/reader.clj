@@ -342,8 +342,7 @@
 (defn- read-meta
   [rdr _]
   (log-source rdr
-    (let [[line column] (when (indexing-reader? rdr)
-                          [(get-line-number rdr) (int (dec (get-column-number rdr)))])
+    (let [[line column] (starting-line-col-info rdr)
           m (desugar-meta (read rdr true nil true))]
       (when-not (map? m)
         (reader-error rdr "Metadata must be Symbol, Keyword, String or Map"))
