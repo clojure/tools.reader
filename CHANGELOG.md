@@ -1,5 +1,7 @@
 Changelog
 ========================================
+* Release 0.8.13 on 04 Dec 2014
+  * Fixed column number handling in source info
 * Release 0.8.12 on 03 Nov 2014
   * Fixed a bug when reading syntax-quoted map literals containing a :val key
 * Release 0.8.11 on 31 Oct 2014
