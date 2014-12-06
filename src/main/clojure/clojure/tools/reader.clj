@@ -631,7 +631,7 @@
 (defn- read-ctor [rdr class-name]
   (when-not *read-eval*
     (reader-error "Record construction syntax can only be used when *read-eval* == true"))
-  (let [class (Class/forName (name class-name) false (RT/baseLoader))
+  (let [class (RT/classForNameNonLoading (name class-name))
         ch (read-past whitespace? rdr)] ;; differs from clojure
     (if-let [[end-ch form] (case ch
                              \[ [\] :short]
