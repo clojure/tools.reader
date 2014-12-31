@@ -359,6 +359,8 @@
 (defn- read-set
   [rdr _]
   (let [[start-line start-column] (starting-line-col-info rdr)
+        ;; subtract 1 from start-column so it includes the # in the leading #{
+        start-column (if start-column (dec start-column))
         the-set (PersistentHashSet/createWithCheck (read-delimited \} rdr true))
         [end-line end-column] (ending-line-col-info rdr)]
     (with-meta the-set

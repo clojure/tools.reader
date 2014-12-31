@@ -3,10 +3,17 @@
   (:use [clojure.tools.reader :only [read *default-data-reader-fn*]]
         [clojure.test :only [deftest is]])
   (:require [clojure.tools.reader.reader-types :as reader-types]
+            [clojure.string :as str]
             [clojure.walk :as walk])
   (:import java.nio.charset.Charset
            (java.io StringReader)
            clojure.lang.LineNumberingPushbackReader))
+
+(defn compare-forms-with-meta [expected-form actual-form]
+  (let [comparisons (map vector (tree-seq coll? identity expected-form)
+                         (tree-seq coll? identity actual-form))]
+    (doseq [[expected actual] comparisons]
+      (is (= [expected (meta expected)] [actual (meta actual)])))))
 
 (def test-contents
   "Contents of a file stream for testing."
@@ -56,14 +63,8 @@
         first-form (read reader)
         second-form (read reader)]
     (is (= {:line 1 :column 1 :end-line 1 :end-column 32 :file "haiku.clj"} (meta first-form)))
-    (let [comparisons (map vector (tree-seq coll? identity expected-haiku-ns)
-                           (tree-seq coll? identity first-form))]
-      (doseq [[expected actual] comparisons]
-        (is (= [expected (meta expected)] [actual (meta actual)]))))
-    (let [comparisons (map vector (tree-seq coll? identity expected-haiku-defn)
-                           (tree-seq coll? identity second-form))]
-      (doseq [[expected actual] comparisons]
-        (is (= [expected (meta expected)] [actual (meta actual)]))))))
+    (compare-forms-with-meta expected-haiku-ns first-form)
+    (compare-forms-with-meta expected-haiku-defn second-form)))
 
 (def expected-haiku-ns-with-source
   (with-meta  '(^{:line 1 :column 2 :end-line 1 :end-column 4 :source "ns" :file "haiku.clj"} ns
@@ -107,11 +108,52 @@
         first-form (read reader)
         second-form (read reader)]
     (is (= {:line 1 :column 1 :end-line 1 :end-column 32 :source "(ns clojure.tools.reader.haiku)" :file "haiku.clj"} (meta first-form)))
-    (let [comparisons (map vector (tree-seq coll? identity expected-haiku-ns-with-source)
-                           (tree-seq coll? identity first-form))]
-      (doseq [[expected actual] comparisons]
-        (is (= [expected (meta expected)] [actual (meta actual)]))))
-    (let [comparisons (map vector (tree-seq coll? identity expected-haiku-defn-with-source)
-                           (tree-seq coll? identity second-form))]
-      (doseq [[expected actual] comparisons]
-        (is (= [expected (meta expected)] [actual (meta actual)]))))))
+    (compare-forms-with-meta expected-haiku-ns-with-source first-form)
+    (compare-forms-with-meta expected-haiku-defn-with-source second-form)))
+
+
+(def test2-contents
+  (str/join "\n"
+            ["[ +42 -42 0N +042 +0x42e -0x42e -36rCRAZY -42.2e-3M 0.314e+1"
+             "  true false :kw :ns/kw 'foo/bar nil"
+             "  \\f \\u0194 \\x61 \\newline \\o377 \\ud7ff "
+             " () [7] #{8 9} '^{:meta []} bar  "
+             ;;" () [7] #{8 9}                   "
+             "  #inst \"2010-11-12T13:14:15.666\""
+             " ]"]))
+
+(def expected-vector
+  (with-meta
+    (vector
+     42 -42 0N 34 1070 -1070 -21429358 -0.0422M 3.14
+     true false :kw :ns/kw
+     (list
+      'quote
+      (with-meta
+        'foo/bar
+        {:line 2, :column 26, :end-line 2, :end-column 33, :file "vector.clj"}))
+     nil
+     \f \Ɣ \a \newline \ÿ \퟿
+     (with-meta
+       '()
+       {:line 4, :column 2, :end-line 4, :end-column 4, :file "vector.clj"})
+     '^{:line 4, :column 5, :end-line 4, :end-column 8, :file "vector.clj"} [7]
+     '^{:line 4, :column 9, :end-line 4, :end-column 15, :file "vector.clj"} #{9 8}
+     ^{:source "'^{:meta []} bar"}
+     (list
+      'quote
+      (with-meta
+        'bar
+        {:meta
+         ^{:line 4, :column 25, :end-line 4, :end-column 27, :file "vector.clj"}
+         [],
+         :line 4, :column 29, :end-line 4, :end-column 32, :file "vector.clj"}))
+     #inst "2010-11-12T13:14:15.666-00:00")
+    {:line 1 :column 1 :end-line 6 :end-column 3 :file "vector.clj"}))
+
+(deftest read-metadata2
+  (let [reader (-> (StringReader. test2-contents)
+                   (LineNumberingPushbackReader.)
+                   (reader-types/indexing-push-back-reader 1 "vector.clj"))
+        first-form (read reader)]
+    (compare-forms-with-meta expected-vector first-form)))
