@@ -1,6 +1,6 @@
 (ns clojure.tools.metadata-test
-  (:refer-clojure :exclude [read *default-data-reader-fn*])
-  (:use [clojure.tools.reader :only [read *default-data-reader-fn*]]
+  (:refer-clojure :exclude [read *default-data-reader-fn* read-string])
+  (:use [clojure.tools.reader :only [read *default-data-reader-fn* read-string]]
         [clojure.test :only [deftest is]])
   (:require [clojure.tools.reader.reader-types :as reader-types]
             [clojure.string :as str]
@@ -148,7 +148,7 @@
          ^{:line 4, :column 25, :end-line 4, :end-column 27, :file "vector.clj"}
          [],
          :line 4, :column 29, :end-line 4, :end-column 32, :file "vector.clj"}))
-     #inst "2010-11-12T13:14:15.666-00:00")
+     (read-string "#inst \"2010-11-12T13:14:15.666-00:00\""))
     {:line 1 :column 1 :end-line 6 :end-column 3 :file "vector.clj"}))
 
 (deftest read-metadata2
