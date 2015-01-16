@@ -116,7 +116,7 @@
   (str/join "\n"
             ["[ +42 -42 0N +042 +0x42e -0x42e -36rCRAZY -42.2e-3M 0.314e+1"
              "  true false :kw :ns/kw 'foo/bar nil"
-             "  \\f \\u0194 \\x61 \\newline \\o377 \\ud7ff "
+             "  \\f \\u0194 \\newline \\o377 \\ud7ff "
              " () [7] #{8 9} '^{:meta []} bar  "
              ;;" () [7] #{8 9}                   "
              "  #inst \"2010-11-12T13:14:15.666\""
@@ -133,7 +133,7 @@
         'foo/bar
         {:line 2, :column 26, :end-line 2, :end-column 33, :file "vector.clj"}))
      nil
-     \f \Ɣ \a \newline \ÿ \퟿
+     \f \Ɣ \newline \ÿ \퟿
      (with-meta
        '()
        {:line 4, :column 2, :end-line 4, :end-column 4, :file "vector.clj"})

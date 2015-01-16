@@ -203,7 +203,6 @@
 (deftest read-char
   (is (= \f (read-string "\\f")))
   (is (= \u0194 (read-string "\\u0194")))
-  (is (= \a (read-string "\\x61"))) ;; the clojure reader can't read this
   (is (= \o123 (read-string "\\o123")))
   (is (= \newline (read-string "\\newline")))
   (is (= (char 0) (read-string "\\o0")))
@@ -220,7 +219,6 @@
   (is (= "foo\\bar" (read-string "\"foo\\\\bar\"")))
   (is (= "foo\000bar" (read-string "\"foo\\000bar\"")))
   (is (= "foo\u0194bar" (read-string "\"foo\\u0194bar\"")))
-  (is (= "fooabar" (read-string "\"foo\\x61bar\""))) ;; the clojure reader can't read this
   (is (= "foo\123bar" (read-string "\"foo\\123bar\""))))
 
 (deftest read-list

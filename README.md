@@ -172,7 +172,6 @@ Differences from LispReader.java
 There are small differences from clojure.lang.LispReader:
 
 * `read` throws an `ex-info` for almost every exception, whereas `clojure.lang.LispReader/read` throws a `ReaderException` wrapping the causing exception.
-* `read` is capable of reading `\x` escaped chars
 * `read` is capable of reading `Infinity` `+Infinity` `-Infinity` and `NaN` as per [#CLJ-1074](http://dev.clojure.org/jira/browse/CLJ-1074)
 * `read` is capable of reading literal tags containing periods, fixing [#CLJ-1100](http://dev.clojure.org/jira/browse/CLJ-1100)
 * `clojure.tools.reader/read` checks if `clojure.tools.reader/*alias-map*` is bound, if that's the case, aliases will be resolved by querying it (must be a map), otherwhise (ns-aliases \*ns\*) will be used
