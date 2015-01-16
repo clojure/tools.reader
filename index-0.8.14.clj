@@ -1,13 +1,13 @@
 {:namespaces
  ({:source-url
-   "https://github.com/clojure/tools.reader/blob/3688b25a2642d147a83e7bd3056d69bcf8bf1c4a/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/blob/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader/clojure.tools.reader-api.html",
    :name "clojure.tools.reader",
    :author "Bronsa",
    :doc "A clojure reader in clojure"}
   {:source-url
-   "https://github.com/clojure/tools.reader/blob/52a95228cc78d0fc0dc03fc3e841305fed5e479e/src/main/clojure/clojure/tools/reader/edn.clj",
+   "https://github.com/clojure/tools.reader/blob/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader/edn.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader/clojure.tools.reader.edn-api.html",
    :name "clojure.tools.reader.edn",
@@ -24,68 +24,68 @@
  ({:name "*alias-map*",
    :namespace "clojure.tools.reader",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/3688b25a2642d147a83e7bd3056d69bcf8bf1c4a/src/main/clojure/clojure/tools/reader.clj#L305",
+   "https://github.com/clojure/tools.reader/blob/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader.clj#L298",
    :dynamic true,
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/3688b25a2642d147a83e7bd3056d69bcf8bf1c4a/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader/*alias-map*",
    :doc
    "Map from ns alias to ns, if non-nil, it will be used to resolve read-time\nns aliases instead of (ns-aliases *ns*).\n\nDefaults to nil",
    :var-type "var",
-   :line 305,
+   :line 298,
    :file "src/main/clojure/clojure/tools/reader.clj"}
   {:name "*data-readers*",
    :namespace "clojure.tools.reader",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/3688b25a2642d147a83e7bd3056d69bcf8bf1c4a/src/main/clojure/clojure/tools/reader.clj#L701",
+   "https://github.com/clojure/tools.reader/blob/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader.clj#L694",
    :dynamic true,
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/3688b25a2642d147a83e7bd3056d69bcf8bf1c4a/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader/*data-readers*",
    :doc
    "Map from reader tag symbols to data reader Vars.\nReader tags without namespace qualifiers are reserved for Clojure.\nDefault reader tags are defined in clojure.tools.reader/default-data-readers\nand may be overridden by binding this Var.",
    :var-type "var",
-   :line 701,
+   :line 694,
    :file "src/main/clojure/clojure/tools/reader.clj"}
   {:name "*default-data-reader-fn*",
    :namespace "clojure.tools.reader",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/3688b25a2642d147a83e7bd3056d69bcf8bf1c4a/src/main/clojure/clojure/tools/reader.clj#L708",
+   "https://github.com/clojure/tools.reader/blob/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader.clj#L701",
    :dynamic true,
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/3688b25a2642d147a83e7bd3056d69bcf8bf1c4a/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader/*default-data-reader-fn*",
    :doc
    "When no data reader is found for a tag and *default-data-reader-fn*\nis non-nil, it will be called with two arguments, the tag and the value.\nIf *default-data-reader-fn* is nil (the default value), an exception\nwill be thrown for the unknown tag.",
    :var-type "var",
-   :line 708,
+   :line 701,
    :file "src/main/clojure/clojure/tools/reader.clj"}
   {:name "*read-eval*",
    :namespace "clojure.tools.reader",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/3688b25a2642d147a83e7bd3056d69bcf8bf1c4a/src/main/clojure/clojure/tools/reader.clj#L683",
+   "https://github.com/clojure/tools.reader/blob/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader.clj#L676",
    :dynamic true,
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/3688b25a2642d147a83e7bd3056d69bcf8bf1c4a/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader/*read-eval*",
    :doc
    "Defaults to true.\n\n***WARNING***\nThis setting implies that the full power of the reader is in play,\nincluding syntax that can cause code to execute. It should never be\nused with untrusted sources. See also: clojure.tools.reader.edn/read.\n\nWhen set to logical false in the thread-local binding,\nthe eval reader (#=) and *record/type literal syntax* are disabled in read/load.\nExample (will fail): (binding [*read-eval* false] (read-string \"#=(* 2 21)\"))\n\nWhen set to :unknown all reads will fail in contexts where *read-eval*\nhas not been explicitly bound to either true or false. This setting\ncan be a useful diagnostic tool to ensure that all of your reads\noccur in considered contexts.",
    :var-type "var",
-   :line 683,
+   :line 676,
    :file "src/main/clojure/clojure/tools/reader.clj"}
   {:file "src/main/clojure/clojure/tools/reader.clj",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/3688b25a2642d147a83e7bd3056d69bcf8bf1c4a/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/3688b25a2642d147a83e7bd3056d69bcf8bf1c4a/src/main/clojure/clojure/tools/reader.clj#L715",
+   "https://github.com/clojure/tools.reader/blob/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader.clj#L708",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader/default-data-readers",
    :namespace "clojure.tools.reader",
-   :line 715,
+   :line 708,
    :var-type "var",
    :doc
    "Default map of data reader functions provided by Clojure.\nMay be overridden by binding *data-readers*",
@@ -98,42 +98,42 @@
    :name "read",
    :namespace "clojure.tools.reader",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/3688b25a2642d147a83e7bd3056d69bcf8bf1c4a/src/main/clojure/clojure/tools/reader.clj#L721",
+   "https://github.com/clojure/tools.reader/blob/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader.clj#L714",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/3688b25a2642d147a83e7bd3056d69bcf8bf1c4a/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader/read",
    :doc
    "Reads the first object from an IPushbackReader or a java.io.PushbackReader.\nReturns the object read. If EOF, throws if eof-error? is true.\nOtherwise returns sentinel. If no stream is providen, *in* will be used.\n\n***WARNING***\nNote that read can execute code (controlled by *read-eval*),\nand as such should be used only with trusted sources.\n\nTo read data structures only, use clojure.tools.reader.edn/read\n\nNote that the function signature of clojure.tools.reader/read and\nclojure.tools.reader.edn/read is not the same for eof-handling",
    :var-type "function",
-   :line 721,
+   :line 714,
    :file "src/main/clojure/clojure/tools/reader.clj"}
   {:arglists ([s]),
    :name "read-string",
    :namespace "clojure.tools.reader",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/3688b25a2642d147a83e7bd3056d69bcf8bf1c4a/src/main/clojure/clojure/tools/reader.clj#L776",
+   "https://github.com/clojure/tools.reader/blob/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader.clj#L769",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/3688b25a2642d147a83e7bd3056d69bcf8bf1c4a/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader/read-string",
    :doc
    "Reads one object from the string s.\nReturns nil when s is nil or empty.\n\n***WARNING***\nNote that read-string can execute code (controlled by *read-eval*),\nand as such should be used only with trusted sources.\n\nTo read data structures only, use clojure.tools.reader.edn/read-string\n\nNote that the function signature of clojure.tools.reader/read-string and\nclojure.tools.reader.edn/read-string is not the same for eof-handling",
    :var-type "function",
-   :line 776,
+   :line 769,
    :file "src/main/clojure/clojure/tools/reader.clj"}
   {:arglists ([form]),
    :name "syntax-quote",
    :namespace "clojure.tools.reader",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/3688b25a2642d147a83e7bd3056d69bcf8bf1c4a/src/main/clojure/clojure/tools/reader.clj#L792",
+   "https://github.com/clojure/tools.reader/blob/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader.clj#L785",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/3688b25a2642d147a83e7bd3056d69bcf8bf1c4a/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader/syntax-quote",
    :doc "Macro equivalent to the syntax-quote reader macro (`).",
    :var-type "macro",
-   :line 792,
+   :line 785,
    :file "src/main/clojure/clojure/tools/reader.clj"}
   {:arglists
    ([]
@@ -143,29 +143,29 @@
    :name "read",
    :namespace "clojure.tools.reader.edn",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/52a95228cc78d0fc0dc03fc3e841305fed5e479e/src/main/clojure/clojure/tools/reader/edn.clj#L340",
+   "https://github.com/clojure/tools.reader/blob/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader/edn.clj#L333",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/52a95228cc78d0fc0dc03fc3e841305fed5e479e/src/main/clojure/clojure/tools/reader/edn.clj",
+   "https://github.com/clojure/tools.reader/raw/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader/edn.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.edn/read",
    :doc
    "Reads the first object from an IPushbackReader or a java.io.PushbackReader.\nReturns the object read. If EOF, throws if eof-error? is true otherwise returns eof.\nIf no reader is provided, *in* will be used.\n\nReads data in the edn format (subset of Clojure data):\nhttp://edn-format.org\n\nclojure.tools.reader.edn/read doesn't depend on dynamic Vars, all configuration\nis done by passing an opt map.\n\nopts is a map that can include the following keys:\n:eof - value to return on end-of-file. When not supplied, eof throws an exception.\n:readers  - a map of tag symbols to data-reader functions to be considered before default-data-readers.\n           When not supplied, only the default-data-readers will be used.\n:default - A function of two args, that will, if present and no reader is found for a tag,\n           be called with the tag and the value.",
    :var-type "function",
-   :line 340,
+   :line 333,
    :file "src/main/clojure/clojure/tools/reader/edn.clj"}
   {:arglists ([s] [opts s]),
    :name "read-string",
    :namespace "clojure.tools.reader.edn",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/52a95228cc78d0fc0dc03fc3e841305fed5e479e/src/main/clojure/clojure/tools/reader/edn.clj#L398",
+   "https://github.com/clojure/tools.reader/blob/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader/edn.clj#L391",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/52a95228cc78d0fc0dc03fc3e841305fed5e479e/src/main/clojure/clojure/tools/reader/edn.clj",
+   "https://github.com/clojure/tools.reader/raw/1908c673fc60873a5da688e6fc87f6b07b222963/src/main/clojure/clojure/tools/reader/edn.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.edn/read-string",
    :doc
    "Reads one object from the string s.\nReturns nil when s is nil or empty.\n\nReads data in the edn format (subset of Clojure data):\nhttp://edn-format.org\n\nopts is a map as per clojure.tools.reader.edn/read",
    :var-type "function",
-   :line 398,
+   :line 391,
    :file "src/main/clojure/clojure/tools/reader/edn.clj"}
   {:arglists
    ([rdr line column line-start? prev prev-column file-name]),
