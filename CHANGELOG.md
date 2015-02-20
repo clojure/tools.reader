@@ -1,5 +1,7 @@
 Changelog
 ========================================
+* Release 0.8.15 on 21 Feb 2015
+  * Fixed line-start? offset
 * Release 0.8.14 on 20 Feb 2015
   * Added line-start? predicate
   * Removed support for \xHH chars
