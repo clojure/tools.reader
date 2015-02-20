@@ -362,4 +362,4 @@ logging frames. Called when pushing a character back."
   "Returns true if rdr is an IndexingReader and the current char starts a new line"
   [rdr]
   (when (indexing-reader? rdr)
-    (zero? (get-column-number rdr))))
+    (== 1 (get-column-number rdr))))
