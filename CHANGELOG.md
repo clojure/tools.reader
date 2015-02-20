@@ -1,5 +1,9 @@
 Changelog
 ========================================
+* Release 0.8.14 on 20 Feb 2015
+  * Added line-start? predicate
+  * Removed support for \xHH chars
+  * Fixed column metadata handling for set literals
 * Release 0.8.13 on 04 Dec 2014
   * Fixed column number handling in source info
 * Release 0.8.12 on 03 Nov 2014
