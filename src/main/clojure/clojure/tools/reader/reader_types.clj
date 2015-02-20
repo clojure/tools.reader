@@ -357,3 +357,9 @@ logging frames. Called when pushing a character back."
             (not (whitespace? (peek-char ~reader))))
      (log-source* ~reader (^{:once true} fn* [] ~@body) true)
      (do ~@body)))
+
+(defn line-start?
+  "Returns true if rdr is an IndexingReader and the current char starts a new line"
+  [rdr]
+  (when (indexing-reader? rdr)
+    (zero? (get-column-number rdr))))
