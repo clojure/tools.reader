@@ -26,8 +26,51 @@
             <configuration>
               <compileDeclaredNamespaceOnly>true</compileDeclaredNamespaceOnly>
               <namespaces>
+                <namespace>clojure.tools.reader</namespace>
+                <namespace>clojure.tools.reader.default-data-readers</namespace>
+                <namespace>clojure.tools.reader.edn</namespace>
+                <namespace>clojure.tools.reader.impl.commons</namespace>
+                <namespace>clojure.tools.reader.impl.utils</namespace>
+                <namespace>clojure.tools.reader.reader-types</namespace>
                 <namespace>clojure.tools.reader.impl.ExceptionInfo</namespace>
               </namespaces>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.4</version>
+        <executions>
+          <execution>
+            <id>default-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/*.clj</include>
+                <include>clojure/tools/reader/impl/ExceptionInfo*.class</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.4</version>
+        <executions>
+          <execution>
+            <id>aot-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+	        <configuration>
+	          <descriptors>
+		        <descriptor>src/assembly/aot.xml</descriptor>
+	          </descriptors>
             </configuration>
           </execution>
         </executions>
