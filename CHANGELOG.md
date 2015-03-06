@@ -1,5 +1,7 @@
 Changelog
 ========================================
+* Release 0.8.16 on 06 Mar 2015
+  * Added new output jar with "aot" classifier
 * Release 0.8.15 on 21 Feb 2015
   * Fixed line-start? offset
 * Release 0.8.14 on 20 Feb 2015
