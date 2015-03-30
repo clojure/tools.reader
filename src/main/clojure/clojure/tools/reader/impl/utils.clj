@@ -64,6 +64,7 @@
       (nil? c)))
 
 (defn desugar-meta
+  "Resolves syntactical sugar in metadata" ;; could be combined with some other desugar?
   [f]
   (cond
     (keyword? f) {f true}

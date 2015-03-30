@@ -37,6 +37,7 @@
     false))
 
 (defn- ^String read-token
+  "Read in a single logical token from the reader"
   [rdr initch]
   (if-not initch
     (reader-error rdr "EOF while reading")
@@ -106,6 +107,7 @@
 (def ^:private ^:const lower-limit (int \uE000))
 
 (defn- read-char*
+  "Read in a character literal"
   [rdr backslash]
   (let [ch (read-char rdr)]
     (if-not (nil? ch)
@@ -154,6 +156,7 @@
     [(get-line-number rdr) (get-column-number rdr)]))
 
 (defn- ^PersistentVector read-delimited
+  "Reads and returns a collection ended with delim"
   [delim rdr recursive?]
   (let [[start-line start-column] (starting-line-col-info rdr)
         delim (char delim)]
@@ -172,6 +175,7 @@
                         (str ", starting at line " start-line " and column " start-column)))))))
 
 (defn- read-list
+  "Read in a list, including its location if the reader is an indexing reader"
   [rdr _]
   (let [[start-line start-column] (starting-line-col-info rdr)
         the-list (read-delimited \) rdr true)
@@ -189,6 +193,7 @@
           :end-column end-column})))))
 
 (defn- read-vector
+  "Read in a vector, including its location if the reader is an indexing reader"
   [rdr _]
   (let [[start-line start-column] (starting-line-col-info rdr)
         the-vector (read-delimited \] rdr true)
@@ -204,6 +209,7 @@
           :end-column end-column})))))
 
 (defn- read-map
+  "Read in a map, including its location if the reader is an indexing reader"
   [rdr _]
   (let [[start-line start-column] (starting-line-col-info rdr)
         the-map (read-delimited \} rdr true)
@@ -225,15 +231,15 @@
           :end-column end-column})))))
 
 (defn- read-number
-  [reader initch]
+  [rdr initch]
   (loop [sb (doto (StringBuilder.) (.append initch))
-         ch (read-char reader)]
+         ch (read-char rdr)]
     (if (or (whitespace? ch) (macros ch) (nil? ch))
       (let [s (str sb)]
-        (unread reader ch)
+        (unread rdr ch)
         (or (match-number s)
-            (reader-error reader "Invalid number format [" s "]")))
-      (recur (doto sb (.append ch)) (read-char reader)))))
+            (reader-error rdr "Invalid number format [" s "]")))
+      (recur (doto sb (.append ch)) (read-char rdr)))))
 
 (defn- escape-char [sb rdr]
   (let [ch (read-char rdr)]
@@ -328,11 +334,13 @@
       (reader-error reader "Invalid token: :"))))
 
 (defn- wrapping-reader
+  "Returns a function which wraps a reader in a call to sym"
   [sym]
   (fn [rdr _]
     (list sym (read rdr true nil true))))
 
 (defn- read-meta
+  "Read metadata and return the following object with the metadata applied"
   [rdr _]
   (log-source rdr
     (let [[line column] (starting-line-col-info rdr)
@@ -367,13 +375,16 @@
           :end-column end-column})))))
 
 (defn- read-discard
+  "Read and discard the first object from rdr"
   [rdr _]
   (doto rdr
     (read true nil true)))
 
 (def ^:private ^:dynamic arg-env)
 
-(defn- garg [n]
+(defn- garg
+  "Get a symbol for an anonymous ?argument?"
+  [n]
   (symbol (str (if (== -1 n) "rest" (str "p" n))
                "__" (RT/nextID) "#")))
 
@@ -398,7 +409,9 @@
                  [])]
       (list 'fn* args form))))
 
-(defn- register-arg [n]
+(defn- register-arg
+  "Registers an argument to the arg-env"
+  [n]
   (if (thread-bound? #'arg-env)
     (if-let [ret (arg-env n)]
       ret
@@ -431,6 +444,7 @@
            (register-arg n)))))))
 
 (defn- read-eval
+  "Evaluate a reader literal"
   [rdr _]
   (when-not *read-eval*
     (reader-error rdr "#= not allowed when *read-eval* is false"))
@@ -454,7 +468,9 @@
   (and (seq? form)
        (= (first form) 'clojure.core/unquote)))
 
-(defn- expand-list [s]
+(defn- expand-list
+  "Expand a list by resolving its syntax quotes and unquotes"
+  [s]
   (loop [s (seq s) r (transient [])]
     (if s
       (let [item (first s)
@@ -466,7 +482,9 @@
         (recur (next s) ret))
       (seq (persistent! r)))))
 
-(defn- flatten-map [form]
+(defn- flatten-map
+  "Flatten a map into a seq of alternate keys and values"
+  [form]
   (loop [s (seq form) key-vals (transient [])]
     (if s
       (let [e (first s)]
@@ -485,9 +503,11 @@
         (set! gensym-env (assoc gensym-env sym gs))
         gs)))
 
-(defn ^:dynamic resolve-symbol [s]
+(defn ^:dynamic resolve-symbol
+  "Resolve a symbol s into its fully qualified namespace version"
+  [s]
   (if (pos? (.indexOf (name s) "."))
-    s
+    s ;; If there is a period, it is interop
     (if-let [ns-str (namespace s)]
       (let [^Namespace ns (resolve-ns (symbol ns-str))]
         (if (or (nil? ns)
@@ -518,7 +538,9 @@
       (list 'clojure.core/apply type res)
       res)))
 
-(defn map-func [coll]
+(defn map-func
+  "Decide which map type to use, array-map if less than 16 elements"
+  [coll]
   (if (>= (count coll) 16)
     'clojure.core/hash-map
     'clojure.core/array-map))

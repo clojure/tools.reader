@@ -35,7 +35,7 @@
   (get-line-number [reader]
     "Returns the line number of the next character to be read from the stream")
   (get-column-number [reader]
-    "Returns the line number of the next character to be read from the stream")
+    "Returns the column number of the next character to be read from the stream")
   (get-file-name [reader]
     "Returns the file name the reader is reading from, or nil"))
 

@@ -95,7 +95,9 @@
             (when (.matches ratio-matcher)
               (match-ratio ratio-matcher))))))))
 
-(defn parse-symbol [^String token]
+(defn parse-symbol
+  "Parses a string into a vector of the namespace and symbol"
+  [^String token]
   (when-not (or (= "" token)
                 (.endsWith token ":")
                 (.startsWith token "::"))
