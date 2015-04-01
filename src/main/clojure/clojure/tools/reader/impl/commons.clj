@@ -97,7 +97,8 @@
 
 (defn parse-symbol [^String token]
   (when-not (or (= "" token)
-                (not= -1 (.indexOf token "::")))
+                (.endsWith token ":")
+                (.startsWith token "::"))
     (let [ns-idx (.indexOf token "/")]
       (if-let [ns (and (pos? ns-idx)
                        (subs token 0 ns-idx))]
@@ -106,6 +107,7 @@
             (let [sym (subs token ns-idx)]
               (when (and (not (numeric? (nth sym 0)))
                          (not (= "" sym))
+                         (not (.endsWith ns ":"))
                          (or (= sym "/")
                              (== -1 (.indexOf sym "/"))))
                 [ns sym]))))
