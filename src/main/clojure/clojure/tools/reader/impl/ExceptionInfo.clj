@@ -7,7 +7,7 @@
 ;;   You must not remove this notice, or any other, from this software.
 
 (ns ^:skip-wiki clojure.tools.reader.impl.ExceptionInfo
-  (:gen-class :extends java.lang.Exception
+  (:gen-class :extends java.lang.RuntimeException
               :init init
               :constructors {[String clojure.lang.IPersistentMap] [String]
                              [String clojure.lang.IPersistentMap Throwable] [String Throwable]}
