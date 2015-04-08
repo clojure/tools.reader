@@ -170,8 +170,8 @@
   (when (indexing-reader? rdr)
     [(get-line-number rdr) (get-column-number rdr)]))
 
-(defonce ^:private READ_EOF (gensym "EOF"))
-(defonce ^:private READ_FINISHED (gensym "FINISHED"))
+(defonce ^:private READ_EOF (Object.))
+(defonce ^:private READ_FINISHED (Object.))
 
 (defn- ^PersistentVector read-delimited
   "Reads and returns a collection ended with delim"
@@ -179,10 +179,10 @@
   (let [[start-line start-column] (starting-line-col-info rdr)
         delim (char delim)]
     (loop [a (transient [])]
-      (let [form (read rdr false READ_EOF delim READ_FINISHED opts pending-forms)]
-        (if (= form READ_FINISHED)
+      (let [form (read rdr false READ_EOF delim opts pending-forms)]
+        (if (identical? form READ_FINISHED)
           (persistent! a)
-          (if (= form READ_EOF)
+          (if (identical? form READ_EOF)
             (reader-error rdr "EOF while reading"
                           (when start-line
                             (str ", starting at line " start-line " and column " start-column)))
@@ -351,7 +351,7 @@
   "Returns a function which wraps a reader in a call to sym"
   [sym]
   (fn [rdr _ opts pending-forms]
-    (list sym (read rdr true nil nil nil opts pending-forms))))
+    (list sym (read rdr true nil opts pending-forms))))
 
 (defn- read-meta
   "Read metadata and return the following object with the metadata applied"
@@ -404,7 +404,7 @@
 
 (defn- check-eof-error
   [form rdr first-line]
-  (when (= form READ_EOF)
+  (when (identical? form READ_EOF)
     (if (< first-line 0)
       (reader-error rdr "EOF while reading")
       (reader-error rdr "EOF while reading, starting at line " first-line))))
@@ -416,7 +416,7 @@
 
 (defn- check-invalid-read-cond
   [form rdr first-line]
-  (when (= form READ_FINISHED)
+  (when (identical? form READ_FINISHED)
     (if (< first-line 0)
       (reader-error rdr "read-cond requires an even number of forms")
       (reader-error rdr (str "read-cond starting on line " first-line " requires an even number of forms")))))
@@ -425,16 +425,16 @@
   "Read next form and suppress. Return nil or READ_FINISHED."
   [first-line rdr opts pending-forms]
   (binding [*suppress-read* true]
-    (let [form (read rdr false READ_EOF \) READ_FINISHED opts pending-forms)]
+    (let [form (read rdr false READ_EOF \) opts pending-forms)]
       (check-eof-error form rdr first-line)
-      (when (= form READ_FINISHED)
+      (when (identical? form READ_FINISHED)
         READ_FINISHED))))
 
 (defn- match-feature
   "Read next feature. If matched, read next form and return.
    Otherwise, read and skip next form, returning READ_FINISHED or nil."
   [first-line rdr opts pending-forms]
-  (let [feature (read rdr false READ_EOF \) READ_FINISHED opts pending-forms)]
+  (let [feature (read rdr false READ_EOF \) opts pending-forms)]
     (check-eof-error feature rdr first-line)
     (if (= feature READ_FINISHED)
       READ_FINISHED
@@ -442,10 +442,9 @@
         (check-reserved-features rdr feature)
         (if (has-feature? rdr feature opts)
           ;; feature matched, read selected form
-          (let [form (read rdr false READ_EOF \) READ_FINISHED opts pending-forms)]
-            (check-eof-error form rdr first-line)
-            (check-invalid-read-cond form rdr first-line)
-            form)
+          (doto (read rdr false READ_EOF \) opts pending-forms)
+            (check-eof-error rdr first-line)
+            (check-invalid-read-cond rdr first-line))
           ;; feature not matched, ignore next form
           (read-suppress first-line rdr opts pending-forms))))))
 
@@ -459,13 +458,12 @@
                    (nil? matched)
                    (let [match (match-feature first-line rdr opts pending-forms)]
                      (if (not (nil? match))
-                       (if (= match READ_FINISHED)
-                         nil
+                       (when-not (identical? match READ_FINISHED)
                          (recur match nil))
                        (recur nil nil)))
 
                    ;; found match, just read and ignore the rest
-                   (not (= finished READ_FINISHED))
+                   (not (identical? finished READ_FINISHED))
                    (recur matched (read-suppress first-line rdr opts pending-forms))
 
                    :else
@@ -473,9 +471,9 @@
     (if (nil? result)
       rdr
       (if splicing
-        (if (instance? java.util.List result)
+        (if (instance? List result)
           (do
-            (.addAll ^java.util.List pending-forms 0 ^java.util.List result)
+            (.addAll ^List pending-forms 0 ^List result)
             rdr)
           (reader-error rdr "Spliced form list in read-cond-splicing must implement java.util.List."))
         result))))
@@ -871,11 +869,11 @@
    Note that the function signature of clojure.tools.reader/read and
    clojure.tools.reader.edn/read is not the same for eof-handling"
   ([] (read *in*))
-  ([reader] (read reader true nil nil nil {} (LinkedList.)))
-  ([reader {eof :eof :as opts}] (read reader (not (nil? eof)) eof nil nil opts (LinkedList.)))
-  ([reader eof-error? sentinel] (read reader eof-error? sentinel nil nil {} (LinkedList.)))
-  ([reader eof-error? sentinel opts pending-forms] (read reader eof-error? sentinel nil nil opts pending-forms))
-  ([reader eof-error? sentinel return-on return-on-value opts pending-forms]
+  ([reader] (read reader true nil nil {} (LinkedList.)))
+  ([reader {eof :eof :as opts}] (read reader (not (nil? eof)) eof nil opts (LinkedList.)))
+  ([reader eof-error? sentinel] (read reader eof-error? sentinel nil {} (LinkedList.)))
+  ([reader eof-error? sentinel opts pending-forms] (read reader eof-error? sentinel nil opts pending-forms))
+  ([reader eof-error? sentinel return-on opts pending-forms]
      (when (= :unknown *read-eval*)
        (reader-error "Reading disallowed - *read-eval* bound to :unknown"))
      (try
@@ -887,7 +885,7 @@
                (cond
                 (whitespace? ch) (recur)
                 (nil? ch) (if eof-error? (reader-error reader "EOF") sentinel)
-                (= ch return-on) return-on-value
+                (= ch return-on) READ_FINISHED
                 (number-literal? reader ch) (read-number reader ch)
                 :else (let [f (macros ch)]
                         (if f
