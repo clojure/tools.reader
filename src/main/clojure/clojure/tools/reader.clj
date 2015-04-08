@@ -485,18 +485,18 @@
   [rdr _ opts pending-forms]
   (when (not (and opts (#{:allow :preserve} (:read-cond opts))))
     (throw (RuntimeException. "Conditional read not allowed")))
-  (let [ch (read-char rdr)]
-    (when (= ch -1)
-      (throw (RuntimeException. "EOF while reading character")))
+  (if-let [ch (read-char rdr)]
     (let [splicing (= ch \@)
           ch (if splicing (read-char rdr) ch)]
-      (let [ch (if (whitespace? ch) (read-past whitespace? rdr) ch)]
-        (when (= ch -1) (throw (RuntimeException. "EOF while reading character")))
-        (when (not= ch \() (throw (RuntimeException. (str "read-cond body must be a list" " !!!" (int ch)))))
-        (binding [*suppress-read* true]
-          (if (= :preserve (:read-cond opts))
-            (reader-conditional (read-list rdr ch opts pending-forms) splicing)
-            (read-cond-delimited rdr splicing opts pending-forms)))))))
+      (if-let [ch (if (whitespace? ch) (read-past whitespace? rdr) ch)]
+        (if (not= ch \()
+          (throw (RuntimeException. "read-cond body must be a list"))
+          (binding [*suppress-read* true]
+            (if (= :preserve (:read-cond opts))
+              (reader-conditional (read-list rdr ch opts pending-forms) splicing)
+              (read-cond-delimited rdr splicing opts pending-forms))))
+        (reader-error rdr "EOF while reading character")))
+    (reader-error rdr "EOF while reading character")))
 
 (def ^:private ^:dynamic arg-env)
 
