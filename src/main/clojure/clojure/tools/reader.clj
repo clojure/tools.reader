@@ -26,19 +26,6 @@
 ;; helpers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defrecord TaggedLiteral [tag form])
-(defmethod print-method clojure.tools.reader.TaggedLiteral [o ^java.io.Writer w]
-  (.write w "#")
-  (print-method (:tag o) w)
-  (.write w " ")
-  (print-method (:form o) w))
-
-(defrecord ReaderConditional [splicing? form])
-(defmethod print-method clojure.tools.reader.ReaderConditional [o ^java.io.Writer w]
-  (.write w "#?")
-  (when (:splicing? o) (.write w "@"))
-  (print-method (:form o) w))
-
 (declare read macros dispatch-macros
          ^:dynamic *read-eval*
          ^:dynamic *data-readers*
@@ -492,7 +479,7 @@
         (when (not= ch \() (throw (RuntimeException. (str "read-cond body must be a list" " !!!" (int ch)))))
         (binding [*suppress-read* true]
           (if (= :preserve (:read-cond opts))
-            (clojure.tools.reader/->ReaderConditional splicing (read-list rdr ch opts pending-forms))
+            (reader-conditional (read-list rdr ch opts pending-forms) splicing)
             (read-cond-delimited rdr splicing opts pending-forms)))))))
 
 (def ^:private ^:dynamic arg-env)
@@ -760,7 +747,7 @@
 (defn- read-tagged* [rdr tag f opts pending-forms]
   (let [o (read rdr true nil opts pending-forms)]
     (if (= :preserve (:read-cond opts))
-      (clojure.tools.reader/->TaggedLiteral tag o)
+      (tagged-literal tag o)
       (f o))))
 
 (defn- read-ctor [rdr class-name opts pending-forms]

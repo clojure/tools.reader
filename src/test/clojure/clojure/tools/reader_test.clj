@@ -2,7 +2,8 @@
   (:refer-clojure :exclude [read read-string *default-data-reader-fn*])
   (:use [clojure.tools.reader :only [read read-string *default-data-reader-fn*]]
         [clojure.tools.reader.reader-types :only [string-push-back-reader]]
-        [clojure.test :only [deftest is are testing]])
+        [clojure.test :only [deftest is are testing]]
+        [clojure.tools.reader.impl.utils :exclude [char]])
   (:import clojure.lang.BigInt))
 
 (load "common_tests")
@@ -132,14 +133,14 @@
 
 (deftest preserve-read-cond
   (let [x (read-string {:read-cond :preserve} "#?(:clj foo :cljs bar)")]
-    ;;(is (reader-conditional? x))
-    ;;(is (= x (reader-conditional '(:clj foo :cljs bar) false)))
+    (is (reader-conditional? x))
+    (is (= x (reader-conditional '(:clj foo :cljs bar) false)))
     (is (not (:splicing? x)))
     (is (= :foo (get x :no-such-key :foo)))
     (is (= (:form x) '(:clj foo :cljs bar))))
   (let [x (read-string {:read-cond :preserve} "#?@(:clj [foo])" )]
-    ;;(is (reader-conditional? x))
-    ;;(is (= x (reader-conditional '(:clj [foo]) true)))
+    (is (reader-conditional? x))
+    (is (= x (reader-conditional '(:clj [foo]) true)))
     (is (:splicing? x))
     (is (= :foo (get x :no-such-key :foo)))
     (is (= (:form x) '(:clj [foo]))))
@@ -147,9 +148,9 @@
                         (read-string {:read-cond :preserve} "#js {:x 1 :y 2}" )))
   (let [x (read-string {:read-cond :preserve} "#?(:cljs #js {:x 1 :y 2})")
         [platform tl] (:form x)]
-    ;;(is (reader-conditional? x))
-    ;;(is (tagged-literal? tl))
-    ;;(is (= tl (tagged-literal 'js {:x 1 :y 2})))
+    (is (reader-conditional? x))
+    (is (tagged-literal? tl))
+    (is (= tl (tagged-literal 'js {:x 1 :y 2})))
     (is (= 'js (:tag tl)))
     (is (= {:x 1 :y 2} (:form tl)))
     (is (= :foo (get tl :no-such-key :foo))))
