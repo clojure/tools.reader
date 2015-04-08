@@ -11,7 +11,7 @@
   (:use clojure.tools.reader.reader-types
         clojure.tools.reader.impl.utils)
   (:import (clojure.lang BigInt Numbers)
-           (java.util regex.Pattern regex.Matcher)
+           (java.util.regex Pattern Matcher)
            java.lang.reflect.Constructor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -129,20 +129,3 @@
   [msg]
   (fn [rdr & _]
     (reader-error rdr msg)))
-
-(defn read-regex
-  [rdr ch opts pending-forms]
-  (let [sb (StringBuilder.)]
-    (loop [ch (read-char rdr)]
-      (if (identical? \" ch)
-        (Pattern/compile (str sb))
-        (if (nil? ch)
-          (reader-error rdr "EOF while reading regex")
-          (do
-            (.append sb ch )
-            (when (identical? \\ ch)
-              (let [ch (read-char rdr)]
-                (if (nil? ch)
-                  (reader-error rdr "EOF while reading regex"))
-                (.append sb ch)))
-            (recur (read-char rdr))))))))

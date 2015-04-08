@@ -19,8 +19,7 @@
                          RT Symbol Reflector Var IObj
                          PersistentVector IRecord Namespace)
            java.lang.reflect.Constructor
-           java.util.regex.Pattern
-           (java.util List LinkedList)))
+           (java.util regex.Pattern List LinkedList)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; helpers
@@ -71,6 +70,23 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; readers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn read-regex
+  [rdr ch opts pending-forms]
+  (let [sb (StringBuilder.)]
+    (loop [ch (read-char rdr)]
+      (if (identical? \" ch)
+        (Pattern/compile (str sb))
+        (if (nil? ch)
+          (reader-error rdr "EOF while reading regex")
+          (do
+            (.append sb ch )
+            (when (identical? \\ ch)
+              (let [ch (read-char rdr)]
+                (if (nil? ch)
+                  (reader-error rdr "EOF while reading regex"))
+                (.append sb ch)))
+            (recur (read-char rdr))))))))
 
 (defn- read-unicode-char
   ([^String token offset length base]
