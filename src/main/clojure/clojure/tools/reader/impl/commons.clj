@@ -131,7 +131,7 @@
     (reader-error rdr msg)))
 
 (defn read-regex
-  [rdr ch]
+  [rdr ch opts pending-forms]
   (let [sb (StringBuilder.)]
     (loop [ch (read-char rdr)]
       (if (identical? \" ch)

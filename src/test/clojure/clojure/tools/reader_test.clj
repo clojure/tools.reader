@@ -1,7 +1,8 @@
 (ns clojure.tools.reader-test
-  (:refer-clojure :exclude [read-string *default-data-reader-fn*])
-  (:use [clojure.tools.reader :only [read-string *default-data-reader-fn*]]
-        [clojure.test :only [deftest is]])
+  (:refer-clojure :exclude [read read-string *default-data-reader-fn*])
+  (:use [clojure.tools.reader :only [read read-string *default-data-reader-fn*]]
+        [clojure.tools.reader.reader-types :only [string-push-back-reader]]
+        [clojure.test :only [deftest is are testing]])
   (:import clojure.lang.BigInt))
 
 (load "common_tests")
@@ -88,3 +89,72 @@
 
 (deftest read-ctor
   (is (= "foo" (read-string "#java.lang.String[\"foo\"]"))))
+
+(deftest reader-conditionals
+  (let [opts {:read-cond :allow :features #{:clj}}]
+    (are [out s opts] (= out (read-string opts s))
+         ;; basic read-cond
+         '[foo-form] "[#?(:foo foo-form :bar bar-form)]" {:read-cond :allow :features #{:foo}}
+         '[bar-form] "[#?(:foo foo-form :bar bar-form)]" {:read-cond :allow :features #{:bar}}
+         '[foo-form] "[#?(:foo foo-form :bar bar-form)]" {:read-cond :allow :features #{:foo :bar}}
+         '[] "[#?(:foo foo-form :bar bar-form)]" {:read-cond :allow :features #{:baz}}
+
+         ;; environmental features
+         "clojure" "#?(:clj \"clojure\" :cljs \"clojurescript\" :default \"default\")"  opts
+
+         ;; default features
+         "default" "#?(:cljr \"clr\" :cljs \"cljs\" :default \"default\")" opts
+
+         ;; splicing
+         [] "[#?@(:clj [])]" opts
+         [:a] "[#?@(:clj [:a])]" opts
+         [:a :b] "[#?@(:clj [:a :b])]" opts
+         [:a :b :c] "[#?@(:clj [:a :b :c])]" opts
+
+         ;; nested splicing
+         [:a :b :c :d :e] "[#?@(:clj [:a #?@(:clj [:b #?@(:clj [:c]) :d]):e])]" opts
+         '(+ 1 (+ 2 3)) "(+ #?@(:clj [1 (+ #?@(:clj [2 3]))]))" opts
+         '(+ (+ 2 3) 1) "(+ #?@(:clj [(+ #?@(:clj [2 3])) 1]))" opts
+         [:a [:b [:c] :d] :e] "[#?@(:clj [:a [#?@(:clj [:b #?@(:clj [[:c]]) :d])] :e])]" opts
+
+         ;; bypass unknown tagged literals
+         [1 2 3] "#?(:cljs #js [1 2 3] :clj [1 2 3])" opts
+         :clojure "#?(:foo #some.nonexistent.Record {:x 1} :clj :clojure)" opts)
+
+    (are [re s opts] (is (thrown-with-msg? RuntimeException re (read-string opts s)))
+         #"Feature should be a keyword" "#?((+ 1 2) :a)" opts
+         #"even number of forms" "#?(:cljs :a :clj)" opts
+         #"read-cond-splicing must implement" "#?@(:clj :a)" opts
+         #"is reserved" "#?@(:foo :a :else :b)" opts
+         #"must be a list" "#?[:foo :a :else :b]" opts
+         #"Conditional read not allowed" "#?[:clj :a :default nil]" {:read-cond :BOGUS}
+         #"Conditional read not allowed" "#?[:clj :a :default nil]" {})))
+
+(deftest preserve-read-cond
+  (let [x (read-string {:read-cond :preserve} "#?(:clj foo :cljs bar)")]
+    ;;(is (reader-conditional? x))
+    ;;(is (= x (reader-conditional '(:clj foo :cljs bar) false)))
+    (is (not (:splicing? x)))
+    (is (= :foo (get x :no-such-key :foo)))
+    (is (= (:form x) '(:clj foo :cljs bar))))
+  (let [x (read-string {:read-cond :preserve} "#?@(:clj [foo])" )]
+    ;;(is (reader-conditional? x))
+    ;;(is (= x (reader-conditional '(:clj [foo]) true)))
+    (is (:splicing? x))
+    (is (= :foo (get x :no-such-key :foo)))
+    (is (= (:form x) '(:clj [foo]))))
+  (is (thrown-with-msg? RuntimeException #"No reader function for tag"
+                        (read-string {:read-cond :preserve} "#js {:x 1 :y 2}" )))
+  (let [x (read-string {:read-cond :preserve} "#?(:cljs #js {:x 1 :y 2})")
+        [platform tl] (:form x)]
+    ;;(is (reader-conditional? x))
+    ;;(is (tagged-literal? tl))
+    ;;(is (= tl (tagged-literal 'js {:x 1 :y 2})))
+    (is (= 'js (:tag tl)))
+    (is (= {:x 1 :y 2} (:form tl)))
+    (is (= :foo (get tl :no-such-key :foo))))
+  (testing "print form roundtrips"
+     (doseq [s ["#?(:clj foo :cljs bar)"
+                "#?(:cljs #js {:x 1, :y 2})"
+                "#?(:clj #clojure.test_clojure.reader.TestRecord [42 85])"]]
+       (is (= s (pr-str (read-string {:read-cond :preserve} s)))))))

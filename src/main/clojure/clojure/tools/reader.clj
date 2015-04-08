@@ -11,7 +11,7 @@
   clojure.tools.reader
   (:refer-clojure :exclude [read read-line read-string char
                             default-data-readers *default-data-reader-fn*
-                            *read-eval* *data-readers*])
+                            *read-eval* *data-readers* *suppress-read*])
   (:use clojure.tools.reader.reader-types
         [clojure.tools.reader.impl utils commons])
   (:require [clojure.tools.reader.default-data-readers :as data-readers])
@@ -19,16 +19,31 @@
                          RT Symbol Reflector Var IObj
                          PersistentVector IRecord Namespace)
            java.lang.reflect.Constructor
-           java.util.regex.Pattern))
+           java.util.regex.Pattern
+           (java.util List LinkedList)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; helpers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defrecord TaggedLiteral [tag form])
+(defmethod print-method clojure.tools.reader.TaggedLiteral [o ^java.io.Writer w]
+  (.write w "#")
+  (print-method (:tag o) w)
+  (.write w " ")
+  (print-method (:form o) w))
+
+(defrecord ReaderConditional [splicing? form])
+(defmethod print-method clojure.tools.reader.ReaderConditional [o ^java.io.Writer w]
+  (.write w "#?")
+  (when (:splicing? o) (.write w "@"))
+  (print-method (:form o) w))
+
 (declare read macros dispatch-macros
          ^:dynamic *read-eval*
          ^:dynamic *data-readers*
          ^:dynamic *default-data-reader-fn*
+         ^:dynamic *suppress-read*
          default-data-readers)
 
 (defn- macro-terminating? [ch]
@@ -53,17 +68,17 @@
 (declare read-tagged)
 
 (defn- read-dispatch
-  [rdr _]
+  [rdr _ opts pending-forms]
   (if-let [ch (read-char rdr)]
     (if-let [dm (dispatch-macros ch)]
-      (dm rdr ch)
-      (if-let [obj (read-tagged (doto rdr (unread ch)) ch)] ;; ctor reader is implemented as a taggged literal
+      (dm rdr ch opts pending-forms)
+      (if-let [obj (read-tagged (doto rdr (unread ch)) ch opts pending-forms)] ;; ctor reader is implemented as a tagged literal
         obj
         (reader-error rdr "No dispatch macro for " ch)))
     (reader-error rdr "EOF while reading character")))
 
 (defn- read-unmatched-delimiter
-  [rdr ch]
+  [rdr ch opts pending-forms]
   (reader-error rdr "Unmatched delimiter " ch))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -108,7 +123,7 @@
 
 (defn- read-char*
   "Read in a character literal"
-  [rdr backslash]
+  [rdr backslash opts pending-forms]
   (let [ch (read-char rdr)]
     (if-not (nil? ch)
       (let [token (if (or (macro-terminating? ch)
@@ -155,30 +170,29 @@
   (when (indexing-reader? rdr)
     [(get-line-number rdr) (get-column-number rdr)]))
 
+(defonce ^:private READ_EOF (gensym "EOF"))
+(defonce ^:private READ_FINISHED (gensym "FINISHED"))
+
 (defn- ^PersistentVector read-delimited
   "Reads and returns a collection ended with delim"
-  [delim rdr recursive?]
+  [delim rdr opts pending-forms]
   (let [[start-line start-column] (starting-line-col-info rdr)
         delim (char delim)]
     (loop [a (transient [])]
-      (if-let [ch (read-past whitespace? rdr)]
-        (if (identical? delim (char ch))
+      (let [form (read rdr false READ_EOF delim READ_FINISHED opts pending-forms)]
+        (if (= form READ_FINISHED)
           (persistent! a)
-          (if-let [macrofn (macros ch)]
-            (let [mret (log-source-unread rdr
-                         (macrofn rdr ch))]
-              (recur (if-not (identical? mret rdr) (conj! a mret) a)))
-            (let [o (read (doto rdr (unread ch)) true nil recursive?)]
-              (recur (if-not (identical? o rdr) (conj! a o) a)))))
-        (reader-error rdr "EOF while reading"
-                      (when start-line
-                        (str ", starting at line " start-line " and column " start-column)))))))
+          (if (= form READ_EOF)
+            (reader-error rdr "EOF while reading"
+                          (when start-line
+                            (str ", starting at line " start-line " and column " start-column)))
+            (recur (conj! a form))))))))
 
 (defn- read-list
   "Read in a list, including its location if the reader is an indexing reader"
-  [rdr _]
+  [rdr _ opts pending-forms]
   (let [[start-line start-column] (starting-line-col-info rdr)
-        the-list (read-delimited \) rdr true)
+        the-list (read-delimited \) rdr opts pending-forms)
         [end-line end-column] (ending-line-col-info rdr)]
     (with-meta (if (empty? the-list)
                  '()
@@ -194,9 +208,9 @@
 
 (defn- read-vector
   "Read in a vector, including its location if the reader is an indexing reader"
-  [rdr _]
+  [rdr _ opts pending-forms]
   (let [[start-line start-column] (starting-line-col-info rdr)
-        the-vector (read-delimited \] rdr true)
+        the-vector (read-delimited \] rdr opts pending-forms)
         [end-line end-column] (ending-line-col-info rdr)]
     (with-meta the-vector
       (when start-line
@@ -210,9 +224,9 @@
 
 (defn- read-map
   "Read in a map, including its location if the reader is an indexing reader"
-  [rdr _]
+  [rdr _ opts pending-forms]
   (let [[start-line start-column] (starting-line-col-info rdr)
-        the-map (read-delimited \} rdr true)
+        the-map (read-delimited \} rdr opts pending-forms)
         map-count (count the-map)
         [end-line end-column] (ending-line-col-info rdr)]
     (when (odd? map-count)
@@ -263,7 +277,7 @@
         (reader-error rdr "Unsupported escape character: \\" ch)))))
 
 (defn- read-string*
-  [reader _]
+  [reader _ opts pending-forms]
   (loop [sb (StringBuilder.)
          ch (read-char reader)]
     (case ch
@@ -314,7 +328,7 @@
       (find-ns sym)))
 
 (defn- read-keyword
-  [reader initch]
+  [reader initch opts pending-forms]
   (let [ch (read-char reader)]
     (if-not (whitespace? ch)
       (let [token (read-token reader ch)
@@ -336,18 +350,18 @@
 (defn- wrapping-reader
   "Returns a function which wraps a reader in a call to sym"
   [sym]
-  (fn [rdr _]
-    (list sym (read rdr true nil true))))
+  (fn [rdr _ opts pending-forms]
+    (list sym (read rdr true nil nil nil opts pending-forms))))
 
 (defn- read-meta
   "Read metadata and return the following object with the metadata applied"
-  [rdr _]
+  [rdr _ opts pending-forms]
   (log-source rdr
     (let [[line column] (starting-line-col-info rdr)
-          m (desugar-meta (read rdr true nil true))]
+          m (desugar-meta (read rdr true nil opts pending-forms))]
       (when-not (map? m)
         (reader-error rdr "Metadata must be Symbol, Keyword, String or Map"))
-      (let [o (read rdr true nil true)]
+      (let [o (read rdr true nil opts pending-forms)]
         (if (instance? IMeta o)
           (let [m (if (and line (seq? o))
                     (assoc m :line line :column column)
@@ -358,11 +372,11 @@
           (reader-error rdr "Metadata can only be applied to IMetas"))))))
 
 (defn- read-set
-  [rdr _]
+  [rdr _ opts pending-forms]
   (let [[start-line start-column] (starting-line-col-info rdr)
         ;; subtract 1 from start-column so it includes the # in the leading #{
         start-column (if start-column (int (dec start-column)))
-        the-set (PersistentHashSet/createWithCheck (read-delimited \} rdr true))
+        the-set (PersistentHashSet/createWithCheck (read-delimited \} rdr opts pending-forms))
         [end-line end-column] (ending-line-col-info rdr)]
     (with-meta the-set
       (when start-line
@@ -376,9 +390,112 @@
 
 (defn- read-discard
   "Read and discard the first object from rdr"
-  [rdr _]
+  [rdr _ opts pending-forms]
   (doto rdr
-    (read true nil true)))
+    (read true nil opts pending-forms)))
+
+(def ^:private RESERVED_FEATURES #{:else :none})
+
+(defn- has-feature?
+  [rdr feature opts]
+  (if (keyword? feature)
+    (or (= :default feature) (contains? (get opts :features) feature))
+    (reader-error rdr (str "Feature should be a keyword: " feature))))
+
+(defn- check-eof-error
+  [form rdr first-line]
+  (when (= form READ_EOF)
+    (if (< first-line 0)
+      (reader-error rdr "EOF while reading")
+      (reader-error rdr "EOF while reading, starting at line " first-line))))
+
+(defn- check-reserved-features
+  [rdr form]
+  (when (get RESERVED_FEATURES form)
+    (reader-error rdr (str "Feature name " form " is reserved"))))
+
+(defn- check-invalid-read-cond
+  [form rdr first-line]
+  (when (= form READ_FINISHED)
+    (if (< first-line 0)
+      (reader-error rdr "read-cond requires an even number of forms")
+      (reader-error rdr (str "read-cond starting on line " first-line " requires an even number of forms")))))
+
+(defn- read-suppress
+  "Read next form and suppress. Return nil or READ_FINISHED."
+  [first-line rdr opts pending-forms]
+  (binding [*suppress-read* true]
+    (let [form (read rdr false READ_EOF \) READ_FINISHED opts pending-forms)]
+      (check-eof-error form rdr first-line)
+      (when (= form READ_FINISHED)
+        READ_FINISHED))))
+
+(defn- match-feature
+  "Read next feature. If matched, read next form and return.
+   Otherwise, read and skip next form, returning READ_FINISHED or nil."
+  [first-line rdr opts pending-forms]
+  (let [feature (read rdr false READ_EOF \) READ_FINISHED opts pending-forms)]
+    (check-eof-error feature rdr first-line)
+    (if (= feature READ_FINISHED)
+      READ_FINISHED
+      (do
+        (check-reserved-features rdr feature)
+        (if (has-feature? rdr feature opts)
+          ;; feature matched, read selected form
+          (let [form (read rdr false READ_EOF \) READ_FINISHED opts pending-forms)]
+            (check-eof-error form rdr first-line)
+            (check-invalid-read-cond form rdr first-line)
+            form)
+          ;; feature not matched, ignore next form
+          (read-suppress first-line rdr opts pending-forms))))))
+
+(defn- read-cond-delimited
+  [rdr splicing opts pending-forms]
+  (let [first-line (if (indexing-reader? rdr) (get-line-number rdr) -1)
+        result (loop [matched nil
+                      finished nil]
+                 (cond
+                   ;; still looking for match, read feature+form
+                   (nil? matched)
+                   (let [match (match-feature first-line rdr opts pending-forms)]
+                     (if (not (nil? match))
+                       (if (= match READ_FINISHED)
+                         nil
+                         (recur match nil))
+                       (recur nil nil)))
+
+                   ;; found match, just read and ignore the rest
+                   (not (= finished READ_FINISHED))
+                   (recur matched (read-suppress first-line rdr opts pending-forms))
+
+                   :else
+                   matched))]
+    (if (nil? result)
+      rdr
+      (if splicing
+        (if (instance? java.util.List result)
+          (do
+            (.addAll ^java.util.List pending-forms 0 ^java.util.List result)
+            rdr)
+          (reader-error rdr "Spliced form list in read-cond-splicing must implement java.util.List."))
+        result))))
+
+(defn- read-cond
+  [rdr _ opts pending-forms]
+  (when (not (and opts (#{:allow :preserve} (:read-cond opts))))
+    (throw (RuntimeException. "Conditional read not allowed")))
+  (let [ch (read-char rdr)]
+    (when (= ch -1)
+      (throw (RuntimeException. "EOF while reading character")))
+    (let [splicing (= ch \@)
+          ch (if splicing (read-char rdr) ch)]
+      (let [ch (if (whitespace? ch) (read-past whitespace? rdr) ch)]
+        (when (= ch -1) (throw (RuntimeException. "EOF while reading character")))
+        (when (not= ch \() (throw (RuntimeException. (str "read-cond body must be a list" " !!!" (int ch)))))
+        (binding [*suppress-read* true]
+          (if (= :preserve (:read-cond opts))
+            (clojure.tools.reader/->ReaderConditional splicing (read-list rdr ch opts pending-forms))
+            (read-cond-delimited rdr splicing opts pending-forms)))))))
 
 (def ^:private ^:dynamic arg-env)
 
@@ -389,11 +506,11 @@
                "__" (RT/nextID) "#")))
 
 (defn- read-fn
-  [rdr _]
+  [rdr _ opts pending-forms]
   (if (thread-bound? #'arg-env)
     (throw (IllegalStateException. "Nested #()s are not allowed")))
   (binding [arg-env (sorted-map)]
-    (let [form (read (doto rdr (unread \()) true nil true) ;; this sets bindings
+    (let [form (read (doto rdr (unread \()) true nil opts pending-forms) ;; this sets bindings
           rargs (rseq arg-env)
           args (if rargs
                  (let [higharg (key (first rargs))]
@@ -423,7 +540,7 @@
 (declare read-symbol)
 
 (defn- read-arg
-  [rdr pct]
+  [rdr pct opts pending-forms]
   (if-not (thread-bound? #'arg-env)
     (read-symbol rdr pct)
     (let [ch (peek-char rdr)]
@@ -438,26 +555,26 @@
            (register-arg -1))
 
        :else
-       (let [n (read rdr true nil true)]
+       (let [n (read rdr true nil opts pending-forms)]
          (if-not (integer? n)
            (throw (IllegalStateException. "Arg literal must be %, %& or %integer"))
            (register-arg n)))))))
 
 (defn- read-eval
   "Evaluate a reader literal"
-  [rdr _]
+  [rdr _ opts pending-forms]
   (when-not *read-eval*
     (reader-error rdr "#= not allowed when *read-eval* is false"))
-  (eval (read rdr true nil true)))
+  (eval (read rdr true nil opts pending-forms)))
 
 (def ^:private ^:dynamic gensym-env nil)
 
 (defn- read-unquote
-  [rdr comma]
+  [rdr comma opts pending-forms]
   (if-let [ch (peek-char rdr)]
     (if (identical? \@ ch)
-      ((wrapping-reader 'clojure.core/unquote-splicing) (doto rdr read-char) \@)
-      ((wrapping-reader 'clojure.core/unquote) rdr \~))))
+      ((wrapping-reader 'clojure.core/unquote-splicing) (doto rdr read-char) \@ opts pending-forms)
+      ((wrapping-reader 'clojure.core/unquote) rdr \~ opts pending-forms))))
 
 (declare syntax-quote*)
 (defn- unquote-splicing? [form]
@@ -602,9 +719,9 @@
    (add-meta form)))
 
 (defn- read-syntax-quote
-  [rdr backquote]
+  [rdr backquote opts pending-forms]
   (binding [gensym-env {}]
-    (-> (read rdr true nil true)
+    (-> (read rdr true nil opts pending-forms)
       syntax-quote*)))
 
 (defn- macros [ch]
@@ -639,13 +756,16 @@
     \" read-regex
     \! read-comment
     \_ read-discard
+    \? read-cond
     nil))
 
-(defn- read-tagged* [rdr tag f]
-  (let [o (read rdr true nil true)]
-    (f o)))
+(defn- read-tagged* [rdr tag f opts pending-forms]
+  (let [o (read rdr true nil opts pending-forms)]
+    (if (= :preserve (:read-cond opts))
+      (clojure.tools.reader/->TaggedLiteral tag o)
+      (f o))))
 
-(defn- read-ctor [rdr class-name]
+(defn- read-ctor [rdr class-name opts pending-forms]
   (when-not *read-eval*
     (reader-error "Record construction syntax can only be used when *read-eval* == true"))
   (let [class (Class/forName (name class-name) false (RT/baseLoader))
@@ -654,7 +774,7 @@
                              \[ [\] :short]
                              \{ [\} :extended]
                              nil)]
-      (let [entries (to-array (read-delimited end-ch rdr true))
+      (let [entries (to-array (read-delimited end-ch rdr opts pending-forms))
             numargs (count entries)
             all-ctors (.getConstructors class)
             ctors-num (count all-ctors)]
@@ -678,18 +798,20 @@
             (Reflector/invokeStaticMethod class "create" (object-array [vals])))))
       (reader-error rdr "Invalid reader constructor form"))))
 
-(defn- read-tagged [rdr initch]
-  (let [tag (read rdr true nil false)]
+(defn- read-tagged [rdr initch opts pending-forms]
+  (let [tag (read rdr true nil opts pending-forms)]
     (if-not (symbol? tag)
       (reader-error rdr "Reader tag must be a symbol"))
-    (if-let [f (or (*data-readers* tag)
-                   (default-data-readers tag))]
-      (read-tagged* rdr tag f)
-      (if (.contains (name tag) ".")
-        (read-ctor rdr tag)
-        (if-let [f *default-data-reader-fn*]
-          (f tag (read rdr true nil true))
-          (reader-error rdr "No reader function for tag " (name tag)))))))
+    (if *suppress-read*
+      (read-tagged* rdr tag identity opts pending-forms)
+      (if-let [f (or (*data-readers* tag)
+                     (default-data-readers tag))]
+        (read-tagged* rdr tag f opts pending-forms)
+        (if (.contains (name tag) ".")
+          (read-ctor rdr tag opts pending-forms)
+          (if-let [f *default-data-reader-fn*]
+            (f tag (read rdr true nil opts pending-forms))
+            (reader-error rdr "No reader function for tag " (name tag))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public API
@@ -727,6 +849,8 @@
    will be thrown for the unknown tag."
   nil)
 
+(def ^:dynamic *suppress-read* false)
+
 (def default-data-readers
   "Default map of data reader functions provided by Clojure.
    May be overridden by binding *data-readers*"
@@ -747,26 +871,31 @@
    Note that the function signature of clojure.tools.reader/read and
    clojure.tools.reader.edn/read is not the same for eof-handling"
   ([] (read *in*))
-  ([reader] (read reader true nil))
-  ([reader eof-error? sentinel] (read reader eof-error? sentinel false))
-  ([reader eof-error? sentinel recursive?]
+  ([reader] (read reader true nil nil nil {} (LinkedList.)))
+  ([reader {eof :eof :as opts}] (read reader (not (nil? eof)) eof nil nil opts (LinkedList.)))
+  ([reader eof-error? sentinel] (read reader eof-error? sentinel nil nil {} (LinkedList.)))
+  ([reader eof-error? sentinel opts pending-forms] (read reader eof-error? sentinel nil nil opts pending-forms))
+  ([reader eof-error? sentinel return-on return-on-value opts pending-forms]
      (when (= :unknown *read-eval*)
        (reader-error "Reading disallowed - *read-eval* bound to :unknown"))
      (try
        (loop []
          (log-source reader
-           (let [ch (read-char reader)]
-             (cond
-              (whitespace? ch) (recur)
-              (nil? ch) (if eof-error? (reader-error reader "EOF") sentinel)
-              (number-literal? reader ch) (read-number reader ch)
-              :else (let [f (macros ch)]
-                      (if f
-                        (let [res (f reader ch)]
-                          (if (identical? res reader)
-                            (recur)
-                            res))
-                        (read-symbol reader ch)))))))
+           (if (seq pending-forms)
+             (.remove ^List pending-forms 0)
+             (let [ch (read-char reader)]
+               (cond
+                (whitespace? ch) (recur)
+                (nil? ch) (if eof-error? (reader-error reader "EOF") sentinel)
+                (= ch return-on) return-on-value
+                (number-literal? reader ch) (read-number reader ch)
+                :else (let [f (macros ch)]
+                        (if f
+                          (let [res (f reader ch opts pending-forms)]
+                            (if (identical? res reader)
+                              (recur)
+                              res))
+                          (read-symbol reader ch))))))))
        (catch Exception e
          (if (ex-info? e)
            (let [d (ex-data e)]
@@ -800,9 +929,12 @@
 
    Note that the function signature of clojure.tools.reader/read-string and
    clojure.tools.reader.edn/read-string is not the same for eof-handling"
-  [s]
-  (when (and s (not (identical? s "")))
-    (read (string-push-back-reader s) true nil false)))
+  ([s]
+   (when (and s (not (identical? s "")))
+     (read (string-push-back-reader s) true nil)))
+  ([opts s]
+    (when (and s (not (identical? s ""))))
+     (read (string-push-back-reader s) opts)))
 
 (defmacro syntax-quote
   "Macro equivalent to the syntax-quote reader macro (`)."
