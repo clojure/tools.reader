@@ -762,7 +762,7 @@
 
 (defn- read-tagged* [rdr tag f opts pending-forms]
   (let [o (read rdr true nil opts pending-forms)]
-    (if (= :preserve (:read-cond opts))
+    (if (and *suppress-read* (= :preserve (:read-cond opts)))
       (tagged-literal tag o)
       (f o))))
 

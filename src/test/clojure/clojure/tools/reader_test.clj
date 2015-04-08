@@ -1,6 +1,6 @@
 (ns clojure.tools.reader-test
-  (:refer-clojure :exclude [read read-string *default-data-reader-fn*])
-  (:use [clojure.tools.reader :only [read read-string *default-data-reader-fn*]]
+  (:refer-clojure :exclude [read read-string *default-data-reader-fn* *data-readers*])
+  (:use [clojure.tools.reader :only [read read-string *default-data-reader-fn* *data-readers*]]
         [clojure.tools.reader.reader-types :only [string-push-back-reader]]
         [clojure.test :only [deftest is are testing]]
         [clojure.tools.reader.impl.utils :exclude [char]])
@@ -132,6 +132,9 @@
          #"Conditional read not allowed" "#?[:clj :a :default nil]" {})))
 
 (deftest preserve-read-cond
+  (is (= 1 (binding [*data-readers* {'foo (constantly 1)}]
+             (read-string {:read-cond :preserve} "#foo []"))))
+
   (let [x (read-string {:read-cond :preserve} "#?(:clj foo :cljs bar)")]
     (is (reader-conditional? x))
     (is (= x (reader-conditional '(:clj foo :cljs bar) false)))
