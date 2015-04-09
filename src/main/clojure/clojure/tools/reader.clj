@@ -59,9 +59,7 @@
   (if-let [ch (read-char rdr)]
     (if-let [dm (dispatch-macros ch)]
       (dm rdr ch opts pending-forms)
-      (if-let [obj (read-tagged (doto rdr (unread ch)) ch opts pending-forms)] ;; ctor reader is implemented as a tagged literal
-        obj
-        (reader-error rdr "No dispatch macro for " ch)))
+      (read-tagged (doto rdr (unread ch)) ch opts pending-forms)) ;; ctor reader is implemented as a tagged literal
     (reader-error rdr "EOF while reading character")))
 
 (defn- read-unmatched-delimiter
