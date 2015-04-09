@@ -490,8 +490,8 @@
       (if-let [ch (if (whitespace? ch) (read-past whitespace? rdr) ch)]
         (if (not= ch \()
           (throw (RuntimeException. "read-cond body must be a list"))
-          (binding [*suppress-read* true]
-            (if (= :preserve (:read-cond opts))
+          (binding [*suppress-read* (or *suppress-read* (= :preserve (:read-cond opts)))]
+            (if *suppress-read*
               (reader-conditional (read-list rdr ch opts pending-forms) splicing)
               (read-cond-delimited rdr splicing opts pending-forms))))
         (reader-error rdr "EOF while reading character")))
@@ -759,12 +759,6 @@
     \? read-cond
     nil))
 
-(defn- read-tagged* [rdr tag f opts pending-forms]
-  (let [o (read* rdr true nil opts pending-forms)]
-    (if (and *suppress-read* (= :preserve (:read-cond opts)))
-      (tagged-literal tag o)
-      (f o))))
-
 (defn- read-ctor [rdr class-name opts pending-forms]
   (when-not *read-eval*
     (reader-error "Record construction syntax can only be used when *read-eval* == true"))
@@ -803,10 +797,10 @@
     (if-not (symbol? tag)
       (reader-error rdr "Reader tag must be a symbol"))
     (if *suppress-read*
-      (read-tagged* rdr tag identity opts pending-forms)
+      (tagged-literal tag (read* rdr true nil opts pending-forms))
       (if-let [f (or (*data-readers* tag)
                      (default-data-readers tag))]
-        (read-tagged* rdr tag f opts pending-forms)
+        (f (read* rdr true nil opts pending-forms))
         (if (.contains (name tag) ".")
           (read-ctor rdr tag opts pending-forms)
           (if-let [f *default-data-reader-fn*]

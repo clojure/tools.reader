@@ -91,6 +91,8 @@
 (deftest read-ctor
   (is (= "foo" (read-string "#java.lang.String[\"foo\"]"))))
 
+(defrecord JSValue [v])
+
 (deftest reader-conditionals
   (let [opts {:read-cond :allow :features #{:clj}}]
     (are [out s opts] (= out (read-string opts s))
@@ -129,7 +131,10 @@
          #"is reserved" "#?@(:foo :a :else :b)" opts
          #"must be a list" "#?[:foo :a :else :b]" opts
          #"Conditional read not allowed" "#?[:clj :a :default nil]" {:read-cond :BOGUS}
-         #"Conditional read not allowed" "#?[:clj :a :default nil]" {})))
+         #"Conditional read not allowed" "#?[:clj :a :default nil]" {}))
+  (binding [*data-readers* {'js (fn [v] (JSValue. v) )}]
+    (is (= (JSValue. [1 2 3])
+           (read-string {:features #{:cljs} :read-cond :allow} "#?(:cljs #js [1 2 3] :foo #foo [1])")))))
 
 (deftest preserve-read-cond
   (is (= 1 (binding [*data-readers* {'foo (constantly 1)}]
