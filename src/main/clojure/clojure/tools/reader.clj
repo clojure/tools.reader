@@ -25,7 +25,8 @@
 ;; helpers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(declare read macros dispatch-macros
+(declare ^:private read*
+         macros dispatch-macros
          ^:dynamic *read-eval*
          ^:dynamic *data-readers*
          ^:dynamic *default-data-reader-fn*
@@ -182,7 +183,7 @@
   (let [[start-line start-column] (starting-line-col-info rdr)
         delim (char delim)]
     (loop [a (transient [])]
-      (let [form (read rdr false READ_EOF delim opts pending-forms)]
+      (let [form (read* rdr false READ_EOF delim opts pending-forms)]
         (if (identical? form READ_FINISHED)
           (persistent! a)
           (if (identical? form READ_EOF)
@@ -354,17 +355,17 @@
   "Returns a function which wraps a reader in a call to sym"
   [sym]
   (fn [rdr _ opts pending-forms]
-    (list sym (read rdr true nil opts pending-forms))))
+    (list sym (read* rdr true nil opts pending-forms))))
 
 (defn- read-meta
   "Read metadata and return the following object with the metadata applied"
   [rdr _ opts pending-forms]
   (log-source rdr
     (let [[line column] (starting-line-col-info rdr)
-          m (desugar-meta (read rdr true nil opts pending-forms))]
+          m (desugar-meta (read* rdr true nil opts pending-forms))]
       (when-not (map? m)
         (reader-error rdr "Metadata must be Symbol, Keyword, String or Map"))
-      (let [o (read rdr true nil opts pending-forms)]
+      (let [o (read* rdr true nil opts pending-forms)]
         (if (instance? IMeta o)
           (let [m (if (and line (seq? o))
                     (assoc m :line line :column column)
@@ -395,7 +396,7 @@
   "Read and discard the first object from rdr"
   [rdr _ opts pending-forms]
   (doto rdr
-    (read true nil opts pending-forms)))
+    (read* true nil opts pending-forms)))
 
 (def ^:private RESERVED_FEATURES #{:else :none})
 
@@ -428,7 +429,7 @@
   "Read next form and suppress. Return nil or READ_FINISHED."
   [first-line rdr opts pending-forms]
   (binding [*suppress-read* true]
-    (let [form (read rdr false READ_EOF \) opts pending-forms)]
+    (let [form (read* rdr false READ_EOF \) opts pending-forms)]
       (check-eof-error form rdr first-line)
       (when (identical? form READ_FINISHED)
         READ_FINISHED))))
@@ -437,7 +438,7 @@
   "Read next feature. If matched, read next form and return.
    Otherwise, read and skip next form, returning READ_FINISHED or nil."
   [first-line rdr opts pending-forms]
-  (let [feature (read rdr false READ_EOF \) opts pending-forms)]
+  (let [feature (read* rdr false READ_EOF \) opts pending-forms)]
     (check-eof-error feature rdr first-line)
     (if (= feature READ_FINISHED)
       READ_FINISHED
@@ -445,7 +446,7 @@
         (check-reserved-features rdr feature)
         (if (has-feature? rdr feature opts)
           ;; feature matched, read selected form
-          (doto (read rdr false READ_EOF \) opts pending-forms)
+          (doto (read* rdr false READ_EOF \) opts pending-forms)
             (check-eof-error rdr first-line)
             (check-invalid-read-cond rdr first-line))
           ;; feature not matched, ignore next form
@@ -511,7 +512,7 @@
   (if (thread-bound? #'arg-env)
     (throw (IllegalStateException. "Nested #()s are not allowed")))
   (binding [arg-env (sorted-map)]
-    (let [form (read (doto rdr (unread \()) true nil opts pending-forms) ;; this sets bindings
+    (let [form (read* (doto rdr (unread \()) true nil opts pending-forms) ;; this sets bindings
           rargs (rseq arg-env)
           args (if rargs
                  (let [higharg (key (first rargs))]
@@ -556,7 +557,7 @@
            (register-arg -1))
 
        :else
-       (let [n (read rdr true nil opts pending-forms)]
+       (let [n (read* rdr true nil opts pending-forms)]
          (if-not (integer? n)
            (throw (IllegalStateException. "Arg literal must be %, %& or %integer"))
            (register-arg n)))))))
@@ -566,7 +567,7 @@
   [rdr _ opts pending-forms]
   (when-not *read-eval*
     (reader-error rdr "#= not allowed when *read-eval* is false"))
-  (eval (read rdr true nil opts pending-forms)))
+  (eval (read* rdr true nil opts pending-forms)))
 
 (def ^:private ^:dynamic gensym-env nil)
 
@@ -722,7 +723,7 @@
 (defn- read-syntax-quote
   [rdr backquote opts pending-forms]
   (binding [gensym-env {}]
-    (-> (read rdr true nil opts pending-forms)
+    (-> (read* rdr true nil opts pending-forms)
       syntax-quote*)))
 
 (defn- macros [ch]
@@ -761,7 +762,7 @@
     nil))
 
 (defn- read-tagged* [rdr tag f opts pending-forms]
-  (let [o (read rdr true nil opts pending-forms)]
+  (let [o (read* rdr true nil opts pending-forms)]
     (if (and *suppress-read* (= :preserve (:read-cond opts)))
       (tagged-literal tag o)
       (f o))))
@@ -800,7 +801,7 @@
       (reader-error rdr "Invalid reader constructor form"))))
 
 (defn- read-tagged [rdr initch opts pending-forms]
-  (let [tag (read rdr true nil opts pending-forms)]
+  (let [tag (read* rdr true nil opts pending-forms)]
     (if-not (symbol? tag)
       (reader-error rdr "Reader tag must be a symbol"))
     (if *suppress-read*
@@ -811,7 +812,7 @@
         (if (.contains (name tag) ".")
           (read-ctor rdr tag opts pending-forms)
           (if-let [f *default-data-reader-fn*]
-            (f tag (read rdr true nil opts pending-forms))
+            (f tag (read* rdr true nil opts pending-forms))
             (reader-error rdr "No reader function for tag " (name tag))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -858,32 +859,9 @@
   {'inst #'data-readers/read-instant-date
    'uuid #'data-readers/default-uuid-reader})
 
-(defn read
-  "Reads the first object from an IPushbackReader or a java.io.PushbackReader.
-   Returns the object read. If EOF, throws if eof-error? is true.
-   Otherwise returns sentinel. If no stream is providen, *in* will be used.
-
-   Opts is a persistent map with valid keys:
-    :read-cond - :allow to process reader conditionals, or
-                 :preserve to keep all branches
-    :features - persistent set of feature keywords for reader conditionals
-    :eof - on eof, return value unless :eofthrow, then throw.
-           if not specified, will throw
-
-   ***WARNING***
-   Note that read can execute code (controlled by *read-eval*),
-   and as such should be used only with trusted sources.
-
-   To read data structures only, use clojure.tools.reader.edn/read
-
-   Note that the function signature of clojure.tools.reader/read and
-   clojure.tools.reader.edn/read is not the same for eof-handling"
-  {:arglists '([] [reader] [opts reader] [reader eof-error? eof-value])}
-  ([] (read *in*))
-  ([reader] (read reader true nil nil {} (LinkedList.)))
-  ([{eof :eof :as opts :or {eof :eofthrow}} reader] (read reader (= eof :eofthrow) eof nil opts (LinkedList.)))
-  ([reader eof-error? sentinel] (read reader eof-error? sentinel nil {} (LinkedList.)))
-  ([reader eof-error? sentinel opts pending-forms] (read reader eof-error? sentinel nil opts pending-forms))
+(defn ^:private read*
+  ([reader eof-error? sentinel opts pending-forms]
+     (read* reader eof-error? sentinel nil opts pending-forms))
   ([reader eof-error? sentinel return-on opts pending-forms]
      (when (= :unknown *read-eval*)
        (reader-error "Reading disallowed - *read-eval* bound to :unknown"))
@@ -925,6 +903,32 @@
                                      :column (get-column-number reader)
                                      :file   (get-file-name reader)}))
                            e)))))))
+
+(defn read
+  "Reads the first object from an IPushbackReader or a java.io.PushbackReader.
+   Returns the object read. If EOF, throws if eof-error? is true.
+   Otherwise returns sentinel. If no stream is providen, *in* will be used.
+
+   Opts is a persistent map with valid keys:
+    :read-cond - :allow to process reader conditionals, or
+                 :preserve to keep all branches
+    :features - persistent set of feature keywords for reader conditionals
+    :eof - on eof, return value unless :eofthrow, then throw.
+           if not specified, will throw
+
+   ***WARNING***
+   Note that read can execute code (controlled by *read-eval*),
+   and as such should be used only with trusted sources.
+
+   To read data structures only, use clojure.tools.reader.edn/read
+
+   Note that the function signature of clojure.tools.reader/read and
+   clojure.tools.reader.edn/read is not the same for eof-handling"
+  {:arglists '([] [reader] [opts reader] [reader eof-error? eof-value])}
+  ([] (read *in* true nil))
+  ([reader] (read reader true nil))
+  ([{eof :eof :as opts :or {eof :eofthrow}} reader] (read* reader (= eof :eofthrow) eof nil opts (LinkedList.)))
+  ([reader eof-error? sentinel] (read* reader eof-error? sentinel nil {} (LinkedList.))))
 
 (defn read-string
   "Reads one object from the string s.
