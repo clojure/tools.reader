@@ -1,5 +1,7 @@
 Changelog
 ========================================
+* Release 0.9.1 on 09 Apr 2015
+  * Fixed tagged literals inside read-cond
 * Release 0.9.0 on 09 Apr 2015
   * Implemented reader conditionals
   * Fixed column metadata on sets
