@@ -1,5 +1,10 @@
 Changelog
 ========================================
+* Release 0.9.0 on 09 Apr 2015
+  * Implemented reader conditionals
+  * Fixed column metadata on sets
+  * Disallowed reading keywords and symbols ending with colon
+  * Made ExceptionInfo extend RuntimeException
 * Release 0.8.16 on 06 Mar 2015
   * Added new output jar with "aot" classifier
 * Release 0.8.15 on 21 Feb 2015
