@@ -626,11 +626,11 @@
   (if (pos? (.indexOf (name s) "."))
     s ;; If there is a period, it is interop
     (if-let [ns-str (namespace s)]
-      (let [^Namespace ns (resolve-ns (symbol ns-str))]
+      (let [ns (resolve-ns (symbol ns-str))]
         (if (or (nil? ns)
                 (= (name (ns-name ns)) ns-str)) ;; not an alias
           s
-          (symbol (name (.name ns)) (name s))))
+          (symbol (name (ns-name ns)) (name s))))
       (if-let [o ((ns-map *ns*) s)]
         (if (class? o)
           (symbol (.getName ^Class o))
