@@ -33,6 +33,11 @@
          ^:dynamic *suppress-read*
          default-data-readers)
 
+(defn ^:private ns-name* [x]
+  (if (instance? Namespace x)
+    (name (ns-name x))
+    (name x)))
+
 (defn- macro-terminating? [ch]
   (case ch
     (\" \; \@ \^ \` \~ \( \) \[ \] \{ \} \\) true
@@ -628,15 +633,15 @@
     (if-let [ns-str (namespace s)]
       (let [ns (resolve-ns (symbol ns-str))]
         (if (or (nil? ns)
-                (= (name (ns-name ns)) ns-str)) ;; not an alias
+                (= (ns-name* ns) ns-str)) ;; not an alias
           s
-          (symbol (name (ns-name ns)) (name s))))
+          (symbol (ns-name* ns) (name s))))
       (if-let [o ((ns-map *ns*) s)]
         (if (class? o)
           (symbol (.getName ^Class o))
           (if (var? o)
-            (symbol (-> ^Var o .ns .name name) (-> ^Var o .sym name))))
-        (symbol (name (ns-name *ns*)) (name s))))))
+            (symbol (-> ^Var o .ns ns-name*) (-> ^Var o .sym name))))
+        (symbol (ns-name* *ns*) (name s))))))
 
 (defn- add-meta [form ret]
   (if (and (instance? IObj form)
