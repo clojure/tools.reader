@@ -1,5 +1,7 @@
 Changelog
 ========================================
+* Release 0.9.2 on 23 Apr 2015
+  * Allow sym->sym mapping in *alias-map*
 * Release 0.9.1 on 09 Apr 2015
   * Fixed tagged literals inside read-cond
 * Release 0.9.0 on 09 Apr 2015
