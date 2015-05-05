@@ -9,10 +9,14 @@
 (ns ^{:doc "An EDN reader in clojure"
       :author "Bronsa"}
   clojure.tools.reader.edn
-  (:refer-clojure :exclude [read read-line read-string char default-data-readers])
-  (:use clojure.tools.reader.reader-types
-        [clojure.tools.reader.impl utils commons]
-        [clojure.tools.reader :only [default-data-readers]])
+  (:refer-clojure :exclude [read read-string char default-data-readers])
+  (:require [clojure.tools.reader.reader-types :refer
+             [read-char reader-error unread peek-char indexing-reader?
+              get-line-number get-column-number get-file-name string-push-back-reader]]
+            [clojure.tools.reader.impl.utils :refer
+             [char ex-info? whitespace? numeric? desugar-meta]]
+            [clojure.tools.reader.impl.commons :refer :all]
+            [clojure.tools.reader :refer [default-data-readers]])
   (:import (clojure.lang PersistentHashSet IMeta RT PersistentVector)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -32,7 +32,6 @@
                 <namespace>clojure.tools.reader.impl.commons</namespace>
                 <namespace>clojure.tools.reader.impl.utils</namespace>
                 <namespace>clojure.tools.reader.reader-types</namespace>
-                <namespace>clojure.tools.reader.impl.ExceptionInfo</namespace>
               </namespaces>
             </configuration>
           </execution>
@@ -51,7 +50,6 @@
             <configuration>
               <includes>
                 <include>**/*.clj</include>
-                <include>clojure/tools/reader/impl/ExceptionInfo*.class</include>
               </includes>
             </configuration>
           </execution>

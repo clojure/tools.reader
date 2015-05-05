@@ -1,7 +1,7 @@
 clojure.tools.reader
 ========================================
 
-A complete Clojure reader and an EDN-only reader, works with Clojure versions >= 1.3.0
+A complete Clojure reader and an EDN-only reader, works with Clojure versions >= 1.4.0
 
 * [Rationale](#rationale)
 * [Releases and Dependency Information](#releases-and-dependency-information)
@@ -15,16 +15,12 @@ A complete Clojure reader and an EDN-only reader, works with Clojure versions >=
 Rationale
 ========================================
 
-clojure.tools.reader offers all functionality of the reader from clojure-1.5.0, and more.
-
-This means safer read/read-string, an edn-only reader, tagged-literals support, default-data-reader-fn support for every Clojure version >=1.3.0
+clojure.tools.reader offers all functionality of the reader from clojure-1.7.0, and more.
 
 For a list of additional features of the reader, read [Differences from LispReader.java](#differences-from-lispreaderjava)
 
 Moreover, by using reader types from `clojure.tools.reader.reader-types`, if using an IndexingReader, column info is available and both line and column metadata is attached not only to lists, but to symbols, vectors and maps too, when additional debugging info is needed (note that the edn reader doesn't add any line/column metadata at all).
 
-Note that it uses `ex-info` which is available on `clojure.core` only from clojure-1.4.0.
-If using clojure-1.3.0 and needing access to ex-data, use `clojure.tools.reader.impl.utils/ex-data`
 
 YourKit
 ========================================
