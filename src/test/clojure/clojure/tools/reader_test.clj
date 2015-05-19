@@ -127,8 +127,8 @@
     (are [re s opts] (is (thrown-with-msg? RuntimeException re (read-string opts s)))
          #"Feature should be a keyword" "#?((+ 1 2) :a)" opts
          #"even number of forms" "#?(:cljs :a :clj)" opts
-         #"read-cond-splicing must implement" "#?@(:clj :a)" opts
-         #"is reserved" "#?@(:foo :a :else :b)" opts
+         #"read-cond-splicing must implement" "(#?@(:clj :a))" opts
+         #"is reserved" "(#?@(:foo :a :else :b))" opts
          #"must be a list" "#?[:foo :a :else :b]" opts
          #"Conditional read not allowed" "#?[:clj :a :default nil]" {:read-cond :BOGUS}
          #"Conditional read not allowed" "#?[:clj :a :default nil]" {}))
@@ -146,7 +146,7 @@
     (is (not (:splicing? x)))
     (is (= :foo (get x :no-such-key :foo)))
     (is (= (:form x) '(:clj foo :cljs bar))))
-  (let [x (read-string {:read-cond :preserve} "#?@(:clj [foo])" )]
+  (let [x (first (read-string {:read-cond :preserve} "(#?@(:clj [foo]))"))]
     (is (reader-conditional? x))
     (is (= x (reader-conditional '(:clj [foo]) true)))
     (is (:splicing? x))
@@ -163,7 +163,7 @@
     (is (= {:x 1 :y 2} (:form tl)))
     (is (= :foo (get tl :no-such-key :foo))))
   (testing "print form roundtrips"
-     (doseq [s ["#?(:clj foo :cljs bar)"
-                "#?(:cljs #js {:x 1, :y 2})"
-                "#?(:clj #clojure.test_clojure.reader.TestRecord [42 85])"]]
-       (is (= s (pr-str (read-string {:read-cond :preserve} s)))))))
+    (doseq [s ["#?(:clj foo :cljs bar)"
+               "#?(:cljs #js {:x 1, :y 2})"
+               "#?(:clj #clojure.test_clojure.reader.TestRecord [42 85])"]]
+      (is (= s (pr-str (read-string {:read-cond :preserve} s)))))))
