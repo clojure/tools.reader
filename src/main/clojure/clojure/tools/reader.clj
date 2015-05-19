@@ -184,20 +184,22 @@
 (defonce ^:private READ_EOF (Object.))
 (defonce ^:private READ_FINISHED (Object.))
 
+(def ^:dynamic *read-delim* false)
 (defn- ^PersistentVector read-delimited
   "Reads and returns a collection ended with delim"
   [delim rdr opts pending-forms]
   (let [[start-line start-column] (starting-line-col-info rdr)
         delim (char delim)]
-    (loop [a (transient [])]
-      (let [form (read* rdr false READ_EOF delim opts pending-forms)]
-        (if (identical? form READ_FINISHED)
-          (persistent! a)
-          (if (identical? form READ_EOF)
-            (reader-error rdr "EOF while reading"
-                          (when start-line
-                            (str ", starting at line " start-line " and column " start-column)))
-            (recur (conj! a form))))))))
+    (binding [*read-delim* true]
+      (loop [a (transient [])]
+        (let [form (read* rdr false READ_EOF delim opts pending-forms)]
+          (if (identical? form READ_FINISHED)
+            (persistent! a)
+            (if (identical? form READ_EOF)
+              (reader-error rdr "EOF while reading"
+                            (when start-line
+                              (str ", starting at line " start-line " and column " start-column)))
+              (recur (conj! a form)))))))))
 
 (defn- read-list
   "Read in a list, including its location if the reader is an indexing reader"
@@ -496,6 +498,9 @@
   (if-let [ch (read-char rdr)]
     (let [splicing (= ch \@)
           ch (if splicing (read-char rdr) ch)]
+      (when splicing
+        (when-not *read-delim*
+          (reader-error rdr "cond-splice not in list")))
       (if-let [ch (if (whitespace? ch) (read-past whitespace? rdr) ch)]
         (if (not= ch \()
           (throw (RuntimeException. "read-cond body must be a list"))
@@ -698,7 +703,7 @@
                :else (resolve-symbol form)))))
 
     (unquote? form) (second form)
-    (unquote-splicing? form) (throw (IllegalStateException. "splice not in list"))
+    (unquote-splicing? form) (throw (IllegalStateException. "unquote-splice not in list"))
 
     (coll? form)
     (cond
