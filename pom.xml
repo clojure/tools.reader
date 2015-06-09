@@ -8,6 +8,16 @@
   <url>https://github.com/clojure/tools.reader</url>
 
   <build>
+
+    <resources>
+      <resource>
+        <directory>src/main/clojure</directory>
+      </resource>
+      <resource>
+        <directory>src/main/cljs</directory>
+      </resource>
+    </resources>
+
     <plugins>
       <plugin>
         <groupId>com.theoryinpractise</groupId>
@@ -96,7 +106,7 @@
       <groupId>org.clojure</groupId>
       <artifactId>clojurescript</artifactId>
       <version>0.0-3308</version>
-      <optional>true</optional>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
