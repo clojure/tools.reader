@@ -50,8 +50,6 @@
             <configuration>
               <includes>
                 <include>**/*.clj</include>
-              </includes>
-              <includes>
                 <include>**/*.cljs</include>
               </includes>
             </configuration>
