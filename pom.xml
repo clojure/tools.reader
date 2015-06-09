@@ -51,6 +51,9 @@
               <includes>
                 <include>**/*.clj</include>
               </includes>
+              <includes>
+                <include>**/*.cljs</include>
+              </includes>
             </configuration>
           </execution>
         </executions>
@@ -89,6 +92,15 @@
     <artifactId>pom.contrib</artifactId>
     <version>0.1.2</version>
   </parent>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.clojure</groupId>
+      <artifactId>clojurescript</artifactId>
+      <version>0.0-3308</version>
+      <optional>true</optional>
+    </dependency>
+  </dependencies>
 
   <developers>
     <developer>
