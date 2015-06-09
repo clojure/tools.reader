@@ -3,16 +3,12 @@
   (:require [cljs.tools.reader :refer
              [read *data-readers* *default-data-reader-fn* read-string]]
             [cljs.test :as t :refer-macros [deftest is run-tests]]
-            [cljs.tools.reader.impl.utils :refer-macros [compile-if-cljs<3291]]
             [cljs.tools.reader.reader-types :as reader-types]
             [clojure.string :as str]
             [clojure.walk :as walk]))
 
 (defn inst [s]
   (js/Date. s))
-
-(compile-if-cljs<3291
- (defn uuid [s] (cljs.core.UUID. s nil)))
 
 (set! *data-readers* {'inst inst 'uuid uuid})
 

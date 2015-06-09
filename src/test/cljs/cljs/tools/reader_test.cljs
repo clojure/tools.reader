@@ -1,14 +1,12 @@
 (ns cljs.tools.reader-test
   (:refer-clojure :exclude [read-string])
-  (:require
-    [cljs.test :as t :refer-macros [are deftest is run-tests testing]]
-    [cljs.tools.reader :as reader :refer
-     [*data-readers* *default-data-reader-fn* read-string]]
-    [cljs.tools.reader.impl.utils
-     :refer [reader-conditional reader-conditional?]
-     :refer-macros [compile-if-cljs<3291]]
-    [cljs.tools.reader.reader-types :as rt]
-    [goog.string]))
+  (:require [cljs.test :as t :refer-macros [are deftest is run-tests testing]]
+            [cljs.tools.reader :as reader :refer
+             [*data-readers* *default-data-reader-fn* read-string]]
+            [cljs.tools.reader.impl.utils
+             :refer [reader-conditional reader-conditional?]]
+            [cljs.tools.reader.reader-types :as rt]
+            [goog.string]))
 
 ;;==============================================================================
 ;; common_tests.clj
@@ -163,10 +161,6 @@
 
 (defn inst [s]
   (js/Date. s))
-
-(compile-if-cljs<3291
- (defn uuid [s]
-   (cljs.core.UUID. s nil)))
 
 (deftest read-tagged
   (binding [*data-readers* {'inst inst 'uuid uuid}]
