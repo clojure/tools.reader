@@ -1,5 +1,7 @@
 Changelog
 ========================================
+* Release 0.10.0-alpha1 on 09 Jun 2015
+  * Initial cljs port
 * Release 0.9.2 on 23 Apr 2015
   * Allow sym->sym mapping in *alias-map*
 * Release 0.9.1 on 09 Apr 2015

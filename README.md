@@ -1,7 +1,7 @@
 clojure.tools.reader
 ========================================
 
-A complete Clojure reader and an EDN-only reader, works with Clojure versions >= 1.4.0
+A complete Clojure reader and an EDN-only reader, works with Clojure versions >= 1.4.0 and Clojurescript  >=3308 and since version 0.10.0-alpha1
 
 * [Rationale](#rationale)
 * [Releases and Dependency Information](#releases-and-dependency-information)
@@ -34,7 +34,7 @@ YourKit is kindly supporting open source projects with its full-featured Java Pr
 Releases and Dependency Information
 ========================================
 
-Latest stable release: 0.9.2
+Latest stable release: 0.10.0-alpha1
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
@@ -43,7 +43,7 @@ Latest stable release: 0.9.2
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "0.9.2"]
+[org.clojure/tools.reader "0.10.0-alpha1"]
 ```
 [Maven](http://maven.apache.org/) dependency information:
 
@@ -51,7 +51,7 @@ Latest stable release: 0.9.2
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>0.9.2</version>
+  <version>0.10.0-alpha1</version>
 </dependency>
 ```
 

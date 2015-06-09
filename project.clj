@@ -1,4 +1,4 @@
-(defproject org.clojure/tools.reader "0.9.3-SNAPSHOT"
+(defproject org.clojure/tools.reader "0.10.0-SNAPSHOT"
   :description "A Clojure reader in Clojure"
   :parent [org.clojure/pom.contrib "0.1.2"]
   :url "https://github.com/clojure/tools.reader"
