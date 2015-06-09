@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [read-string])
   (:require [cljs.test :as t :refer-macros [are deftest is run-tests testing]]
             [cljs.tools.reader :as reader :refer
-             [*data-readers* *default-data-reader-fn* read-string]]
+             [*data-readers* *default-data-reader-fn* read-string *alias-map*]]
             [cljs.tools.reader.impl.utils
              :refer [reader-conditional reader-conditional?]]
             [cljs.tools.reader.reader-types :as rt]
@@ -129,7 +129,10 @@
   (is (= :abc.def/ghi (read-string ":abc.def/ghi")))
   (is (= :abc/def.ghi (read-string ":abc/def.ghi")))
   (is (= :abc:def/ghi:jkl.mno (read-string ":abc:def/ghi:jkl.mno")))
-  (is (instance? cljs.core.Keyword (read-string ":alphabet"))))
+  (is (instance? cljs.core.Keyword (read-string ":alphabet")))
+  (is (= :foo/bar (read-string "::foo/bar")))
+  (is (= :foo/bar (read-string "::foo/bar")))
+  (is (= :bar/bar (binding [*alias-map* '{foo bar}] (read-string "::foo/bar")))))
 
 (deftest read-regex
   (is (= (str #"(?i)abc")
@@ -142,6 +145,8 @@
 
 (deftest read-syntax-quote
   (let [q (read-string "quote")]
+    (is (= 'bar/bar (binding [*alias-map* '{foo bar}]
+                      (second (read-string "`foo/bar")))))
     (is (= q (first (read-string "`foo"))))
     (is (= 'foo (second (read-string "`foo"))))
     (is (= q (first (read-string "`+"))))

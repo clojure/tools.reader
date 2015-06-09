@@ -99,7 +99,7 @@
   [token]
   (when-not (or (= "" token)
                 (re-find #":$" token)
-                (re-find #"^:" token))
+                (re-find #"^::" token))
     (let [ns-idx (.indexOf token "/")]
       (if-let [ns (and (pos? ns-idx)
                        (subs token 0 ns-idx))]

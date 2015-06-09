@@ -338,13 +338,27 @@
                       :end-column end-column})))))
             (reader-error rdr "Invalid token: " token))))))
 
+(def ^:dynamic *alias-map*
+  "Map from ns alias to ns, if non-nil, it will be used to resolve read-time
+   ns aliases.
+
+   Defaults to nil"
+  nil)
+
+(defn- resolve-ns [sym]
+  (get *alias-map* sym sym))
+
 (defn- read-keyword
   [reader initch opts pending-forms]
   (let [ch (read-char reader)]
     (if-not (whitespace? ch)
       (let [token (read-token reader ch)]
         (if-let [[ns name] (parse-symbol token)]
-          (keyword ns name)
+          (if (identical? \: (nth token 0))
+            (if-let [ns (and ns (resolve-ns (symbol (subs ns 1))))]
+              (keyword (str ns) name)
+              (reader-error reader "Invalid token: :" token))
+            (keyword ns name))
           (reader-error reader "Invalid token: :" token)))
       (reader-error reader "Invalid token: :"))))
 
@@ -649,6 +663,14 @@
       (true? x)
       (false? x)))
 
+(defn ^:dynamic resolve-symbol
+  "Resolve a symbol s into its fully qualified namespace version"
+  [s]
+  (if-let [ns-str (namespace s)]
+    (let [ns (resolve-ns (symbol ns-str))]
+      (symbol (name ns) (name s)))
+    s))
+
 (defn- syntax-quote* [form]
   (->>
    (cond
@@ -657,7 +679,7 @@
     (symbol? form)
     (list 'quote
           (if (namespace form)
-            form
+            (resolve-symbol form)
             (if (gstring/endsWith (name form) "#")
               (register-gensym form)
               form)))
