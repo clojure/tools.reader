@@ -20,7 +20,7 @@
    :author "Bronsa",
    :doc "An EDN reader in clojure"}
   {:source-url
-   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/commons.clj",
+   "https://github.com/clojure/tools.reader/blob/afc385400f7f73c1d45dff6148c2fac843a476ae/src/main/clojure/clojure/tools/reader/impl/commons.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader/clojure.tools.reader.impl.commons-api.html",
    :name "clojure.tools.reader.impl.commons",
@@ -284,9 +284,9 @@
    :name "number-literal?",
    :namespace "clojure.tools.reader.impl.commons",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/commons.clj#L21",
+   "https://github.com/clojure/tools.reader/blob/afc385400f7f73c1d45dff6148c2fac843a476ae/src/main/clojure/clojure/tools/reader/impl/commons.clj#L21",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/commons.clj",
+   "https://github.com/clojure/tools.reader/raw/afc385400f7f73c1d45dff6148c2fac843a476ae/src/main/clojure/clojure/tools/reader/impl/commons.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.impl.commons/number-literal?",
    :doc
@@ -298,9 +298,9 @@
    :name "parse-symbol",
    :namespace "clojure.tools.reader.impl.commons",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/commons.clj#L98",
+   "https://github.com/clojure/tools.reader/blob/afc385400f7f73c1d45dff6148c2fac843a476ae/src/main/clojure/clojure/tools/reader/impl/commons.clj#L98",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/commons.clj",
+   "https://github.com/clojure/tools.reader/raw/afc385400f7f73c1d45dff6148c2fac843a476ae/src/main/clojure/clojure/tools/reader/impl/commons.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.impl.commons/parse-symbol",
    :doc "Parses a string into a vector of the namespace and symbol",
@@ -311,9 +311,9 @@
    :name "read-past",
    :namespace "clojure.tools.reader.impl.commons",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/commons.clj#L28",
+   "https://github.com/clojure/tools.reader/blob/afc385400f7f73c1d45dff6148c2fac843a476ae/src/main/clojure/clojure/tools/reader/impl/commons.clj#L28",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/commons.clj",
+   "https://github.com/clojure/tools.reader/raw/afc385400f7f73c1d45dff6148c2fac843a476ae/src/main/clojure/clojure/tools/reader/impl/commons.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.impl.commons/read-past",
    :doc
@@ -325,9 +325,9 @@
    :name "skip-line",
    :namespace "clojure.tools.reader.impl.commons",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/commons.clj#L37",
+   "https://github.com/clojure/tools.reader/blob/afc385400f7f73c1d45dff6148c2fac843a476ae/src/main/clojure/clojure/tools/reader/impl/commons.clj#L37",
    :raw-source-url
-   "https://github.com/clojure/tools.reader/raw/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/commons.clj",
+   "https://github.com/clojure/tools.reader/raw/afc385400f7f73c1d45dff6148c2fac843a476ae/src/main/clojure/clojure/tools/reader/impl/commons.clj",
    :wiki-url
    "http://clojure.github.com/tools.reader//clojure.tools.reader-api.html#clojure.tools.reader.impl.commons/skip-line",
    :doc "Advances the reader to the end of a line. Returns the reader",
