@@ -364,7 +364,9 @@
   nil)
 
 (defn- resolve-ns [sym]
-  (get *alias-map* sym sym))
+  (or (get *alias-map* sym sym)
+      (when-let [ns (find-ns sym)]
+        (symbol (ns-name ns)))))
 
 (defn- read-keyword
   [^not-native reader initch opts pending-forms]
@@ -686,13 +688,23 @@
       (true? x)
       (false? x)))
 
+(defn ^:private ns-name* [x]
+  (if (symbol? x)
+    (name x)
+    (name (ns-name x))))
+
 (defn ^:dynamic resolve-symbol
   "Resolve a symbol s into its fully qualified namespace version"
   [s]
-  (if-let [ns-str (namespace s)]
-    (let [ns (resolve-ns (symbol ns-str))]
-      (symbol (name ns) (name s)))
-    s))
+  (if (pos? (.indexOf (name s) "."))
+    s ;; If there is a period, it is interop
+    (if-let [ns-str (namespace s)]
+      (if-let [ns (resolve-ns (symbol ns-str))]
+        (symbol (ns-name* ns) (name s))
+        s)
+      (if-let [o (get (ns-map *ns*) s)]
+        (.-sym o)
+        (symbol (ns-name* *ns*) (name s))))))
 
 (defn- syntax-quote* [form]
   (->>
@@ -772,16 +784,17 @@
     \( read-fn
     \{ read-set
     \< (throwing-reader "Unreadable form")
+    \< (throwing-reader "read-eval not supported")
     \" read-regex
     \! read-comment
     \_ read-discard
     \? read-cond
     nil))
 
-
 (defn emit-ctor [type ns record val]
-  (let [method (str ns "." (if (= :extended type) "map") "__GT_" (munge record))]
-    (js* "(cljs.core.apply.call(null, eval(~{}), ~{}))" method val)))
+  (let [method-name (symbol (str (if (= type :extended) 'map) '-> (name record)))
+        method (ns-resolve ns method-name)]
+    (apply @method val)))
 
 (defn- read-ctor [^not-native rdr class-name opts pending-forms]
   (let [ns (namespace class-name)
