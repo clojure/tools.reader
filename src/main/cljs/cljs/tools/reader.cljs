@@ -784,7 +784,7 @@
     \( read-fn
     \{ read-set
     \< (throwing-reader "Unreadable form")
-    \< (throwing-reader "read-eval not supported")
+    \=(throwing-reader "read-eval not supported")
     \" read-regex
     \! read-comment
     \_ read-discard
