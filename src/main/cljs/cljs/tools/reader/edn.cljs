@@ -27,16 +27,16 @@
 
 (declare read macros dispatch-macros)
 
-(defn- macro-terminating? [ch]
-  (and (not= \# ch)
-       (not= \' ch)
-       (not= \: ch)
+(defn- ^boolean macro-terminating? [ch]
+  (and (not (identical? \# ch))
+       (not (identical? \' ch))
+       (not (identical? \: ch))
        (macros ch)))
 
-(defn- not-constituent? [ch]
-  (or (= \@ ch)
-      (= \` ch)
-      (= \~ ch)))
+(defn- ^boolean not-constituent? [ch]
+  (or (identical? \@ ch)
+      (identical? \` ch)
+      (identical? \~ ch)))
 
 (defn- read-token
   ([rdr initch]
@@ -135,12 +135,12 @@
 
          (== 1 token-len)  (nth token 0)
 
-         (= token "newline") \newline
-         (= token "space") \space
-         (= token "tab") \tab
-         (= token "backspace") \backspace
-         (= token "formfeed") \formfeed
-         (= token "return") \return
+         (identical? token "newline") \newline
+         (identical? token "space") \space
+         (identical? token "tab") \tab
+         (identical? token "backspace") \backspace
+         (identical? token "formfeed") \formfeed
+         (identical? token "return") \return
 
          (gstring/startsWith token "u")
          (let [c (read-unicode-char token 1 4 16)
@@ -269,7 +269,7 @@
         (if (and s (== -1 (.indexOf token "::")))
           (let [ns (s 0)
                 name (s 1)]
-            (if (= \: (nth token 0))
+            (if (identical? \: (nth token 0))
               (reader-error reader "Invalid token: :" token) ;; no ::keyword in edn
               (keyword ns name)))
           (reader-error reader "Invalid token: :" token)))
@@ -286,7 +286,7 @@
     (when-not (map? m)
       (reader-error rdr "Metadata must be Symbol, Keyword, String or Map"))
     (let [o (read rdr true nil opts)]
-      (if (satisfies? IMeta o)
+      (if (implements? IMeta o)
         (with-meta o (merge (meta o) m))
         (reader-error rdr "Metadata can only be applied to IMetas")))))
 

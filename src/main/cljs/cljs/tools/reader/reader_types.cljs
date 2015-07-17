@@ -45,12 +45,12 @@
   Reader
   (read-char [reader]
     (when (> s-len s-pos)
-      (let [r (nth s s-pos)]
+      (let [r (.charAt s s-pos)]
         (set! s-pos (inc s-pos))
         r)))
   (peek-char [reader]
     (when (> s-len s-pos)
-      (nth s s-pos))))
+      (.charAt s s-pos))))
 
 (deftype NodeReadableReader [readable ^:mutable buf]
   Reader
@@ -69,20 +69,20 @@
       (char (aget buf 0)))))
 
 (deftype PushbackReader
-    [rdr buf buf-len ^:mutable buf-pos]
+  [^not-native rdr buf buf-len ^:mutable buf-pos]
   Reader
   (read-char [reader]
-    (char
-     (if (< buf-pos buf-len)
-       (let [r (aget buf buf-pos)]
-         (set! buf-pos (inc buf-pos))
-         r)
-       (read-char rdr))))
+    (let [c (if (< buf-pos buf-len)
+              (aget buf buf-pos)
+              (read-char rdr))]
+      (when (< buf-pos buf-len)
+        (set! buf-pos (inc buf-pos)))
+      (char c)))
   (peek-char [reader]
-    (char
-     (if (< buf-pos buf-len)
-       (aget buf buf-pos)
-       (peek-char rdr))))
+    (let [c (if (< buf-pos buf-len)
+              (aget buf buf-pos)
+              (peek-char rdr))]
+      (char c)))
   IPushbackReader
   (unread [reader ch]
     (when ch
@@ -90,7 +90,7 @@
       (set! buf-pos (dec buf-pos))
       (aset buf buf-pos ch))))
 
-(defn- normalize-newline [rdr ch]
+(defn- normalize-newline [^not-native rdr ch]
   (if (identical? \return ch)
     (let [c (peek-char rdr)]
       (when (or (identical? \formfeed c)
@@ -100,7 +100,7 @@
     ch))
 
 (deftype IndexingPushbackReader
-    [rdr ^:mutable line ^:mutable column
+    [^not-native rdr ^:mutable line ^:mutable column
      ^:mutable line-start? ^:mutable prev
      ^:mutable prev-column file-name]
   Reader
@@ -163,7 +163,7 @@ logging frames. Called when pushing a character back."
     (.set buffer (subs (str buffer) 0 (dec (.getLength buffer))))))
 
 (deftype SourceLoggingPushbackReader
-    [rdr ^:mutable line ^:mutable column
+    [^not-native rdr ^:mutable line ^:mutable column
      ^:mutable line-start? ^:mutable prev
      ^:mutable prev-column file-name frames]
   Reader
@@ -207,7 +207,7 @@ logging frames. Called when pushing a character back."
 (defn indexing-reader?
   "Returns true if the reader satisfies IndexingReader"
   [rdr]
-  (satisfies? IndexingReader rdr))
+  (implements? IndexingReader rdr))
 
 (defn string-reader
   "Creates a StringReader from a given string"
@@ -253,7 +253,7 @@ logging frames. Called when pushing a character back."
 
 (defn read-line
   "Reads a line from the reader or from *in* if no reader is specified"
-  ([rdr]
+  ([^not-native rdr]
      (loop [c (read-char rdr) s (StringBuffer.)]
        (if (newline? c)
          (str s)
@@ -272,13 +272,13 @@ logging frames. Called when pushing a character back."
                             (when-let [file-name (get-file-name rdr)]
                               {:file file-name})))))))
 
-(defn source-logging-reader?
+(defn ^boolean source-logging-reader?
   [rdr]
   (instance? SourceLoggingPushbackReader rdr))
 
-(defn line-start?
+(defn ^boolean line-start?
   "Returns true if rdr is an IndexingReader and the current char starts a new line"
-  [rdr]
+  [^not-native rdr]
   (when (indexing-reader? rdr)
     (== 1 (get-column-number rdr))))
 
@@ -288,17 +288,9 @@ logging frames. Called when pushing a character back."
     (try
       (swap! (.-frames reader) update-in [:offset] conj (.getLength buffer))
       (let [ret (f)]
-        (if (satisfies? IMeta ret)
+        (if (implements? IMeta ret)
           (merge-meta ret {:source (peek-source-log @ (.-frames reader))})
           ret))
       (finally
         (swap! (.-frames reader) update-in [:offset] rest)))))
 
-(defn log-source
-  "If reader is a SourceLoggingPushbackReader, execute body in a source
-  logging context. Otherwise, execute body, returning the result."
-  [reader body-fn]
-  (if (and (source-logging-reader? reader)
-           (not (whitespace? (peek-char reader))))
-    (log-source* reader body-fn)
-    (body-fn)))

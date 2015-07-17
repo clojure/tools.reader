@@ -16,9 +16,9 @@
 ;; helpers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn number-literal?
+(defn ^boolean number-literal?
   "Checks whether the reader is at the start of a number literal"
-  [reader initch]
+  [^not-native reader initch]
   (or (numeric? initch)
       (and (or (identical? \+ initch) (identical?  \- initch))
            (numeric? (peek-char reader)))))
@@ -26,15 +26,15 @@
 (defn read-past
   "Read until first character that doesn't match pred, returning
    char."
-  [pred rdr]
+  [pred ^not-native rdr]
   (loop [ch (read-char rdr)]
-    (if (pred ch)
+    (if ^boolean (pred ch)
       (recur (read-char rdr))
       ch)))
 
 (defn skip-line
   "Advances the reader to the end of a line. Returns the reader"
-  [reader]
+  [^not-native reader]
   (loop []
     (when-not (newline? (read-char reader))
       (recur)))
@@ -47,19 +47,19 @@
 (defn- match-int
   [s]
   (let [m (vec (re-find int-pattern s))]
-    (if (m 2)
+    (if-not (nil? (m 2))
       0
-      (let [negate? (= "-" (m 1))
+      (let [^boolean negate? (identical? "-" (m 1))
             a (cond
-                (m 3) [(m 3) 10]
-                (m 4) [(m 4) 16]
-                (m 5) [(m 5) 8]
-                (m 7) [(m 7) (js/parseInt (m 6))]
-                (m 8) [(m 8) 10]
-                :else        [nil nil])
+                (not (nil? (m 3))) [(m 3) 10]
+                (not (nil? (m 4))) [(m 4) 16]
+                (not (nil? (m 5))) [(m 5) 8]
+                (not (nil? (m 7))) [(m 7) (js/parseInt (m 6))]
+                (not (nil? (m 8))) [(m 8) 10]
+                :else              [nil nil])
             n (a 0)
             radix (int (a 1))]
-        (when n
+        (when-not (nil? n)
           (let [bn (js/parseInt n radix)
                 bn (if negate? (* -1 bn) bn)]
             bn))))))
@@ -78,13 +78,13 @@
 (defn- match-float
   [s]
   (let [m (vec (re-find float-pattern s))]
-    (if (m 4) ;;; for BigDecimal "10.03M", as all parsed to js/Number
+    (if-not (nil? (m 4)) ;; for BigDecimal "10.03M", as all parsed to js/Number
       (js/parseFloat (m 1))
       (js/parseFloat s))))
 
-(defn matches? [pattern s]
+(defn ^boolean matches? [pattern s]
   (let [[match] (re-find pattern s)]
-    (= match s)))
+    (identical? match s)))
 
 (defn match-number [s]
   (if (matches? int-pattern s)
@@ -97,22 +97,23 @@
 (defn parse-symbol
   "Parses a string into a vector of the namespace and symbol"
   [token]
-  (when-not (or (= "" token)
-                (re-find #":$" token)
-                (re-find #"^::" token))
-    (let [ns-idx (.indexOf token "/")]
-      (if-let [ns (and (pos? ns-idx)
-                       (subs token 0 ns-idx))]
+  (when-not (or (identical? "" token)
+                (true? (.test #":$" token))
+                (true? (.test #"^::" token)))
+    (let [ns-idx (.indexOf token "/")
+          ns (when (pos? ns-idx)
+               (subs token 0 ns-idx))]
+      (if-not (nil? ns)
         (let [ns-idx (inc ns-idx)]
           (when-not (== ns-idx (count token))
             (let [sym (subs token ns-idx)]
               (when (and (not (numeric? (nth sym 0)))
-                         (not (= "" sym))
-                         (not (re-find #":$" ns))
-                         (or (= sym "/")
+                         (not (identical? "" sym))
+                         (false? (.test #":$" ns))
+                         (or (identical? sym "/")
                              (== -1 (.indexOf sym "/"))))
                 [ns sym]))))
-        (when (or (= token "/")
+        (when (or (identical? token "/")
                   (== -1 (.indexOf token "/")))
           [nil token])))))
 

@@ -7,21 +7,21 @@
 ;;   You must not remove this notice, or any other, from this software.
 
 (ns cljs.tools.reader.impl.utils
-  (:refer-clojure :exclude [char])
+  (:refer-clojure :exclude [char munge])
   (:require
    [clojure.string :as string]
    [goog.string :as gstring]))
 
 (defn char [x]
-  (when x
+  (when-not (nil? x)
     (cljs.core/char x)))
 
-(defn ex-info? [ex]
+(defn ^boolean ex-info? [ex]
   (instance? cljs.core.ExceptionInfo ex))
 
 (defrecord ReaderConditional [splicing? form])
 
-(defn reader-conditional?
+(defn ^boolean reader-conditional?
   "Return true if the value is the data representation of a reader conditional"
   [value]
   (instance? ReaderConditional value))
@@ -38,31 +38,23 @@
     (-write writer (str "#?" (when (:splicing? coll) "@")))
     (pr-writer (:form coll) writer opts)))
 
-(defn whitespace?
+(def ws-rx #"[\s]")
+
+(defn ^boolean whitespace?
   "Checks whether a given character is whitespace"
   [ch]
-  (when ch
-    (let [white-chars
-          [\,
-           \space
-           "\t"         ;;, U+0009 HORIZONTAL TABULATION.
-           "\n"         ;;, U+000A LINE FEED.
-           "\u000B"     ;;, U+000B VERTICAL TABULATION.
-           "\f"         ;;, U+000C FORM FEED.
-           "\r"         ;;, U+000D CARRIAGE RETURN.
-           "\u001C"     ;;, U+001C FILE SEPARATOR.
-           "\u001D"     ;;, U+001D GROUP SEPARATOR.
-           "\u001E"     ;;, U+001E RECORD SEPARATOR.
-           "\u001F"]]   ;;, U+001F UNIT SEPARATOR
-      (some (partial identical? ch) white-chars))))
+  (when-not (nil? ch)
+    (if (identical? ch \,)
+      true
+      (.test ws-rx ch))))
 
-(defn numeric?
+(defn ^boolean numeric?
   "Checks whether a given character is numeric"
   [ch]
-  (when ch
+  (when-not (nil? ch)
     (gstring/isNumeric ch)))
 
-(defn newline?
+(defn ^boolean newline?
   "Checks whether the character is a newline"
   [c]
   (or (identical? \newline c)
