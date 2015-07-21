@@ -7,14 +7,15 @@
   :source-paths ["src/main/clojure" "src/main/cljs"]
   :test-paths ["src/test/clojure"]
   :repositories {"sonatype-oss-public" "https://oss.sonatype.org/content/groups/public/"}
-  :dependencies [[org.clojure/clojure "1.7.0-master-SNAPSHOT"]
+  :dependencies [[org.clojure/clojure "1.8.0-master-SNAPSHOT"]
                  [org.clojure/clojurescript "0.0-3308" :scope "provided"]]
   :profiles {:1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
              :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
              :1.6 {:dependencies [[org.clojure/clojure "1.6.0"]]}
-             :1.7 {:dependencies [[org.clojure/clojure "1.7.0-master-SNAPSHOT"]]}}
-  :aliases {"test-all" ["with-profile" "test,1.4:test,1.5:test,1.6:test,1.7" "test"]
-            "check-all" ["with-profile" "1.4:1.5:1.6:1.7" "check"]}
+             :1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
+             :1.8 {:dependencies [[org.clojure/clojure "1.8.0-master-SNAPSHOT"]]}}
+  :aliases {"test-all" ["with-profile" "test,1.4:test,1.5:test,1.6:test,1.7:test,1.8" "test"]
+            "check-all" ["with-profile" "1.4:1.5:1.6:1.7:1.8" "check"]}
   :min-lein-version "2.0.0"
   :plugins [[lein-cljsbuild "1.0.5"]]
   :cljsbuild
