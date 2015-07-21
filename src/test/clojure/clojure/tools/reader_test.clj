@@ -101,6 +101,7 @@
          '[bar-form] "[#?(:foo foo-form :bar bar-form)]" {:read-cond :allow :features #{:bar}}
          '[foo-form] "[#?(:foo foo-form :bar bar-form)]" {:read-cond :allow :features #{:foo :bar}}
          '[] "[#?(:foo foo-form :bar bar-form)]" {:read-cond :allow :features #{:baz}}
+         'nil "#?(:default nil)" opts
 
          ;; environmental features
          "clojure" "#?(:clj \"clojure\" :cljs \"clojurescript\" :default \"default\")"  opts
