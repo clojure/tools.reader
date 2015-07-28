@@ -696,15 +696,7 @@
 (defn ^:dynamic resolve-symbol
   "Resolve a symbol s into its fully qualified namespace version"
   [s]
-  (if (pos? (.indexOf (name s) "."))
-    s ;; If there is a period, it is interop
-    (if-let [ns-str (namespace s)]
-      (if-let [ns (resolve-ns (symbol ns-str))]
-        (symbol (ns-name* ns) (name s))
-        s)
-      (if-let [o (get (ns-map *ns*) s)]
-        (.-sym o)
-        (symbol (ns-name* *ns*) (name s))))))
+  (throw (ex-info "resolve-symbol is not implemented" {:sym s})))
 
 (defn- syntax-quote* [form]
   (->>
