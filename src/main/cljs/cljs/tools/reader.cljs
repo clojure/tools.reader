@@ -109,36 +109,36 @@
   ([token offset length base]
      (let [l (+ offset length)]
        (when-not (== (count token) l)
-         (throw (ex-info. (str "Invalid unicode character: \\" token)
-                          {:type :illegal-argument})))
+         (throw (ex-info (str "Invalid unicode character: \\" token)
+                         {:type :illegal-argument})))
        (loop [i offset uc 0]
          (if (== i l)
            (js/String.fromCharCode uc)
            (let [d (char-code (nth token i) base)]
              (if (== d -1)
-               (throw (ex-info. (str "Invalid digit: " (nth token i))
-                                {:type :illegal-argument}))
+               (throw (ex-info (str "Invalid digit: " (nth token i))
+                               {:type :illegal-argument}))
                (recur (inc i) (+ d (* uc base)))))))))
 
   ([^not-native rdr initch base length exact?]
      (loop [i 1 uc (char-code initch base)]
        (if (== uc -1)
-         (throw (ex-info. (str "Invalid digit: " initch)
-                          {:type :illegal-argument}))
+         (throw (ex-info (str "Invalid digit: " initch)
+                         {:type :illegal-argument}))
          (if-not (== i length)
            (let [ch (peek-char rdr)]
              (if (or (whitespace? ch)
                      (macros ch)
                      (nil? ch))
                (if exact?
-                 (throw (ex-info. (str "Invalid character length: " i ", should be: " length)
-                                  {:type :illegal-argument}))
+                 (throw (ex-info (str "Invalid character length: " i ", should be: " length)
+                                 {:type :illegal-argument}))
                  (js/String.fromCharCode uc))
                (let [d (char-code ch base)]
                  (read-char rdr)
                  (if (== d -1)
-                   (throw (ex-info. (str "Invalid digit: " ch)
-                                    {:type :illegal-argument}))
+                   (throw (ex-info (str "Invalid digit: " ch)
+                                   {:type :illegal-argument}))
                    (recur (inc i) (+ d (* uc base)))))))
            (js/String.fromCharCode uc))))))
 
@@ -364,7 +364,7 @@
   nil)
 
 (defn- resolve-ns [sym]
-  (or (get *alias-map* sym sym)
+  (or (get *alias-map* sym)
       (when-let [ns (find-ns sym)]
         (symbol (ns-name ns)))))
 
@@ -776,7 +776,7 @@
     \( read-fn
     \{ read-set
     \< (throwing-reader "Unreadable form")
-    \=(throwing-reader "read-eval not supported")
+    \= (throwing-reader "read-eval not supported")
     \" read-regex
     \! read-comment
     \_ read-discard
