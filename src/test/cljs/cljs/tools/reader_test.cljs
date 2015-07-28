@@ -130,8 +130,6 @@
   (is (= :abc/def.ghi (read-string ":abc/def.ghi")))
   (is (= :abc:def/ghi:jkl.mno (read-string ":abc:def/ghi:jkl.mno")))
   (is (instance? cljs.core.Keyword (read-string ":alphabet")))
-  (is (= :foo/bar (read-string "::foo/bar")))
-  (is (= :foo/bar (read-string "::foo/bar")))
   (is (= :bar/bar (binding [*alias-map* '{foo bar}] (read-string "::foo/bar")))))
 
 (deftest read-regex
@@ -143,17 +141,17 @@
 (deftest read-quote
   (is (= ''foo (read-string "'foo"))))
 
-(deftest read-syntax-quote
-  (let [q (read-string "quote")]
-    (is (= 'bar/bar (binding [*alias-map* '{foo bar}]
-                      (second (read-string "`foo/bar")))))
-    (is (= q (first (read-string "`foo"))))
-    (is (= 'foo (second (read-string "`foo"))))
-    (is (= q (first (read-string "`+"))))
-    (is (= '+ (second (read-string "`+"))))
-    (is (= q (first (read-string "`foo/bar"))))
-    (is (= 'foo/bar (second (read-string "`foo/bar"))))
-    (is (= 1 (read-string "`1")))))
+#_(deftest read-syntax-quote
+    (let [q (read-string "quote")]
+      (is (= 'bar/bar (binding [*alias-map* '{foo bar}]
+                        (second (read-string "`foo/bar")))))
+      (is (= q (first (read-string "`foo"))))
+      (is (= 'foo (second (read-string "`foo"))))
+      (is (= q (first (read-string "`+"))))
+      (is (= '+ (second (read-string "`+"))))
+      (is (= q (first (read-string "`foo/bar"))))
+      (is (= 'foo/bar (second (read-string "`foo/bar"))))
+      (is (= 1 (read-string "`1")))))
 
 (deftest read-deref
   (is (= '@foo (read-string "@foo"))))
@@ -186,22 +184,22 @@
 (defrecord ^:export foo [])
 (defrecord ^:export bar [baz buz])
 
-(deftest read-record
-  (is (= (foo.)
-         (read-string "#cljs.tools.reader_test.foo[]")))
-  (is (= (foo.)
-         (read-string "#cljs.tools.reader_test.foo []"))) ;; not valid in clojure
-  (is (= (foo.)
-         (read-string "#cljs.tools.reader_test.foo{}")))
-  (is (= (assoc (foo.) :foo 'bar)
-         (read-string "#cljs.tools.reader_test.foo{:foo bar}")))
+#_(deftest read-record
+    (is (= (foo.)
+           (read-string "#cljs.tools.reader_test.foo[]")))
+    (is (= (foo.)
+           (read-string "#cljs.tools.reader_test.foo []"))) ;; not valid in clojure
+    (is (= (foo.)
+           (read-string "#cljs.tools.reader_test.foo{}")))
+    (is (= (assoc (foo.) :foo 'bar)
+           (read-string "#cljs.tools.reader_test.foo{:foo bar}")))
 
-  (is (= (map->bar {:baz 1})
-         (read-string "#cljs.tools.reader_test.bar{:baz 1}")))
-  (is (= (bar. 1 nil)
-         (read-string "#cljs.tools.reader_test.bar[1 nil]")))
-  (is (= (bar. 1 2)
-         (read-string "#cljs.tools.reader_test.bar[1 2]"))))
+    (is (= (map->bar {:baz 1})
+           (read-string "#cljs.tools.reader_test.bar{:baz 1}")))
+    (is (= (bar. 1 nil)
+           (read-string "#cljs.tools.reader_test.bar[1 nil]")))
+    (is (= (bar. 1 2)
+           (read-string "#cljs.tools.reader_test.bar[1 2]"))))
 
 (deftest source-logging-meta-test
   (-> (loop [r (cljs.tools.reader.reader-types/source-logging-push-back-reader "(def test 8)\n(def test2 9)\n")
