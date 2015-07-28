@@ -18,7 +18,7 @@
               get-line-number get-column-number get-file-name
               string-push-back-reader]]
             [cljs.tools.reader.impl.utils :refer
-             [char ex-info? whitespace? numeric? desugar-meta next-id munge
+             [char ex-info? whitespace? numeric? desugar-meta next-id
               ReaderConditional reader-conditional reader-conditional?]]
             [cljs.tools.reader.impl.commons :refer
              [number-literal? read-past match-number parse-symbol read-comment throwing-reader]]
