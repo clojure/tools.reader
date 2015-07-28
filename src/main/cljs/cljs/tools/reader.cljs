@@ -791,35 +791,6 @@
     \? read-cond
     nil))
 
-(defn emit-ctor [type ns record val]
-  (let [method-name (symbol (str (if (= type :extended) 'map) '-> (name record)))
-        method (ns-resolve ns method-name)]
-    (apply @method val)))
-
-(defn- read-ctor [^not-native rdr class-name opts pending-forms]
-  (let [ns (namespace class-name)
-        ns-parts (string/split class-name #"[\./]")
-        record (if ns (name class-name) (last ns-parts))
-        ns (or ns (string/join "." (butlast ns-parts)))
-        ch (read-past whitespace? rdr)] ;; differs from clojure
-    (if-let [[end-ch form] (case ch
-                             \[ [\] :short]
-                             \{ [\} :extended]
-                             nil)]
-      (let [entries (read-delimited end-ch rdr opts pending-forms)]
-        (case form
-          :short
-          (emit-ctor :short ns record entries)
-          :extended
-          (let [vals (apply hash-map entries)]
-            (loop [s (keys vals)]
-              (if s
-                (if-not (keyword? (first s))
-                  (reader-error rdr "Unreadable ctor form: key must be of type cljs.core.Keyword")
-                  (recur (next s)))))
-            (emit-ctor :extended ns record [vals]))))
-      (reader-error rdr "Invalid reader constructor form"))))
-
 (defn- read-tagged [^not-native rdr initch opts pending-forms]
   (let [tag (read* rdr true nil opts pending-forms)]
     (if-not (symbol? tag)
@@ -829,11 +800,9 @@
       (if-let [f (or (*data-readers* tag)
                      (default-data-readers tag))]
         (f (read* rdr true nil opts pending-forms))
-        (if (> (.indexOf (name tag) ".") 1)
-          (read-ctor rdr tag opts pending-forms)
-          (if-let [f *default-data-reader-fn*]
-            (f tag (read* rdr true nil opts pending-forms))
-            (reader-error rdr "No reader function for tag " (name tag))))))))
+        (if-let [f *default-data-reader-fn*]
+          (f tag (read* rdr true nil opts pending-forms))
+          (reader-error rdr "No reader function for tag " (name tag)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public API
