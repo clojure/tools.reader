@@ -471,6 +471,8 @@
       (when (identical? form READ_FINISHED)
         READ_FINISHED))))
 
+(defonce ^:private NO_MATCH (js/Object.))
+
 (defn- match-feature
   "Read next feature. If matched, read next form and return.
    Otherwise, read and skip next form, returning READ_FINISHED or nil."
@@ -487,21 +489,21 @@
             (check-eof-error rdr first-line)
             (check-invalid-read-cond rdr first-line))
           ;; feature not matched, ignore next form
-          (read-suppress first-line rdr opts pending-forms))))))
+          (or (read-suppress first-line rdr opts pending-forms)
+              NO_MATCH))))))
 
 (defn- read-cond-delimited
   [rdr splicing opts pending-forms]
   (let [first-line (if (indexing-reader? rdr) (get-line-number rdr) -1)
-        result (loop [matched nil
+        result (loop [matched NO_MATCH
                       finished nil]
                  (cond
                   ;; still looking for match, read feature+form
-                  (nil? matched)
+                  (identical? matched NO_MATCH)
                   (let [match (match-feature first-line rdr opts pending-forms)]
-                    (if (not (nil? match))
-                      (when-not (identical? match READ_FINISHED)
-                        (recur match nil))
-                      (recur nil nil)))
+                    (if (identical? match READ_FINISHED)
+                      READ_FINISHED
+                      (recur match nil)))
 
                   ;; found match, just read and ignore the rest
                   (not (identical? finished READ_FINISHED))
@@ -509,7 +511,7 @@
 
                   :else
                   matched))]
-    (if (nil? result)
+    (if (identical? result READ_FINISHED)
       rdr
       (if splicing
         (do
