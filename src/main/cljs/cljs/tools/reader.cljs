@@ -688,11 +688,6 @@
       (true? x)
       (false? x)))
 
-(defn ^:private ns-name* [x]
-  (if (symbol? x)
-    (name x)
-    (name (ns-name x))))
-
 (defn ^:dynamic resolve-symbol
   "Resolve a symbol s into its fully qualified namespace version"
   [s]
