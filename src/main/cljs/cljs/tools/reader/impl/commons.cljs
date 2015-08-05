@@ -51,16 +51,15 @@
       0
       (let [^boolean negate? (identical? "-" (m 1))
             a (cond
-                (not (nil? (m 3))) [(m 3) 10]
-                (not (nil? (m 4))) [(m 4) 16]
-                (not (nil? (m 5))) [(m 5) 8]
-                (not (nil? (m 7))) [(m 7) (js/parseInt (m 6))]
-                (not (nil? (m 8))) [(m 8) 10]
-                :else              [nil nil])
-            n (a 0)
-            radix (int (a 1))]
+               (not (nil? (m 3))) [(m 3) 10]
+               (not (nil? (m 4))) [(m 4) 16]
+               (not (nil? (m 5))) [(m 5) 8]
+               (not (nil? (m 7))) [(m 7) (js/parseInt (m 6))]
+               (not (nil? (m 8))) [(m 8) 10]
+               :else              [nil nil])
+            n (a 0)]
         (when-not (nil? n)
-          (let [bn (js/parseInt n radix)
+          (let [bn (js/parseInt n (a 1))
                 bn (if negate? (* -1 bn) bn)]
             bn))))))
 
