@@ -8,7 +8,7 @@
 
 (ns ^{:doc "Protocols and default Reader types implementation"
       :author "Bronsa"}
-  clojure.tools.reader.reader-types
+    clojure.tools.reader.reader-types
   (:refer-clojure :exclude [char read-line])
   (:require [clojure.tools.reader.impl.utils :refer
              [char whitespace? newline? compile-if >=clojure-1-5-alpha*? make-var]])
@@ -184,14 +184,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn merge-meta
   "Returns an object of the same type and value as `obj`, with its
-metadata merged over `m`."
+  metadata merged over `m`."
   [obj m]
   (let [orig-meta (meta obj)]
     (with-meta obj (merge m (dissoc orig-meta :source)))))
 
 (defn- peek-source-log
   "Returns a string containing the contents of the top most source
-logging frame."
+  logging frame."
   [source-log-frames]
   (let [current-frame @source-log-frames]
     (.substring ^StringBuilder (:buffer current-frame) (:offset current-frame))))
@@ -204,7 +204,7 @@ logging frame."
 
 (defn- drop-last-logged-char
   "Removes the last logged character from all currently active source
-logging frames. Called when pushing a character back."
+  logging frames. Called when pushing a character back."
   [source-log-frames]
   (when-let [^StringBuilder buffer (:buffer @source-log-frames)]
     (.deleteCharAt buffer (dec (.length buffer)))))
@@ -280,14 +280,14 @@ logging frames. Called when pushing a character back."
 (defn string-reader
   "Creates a StringReader from a given string"
   ([^String s]
-     (StringReader. s (count s) 0)))
+   (StringReader. s (count s) 0)))
 
 (defn string-push-back-reader
   "Creates a PushbackReader from a given string"
   ([s]
-     (string-push-back-reader s 1))
+   (string-push-back-reader s 1))
   ([^String s buf-len]
-     (PushbackReader. (string-reader s) (object-array buf-len) buf-len buf-len)))
+   (PushbackReader. (string-reader s) (object-array buf-len) buf-len buf-len)))
 
 (defn input-stream-reader
   "Creates an InputStreamReader from an InputStream"
@@ -297,51 +297,51 @@ logging frames. Called when pushing a character back."
 (defn input-stream-push-back-reader
   "Creates a PushbackReader from a given InputStream"
   ([is]
-     (input-stream-push-back-reader is 1))
+   (input-stream-push-back-reader is 1))
   ([^InputStream is buf-len]
-     (PushbackReader. (input-stream-reader is) (object-array buf-len) buf-len buf-len)))
+   (PushbackReader. (input-stream-reader is) (object-array buf-len) buf-len buf-len)))
 
 (defn indexing-push-back-reader
   "Creates an IndexingPushbackReader from a given string or PushbackReader"
   ([s-or-rdr]
-     (indexing-push-back-reader s-or-rdr 1))
+   (indexing-push-back-reader s-or-rdr 1))
   ([s-or-rdr buf-len]
-     (indexing-push-back-reader s-or-rdr buf-len nil))
+   (indexing-push-back-reader s-or-rdr buf-len nil))
   ([s-or-rdr buf-len file-name]
-     (IndexingPushbackReader.
-      (if (string? s-or-rdr) (string-push-back-reader s-or-rdr buf-len) s-or-rdr) 1 1 true nil 0 file-name)))
+   (IndexingPushbackReader.
+    (if (string? s-or-rdr) (string-push-back-reader s-or-rdr buf-len) s-or-rdr) 1 1 true nil 0 file-name)))
 
 (defn source-logging-push-back-reader
   "Creates a SourceLoggingPushbackReader from a given string or PushbackReader"
   ([s-or-rdr]
-     (source-logging-push-back-reader s-or-rdr 1))
+   (source-logging-push-back-reader s-or-rdr 1))
   ([s-or-rdr buf-len]
-     (source-logging-push-back-reader s-or-rdr buf-len nil))
+   (source-logging-push-back-reader s-or-rdr buf-len nil))
   ([s-or-rdr buf-len file-name]
-     (SourceLoggingPushbackReader.
-      (if (string? s-or-rdr) (string-push-back-reader s-or-rdr buf-len) s-or-rdr)
-      1
-      1
-      true
-      nil
-      0
-      file-name
-      (doto (make-var)
-        (alter-var-root (constantly {:buffer (StringBuilder.)
-                                     :offset 0}))))))
+   (SourceLoggingPushbackReader.
+    (if (string? s-or-rdr) (string-push-back-reader s-or-rdr buf-len) s-or-rdr)
+    1
+    1
+    true
+    nil
+    0
+    file-name
+    (doto (make-var)
+      (alter-var-root (constantly {:buffer (StringBuilder.)
+                                   :offset 0}))))))
 
 (defn read-line
   "Reads a line from the reader or from *in* if no reader is specified"
   ([] (read-line *in*))
   ([rdr]
-     (if (or (instance? LineNumberingPushbackReader rdr)
-             (instance? BufferedReader rdr))
-       (binding [*in* rdr]
-         (clojure.core/read-line))
-       (loop [c (read-char rdr) s (StringBuilder.)]
-         (if (newline? c)
-           (str s)
-           (recur (read-char rdr) (.append s c)))))))
+   (if (or (instance? LineNumberingPushbackReader rdr)
+           (instance? BufferedReader rdr))
+     (binding [*in* rdr]
+       (clojure.core/read-line))
+     (loop [c (read-char rdr) s (StringBuilder.)]
+       (if (newline? c)
+         (str s)
+         (recur (read-char rdr) (.append s c)))))))
 
 (defn reader-error
   "Throws an ExceptionInfo with the given message.
