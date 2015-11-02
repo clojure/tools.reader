@@ -72,7 +72,10 @@
       (when (== -1 (.read is buf))
         (set! buf nil)))
     (when buf
-      (char (aget buf 0)))))
+      (char (aget buf 0))))
+  Closeable
+  (close [this]
+    (.close is)))
 
 (deftype PushbackReader
     [rdr ^"[Ljava.lang.Object;" buf buf-len ^:unsynchronized-mutable buf-pos]
@@ -94,7 +97,11 @@
     (when ch
       (if (zero? buf-pos) (throw (RuntimeException. "Pushback buffer is full")))
       (update! buf-pos dec)
-      (aset buf buf-pos ch))))
+      (aset buf buf-pos ch)))
+  Closeable
+  (close [this]
+    (when (instance? Closeable rdr)
+      (.close ^Closeable rdr))))
 
 (defn- normalize-newline [rdr ch]
   (if (identical? \return ch)
@@ -137,7 +144,14 @@
   IndexingReader
   (get-line-number [reader] (int line))
   (get-column-number [reader] (int column))
-  (get-file-name [reader] file-name))
+  (get-file-name [reader] file-name)
+
+  Closeable
+  (close [this]
+    (when (instance? Closeable rdr)
+      (.close ^Closeable rdr))))
+
+;; Java interop
 
 (extend-type java.io.PushbackReader
   Reader
@@ -230,7 +244,12 @@ logging frames. Called when pushing a character back."
   IndexingReader
   (get-line-number [reader] (int line))
   (get-column-number [reader] (int column))
-  (get-file-name [reader] file-name))
+  (get-file-name [reader] file-name)
+
+  Closeable
+  (close [this]
+    (when (instance? Closeable rdr)
+      (.close ^Closeable rdr))))
 
 (defn log-source*
   [reader f]
