@@ -13,7 +13,7 @@
   (:require [clojure.tools.reader.impl.utils :refer
              [char whitespace? newline? compile-if >=clojure-1-5-alpha*? make-var]])
   (:import clojure.lang.LineNumberingPushbackReader
-           (java.io InputStream BufferedReader)))
+           (java.io InputStream BufferedReader Closeable)))
 
 (defmacro ^:private update! [what f]
   (list 'set! what (list f what)))
@@ -179,6 +179,42 @@
                         (fn [rdr] 0))
    :get-file-name (constantly nil)})
 
+(defprotocol ReaderCoercer
+  (to-rdr [rdr]))
+
+(declare string-reader pushback-reader)
+
+(extend-protocol ReaderCoercer
+  Object
+  (to-rdr [rdr]
+    (if (satisfies? Reader rdr)
+      rdr
+      (throw (IllegalArgumentException. (str "Argument of type: " (class rdr) " cannot be converted to Reader")))))
+  clojure.tools.reader.reader_types.Reader
+  (to-rdr [rdr] rdr)
+  String
+  (to-rdr [str] (string-reader str))
+  java.io.Reader
+  (to-rdr [rdr] (java.io.PushbackReader. rdr)))
+
+(defprotocol PushbackReaderCoercer
+  (to-pbr [rdr buf-len]))
+
+(extend-protocol PushbackReaderCoercer
+  Object
+  (to-pbr [rdr buf-len]
+    (if (satisfies? Reader rdr)
+      (pushback-reader rdr buf-len)
+      (throw (IllegalArgumentException. (str "Argument of type: " (class rdr) " cannot be converted to IPushbackReader")))))
+  clojure.tools.reader.reader_types.Reader
+  (to-pbr [rdr buf-len] (pushback-reader rdr buf-len))
+  clojure.tools.reader.reader_types.PushbackReader
+  (to-pbr [rdr buf-len] (pushback-reader rdr buf-len))
+  String
+  (to-pbr [str buf-len] (pushback-reader str buf-len))
+  java.io.Reader
+  (to-pbr [rdr buf-len] (java.io.PushbackReader. rdr buf-len)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Source Logging support
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -282,12 +318,17 @@
   ([^String s]
    (StringReader. s (count s) 0)))
 
+(defn pushback-reader
+  "Creates a PushbackReader from a given reader or string"
+  ([rdr] (pushback-reader rdr 1))
+  ([rdr buf-len] (PushbackReader. (to-rdr rdr) (object-array buf-len) buf-len buf-len)))
+
 (defn string-push-back-reader
   "Creates a PushbackReader from a given string"
   ([s]
    (string-push-back-reader s 1))
   ([^String s buf-len]
-   (PushbackReader. (string-reader s) (object-array buf-len) buf-len buf-len)))
+   (pushback-reader (string-reader s) buf-len)))
 
 (defn input-stream-reader
   "Creates an InputStreamReader from an InputStream"
@@ -299,7 +340,7 @@
   ([is]
    (input-stream-push-back-reader is 1))
   ([^InputStream is buf-len]
-   (PushbackReader. (input-stream-reader is) (object-array buf-len) buf-len buf-len)))
+   (pushback-reader (input-stream-reader is) buf-len)))
 
 (defn indexing-push-back-reader
   "Creates an IndexingPushbackReader from a given string or PushbackReader"
@@ -309,7 +350,7 @@
    (indexing-push-back-reader s-or-rdr buf-len nil))
   ([s-or-rdr buf-len file-name]
    (IndexingPushbackReader.
-    (if (string? s-or-rdr) (string-push-back-reader s-or-rdr buf-len) s-or-rdr) 1 1 true nil 0 file-name)))
+    (to-pbr s-or-rdr buf-len) 1 1 true nil 0 file-name)))
 
 (defn source-logging-push-back-reader
   "Creates a SourceLoggingPushbackReader from a given string or PushbackReader"
@@ -319,7 +360,7 @@
    (source-logging-push-back-reader s-or-rdr buf-len nil))
   ([s-or-rdr buf-len file-name]
    (SourceLoggingPushbackReader.
-    (if (string? s-or-rdr) (string-push-back-reader s-or-rdr buf-len) s-or-rdr)
+    (to-pbr s-or-rdr buf-len)
     1
     1
     true
