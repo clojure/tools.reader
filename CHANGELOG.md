@@ -1,6 +1,10 @@
 Changelog
 ========================================
- * Release 0.10.0 on 09 Oct 2015
+* Release 1.0.0-alpha1 on 02 Nov 2015
+  * Reader types implement Closeable
+  * Added pushback-reader
+  * Improved interoperability between reader types and java readers
+* Release 0.10.0 on 09 Oct 2015
   * Better error for invalid octal literal
 * Release 0.10.0-alpha3 on 28 Jul 2015
   * Updated cljs port for self-hosted cljs
@@ -11,6 +15,7 @@ Changelog
   * Allow returning nil in reader-conditionals (#TRDR-30)
 * Release 0.10.0-alpha1 on 09 Jun 2015
   * Initial cljs port
+  * Removed support for clojure 1.3.0
 * Release 0.9.2 on 23 Apr 2015
   * Allow sym->sym mapping in *alias-map*
 * Release 0.9.1 on 09 Apr 2015
