@@ -182,7 +182,7 @@
 (defprotocol ReaderCoercer
   (to-rdr [rdr]))
 
-(declare string-reader pushback-reader)
+(declare string-reader push-back-reader)
 
 (extend-protocol ReaderCoercer
   Object
@@ -204,14 +204,14 @@
   Object
   (to-pbr [rdr buf-len]
     (if (satisfies? Reader rdr)
-      (pushback-reader rdr buf-len)
+      (push-back-reader rdr buf-len)
       (throw (IllegalArgumentException. (str "Argument of type: " (class rdr) " cannot be converted to IPushbackReader")))))
   clojure.tools.reader.reader_types.Reader
-  (to-pbr [rdr buf-len] (pushback-reader rdr buf-len))
+  (to-pbr [rdr buf-len] (push-back-reader rdr buf-len))
   clojure.tools.reader.reader_types.PushbackReader
-  (to-pbr [rdr buf-len] (pushback-reader rdr buf-len))
+  (to-pbr [rdr buf-len] (push-back-reader rdr buf-len))
   String
-  (to-pbr [str buf-len] (pushback-reader str buf-len))
+  (to-pbr [str buf-len] (push-back-reader str buf-len))
   java.io.Reader
   (to-pbr [rdr buf-len] (java.io.PushbackReader. rdr buf-len)))
 
@@ -318,31 +318,31 @@
   ([^String s]
    (StringReader. s (count s) 0)))
 
-(defn pushback-reader
+(defn ^Closeable push-back-reader
   "Creates a PushbackReader from a given reader or string"
-  ([rdr] (pushback-reader rdr 1))
+  ([rdr] (push-back-reader rdr 1))
   ([rdr buf-len] (PushbackReader. (to-rdr rdr) (object-array buf-len) buf-len buf-len)))
 
-(defn string-push-back-reader
+(defn ^Closeable string-push-back-reader
   "Creates a PushbackReader from a given string"
   ([s]
    (string-push-back-reader s 1))
   ([^String s buf-len]
-   (pushback-reader (string-reader s) buf-len)))
+   (push-back-reader (string-reader s) buf-len)))
 
-(defn input-stream-reader
+(defn ^Closeable input-stream-reader
   "Creates an InputStreamReader from an InputStream"
   [is]
   (InputStreamReader. is nil))
 
-(defn input-stream-push-back-reader
+(defn ^Closeable input-stream-push-back-reader
   "Creates a PushbackReader from a given InputStream"
   ([is]
    (input-stream-push-back-reader is 1))
   ([^InputStream is buf-len]
-   (pushback-reader (input-stream-reader is) buf-len)))
+   (push-back-reader (input-stream-reader is) buf-len)))
 
-(defn indexing-push-back-reader
+(defn ^Closeable indexing-push-back-reader
   "Creates an IndexingPushbackReader from a given string or PushbackReader"
   ([s-or-rdr]
    (indexing-push-back-reader s-or-rdr 1))
@@ -352,7 +352,7 @@
    (IndexingPushbackReader.
     (to-pbr s-or-rdr buf-len) 1 1 true nil 0 file-name)))
 
-(defn source-logging-push-back-reader
+(defn ^Closeable source-logging-push-back-reader
   "Creates a SourceLoggingPushbackReader from a given string or PushbackReader"
   ([s-or-rdr]
    (source-logging-push-back-reader s-or-rdr 1))
