@@ -1,5 +1,8 @@
 Changelog
 ========================================
+* Release 1.0.0-alpha2 on 05 Dec 2015
+  * Renamed pushback-reader to push-back-reader
+  * Added Closeable type hint to reader ctor functions
 * Release 1.0.0-alpha1 on 02 Nov 2015
   * Reader types implement Closeable
   * Added pushback-reader
