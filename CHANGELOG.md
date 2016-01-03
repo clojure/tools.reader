@@ -10,7 +10,7 @@ Changelog
   * Updated cljs port for self-hosted cljs
 * Release 0.10.0-alpha2 on 27 Jun 2015
   * Re-added *alias-map* support in cljs port
-  * Added support for auto-qualifying backtick in cljs port
+  * Added support for auto-qualifying symbols and keywords inside backtick in cljs port
   * Removed a reflection instance
   * Allow returning nil in reader-conditionals (#TRDR-30)
 * Release 0.10.0-alpha1 on 09 Jun 2015
