@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [read-string])
   (:require [cljs.test :as t :refer-macros [are deftest is run-tests testing]]
             [cljs.tools.reader :as reader :refer
-             [*data-readers* *default-data-reader-fn* read-string *alias-map*]]
+             [*data-readers* *default-data-reader-fn* read-string *alias-map* resolve-symbol]]
             [cljs.tools.reader.impl.utils
              :refer [reader-conditional reader-conditional?]]
             [cljs.tools.reader.reader-types :as rt]
@@ -141,17 +141,21 @@
 (deftest read-quote
   (is (= ''foo (read-string "'foo"))))
 
-#_(deftest read-syntax-quote
-    (let [q (read-string "quote")]
-      (is (= 'bar/bar (binding [*alias-map* '{foo bar}]
-                        (second (read-string "`foo/bar")))))
-      (is (= q (first (read-string "`foo"))))
-      (is (= 'foo (second (read-string "`foo"))))
-      (is (= q (first (read-string "`+"))))
-      (is (= '+ (second (read-string "`+"))))
-      (is (= q (first (read-string "`foo/bar"))))
-      (is (= 'foo/bar (second (read-string "`foo/bar"))))
-      (is (= 1 (read-string "`1")))))
+(deftest read-syntax-quote
+  (is (= (binding [resolve-symbol (constantly 'cljs.user/x)]
+           (read-string "`x"))
+         ''cljs.user/x))
+
+  #_(let [q (read-string "quote")]
+    (is (= 'bar/bar (binding [*alias-map* '{foo bar}]
+                      (second (read-string "`foo/bar")))))
+    (is (= q (first (read-string "`foo"))))
+    (is (= 'foo (second (read-string "`foo"))))
+    (is (= q (first (read-string "`+"))))
+    (is (= '+ (second (read-string "`+"))))
+    (is (= q (first (read-string "`foo/bar"))))
+    (is (= 'foo/bar (second (read-string "`foo/bar"))))
+    (is (= 1 (read-string "`1")))))
 
 (deftest read-deref
   (is (= '@foo (read-string "@foo"))))
