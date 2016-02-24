@@ -108,12 +108,21 @@
 (deftest read-map
   (is (= '{} (read-string "{}")))
   (is (= '{foo bar} (read-string "{foo bar}")))
-  (is (= '{foo {bar baz}} (read-string "{foo {bar baz}}"))))
+  (is (= '{foo {bar baz}} (read-string "{foo {bar baz}}")))
+  (is (thrown-with-msg? js/Error
+                        #"Map literal must contain an even number of forms"
+                        (read-string "{foo bar bar}")))
+  (is (thrown-with-msg? js/Error #"Map literal contains duplicate key: foo"
+                      (read-string "{foo bar foo bar}"))))
 
 (deftest read-set
   (is (= '#{} (read-string "#{}")))
   (is (= '#{foo bar} (read-string "#{foo bar}")))
-  (is (= '#{foo #{bar} baz} (read-string "#{foo #{bar} baz}"))))
+  (is (= '#{foo #{bar} baz} (read-string "#{foo #{bar} baz}")))
+  (is (thrown-with-msg? js/Error #"Set literal contains duplicate key: foo"
+                        (read-string "#{foo foo}")))
+  (is (thrown-with-msg? js/Error #"Set literal contains duplicate keys: foo, bar"
+                        (read-string "#{foo foo bar bar}"))))
 
 (deftest read-metadata
   (is (= {:foo true} (meta (read-string "^:foo 'bar"))))

@@ -257,15 +257,30 @@
           :end-line end-line
           :end-column end-column})))))
 
+(defn- duplicate-keys-error [msg coll]
+  (letfn [(duplicates [seq]
+            (for [[id freq] (frequencies seq)
+                  :when (> freq 1)]
+              id))]
+    (let [dups (duplicates coll)]
+      (apply str msg
+           (when (> (count dups) 1) "s")
+           ": " (interpose ", " dups)))))
+
 (defn- read-map
   "Read in a map, including its location if the reader is an indexing reader"
   [rdr _ opts pending-forms]
   (let [[start-line start-column] (starting-line-col-info rdr)
         the-map (read-delimited \} rdr opts pending-forms)
         map-count (count the-map)
+        ks (take-nth 2 the-map)
+        key-set (set ks)
         [end-line end-column] (ending-line-col-info rdr)]
     (when (odd? map-count)
       (reader-error rdr "Map literal must contain an even number of forms"))
+    (when-not (= (count key-set) (count ks))
+      (reader-error rdr (duplicate-keys-error
+                         "Map literal contains duplicate key" ks)))
     (with-meta
       (if (zero? map-count)
         {}
@@ -417,17 +432,21 @@
   (let [[start-line start-column] (starting-line-col-info rdr)
         ;; subtract 1 from start-column so it includes the # in the leading #{
         start-column (if start-column (int (dec start-column)))
-        the-set (set (read-delimited \} rdr opts pending-forms))
+        coll (read-delimited \} rdr opts pending-forms)
+        the-set (set coll)
         [end-line end-column] (ending-line-col-info rdr)]
-    (with-meta the-set
-      (when start-line
-        (merge
-         (when-let [file (get-file-name rdr)]
-           {:file file})
-         {:line start-line
-          :column start-column
-          :end-line end-line
-          :end-column end-column})))))
+      (when-not (= (count coll) (count the-set))
+        (reader-error rdr (duplicate-keys-error
+                           "Set literal contains duplicate key" coll)))
+      (with-meta the-set
+        (when start-line
+          (merge
+           (when-let [file (get-file-name rdr)]
+             {:file file})
+           {:line start-line
+            :column start-column
+            :end-line end-line
+            :end-column end-column})))))
 
 (defn- read-discard
   "Read and discard the first object from rdr"
