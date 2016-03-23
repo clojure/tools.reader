@@ -40,7 +40,7 @@
       (recur)))
   reader)
 
-(def int-pattern #"^([-+]?)(?:(0)|([1-9][0-9]*)|0[xX]([0-9A-Fa-f]+)|0([0-7]+)|([1-9][0-9]?)[rR]([0-9A-Za-z]+)|(0[0-9]+))(N)?$")
+(def int-pattern #"^([-+]?)(?:(0)|([1-9][0-9]*)|0[xX]([0-9A-Fa-f]+)|0([0-7]+)|([1-9][0-9]?)[rR]([0-9A-Za-z]+)|0[0-9]+)(N)?$")
 (def ratio-pattern #"([-+]?[0-9]+)/([0-9]+)")
 (def float-pattern #"([-+]?[0-9]+(\.[0-9]*)?([eE][-+]?[0-9]+)?)(M)?")
 
@@ -55,13 +55,13 @@
                (not (nil? (m 4))) [(m 4) 16]
                (not (nil? (m 5))) [(m 5) 8]
                (not (nil? (m 7))) [(m 7) (js/parseInt (m 6))]
-               (not (nil? (m 8))) [(m 8) 10]
                :else              [nil nil])
             n (a 0)]
         (when-not (nil? n)
           (let [bn (js/parseInt n (a 1))
                 bn (if negate? (* -1 bn) bn)]
-            bn))))))
+            (when-not (js/isNaN bn)
+              bn)))))))
 
 (defn- match-ratio
   [s]
