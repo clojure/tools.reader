@@ -97,20 +97,22 @@
             (recur (read-char rdr))))))))
 
 (defn- read-unicode-char
-  ([^String token offset length base]
-     (let [l (+ offset length)]
-       (when-not (== (count token) l)
-         (throw (IllegalArgumentException. (str "Invalid unicode character: \\" token))))
-       (loop [i offset uc 0]
-         (if (== i l)
-           (char uc)
-           (let [d (Character/digit (int (nth token i)) (int base))]
-             (if (== d -1)
-               (throw (IllegalArgumentException. (str "Invalid digit: " (nth token i))))
-               (recur (inc i) (long (+ d (* uc base))))))))))
+  ([^String token ^long offset ^long length ^long base]
+   (let [l (+ offset length)]
+     (when-not (== (count token) l)
+       (throw (IllegalArgumentException. (str "Invalid unicode character: \\" token))))
+     (loop [i offset uc 0]
+       (if (== i l)
+         (char uc)
+         (let [d (Character/digit (int (nth token i)) (int base))]
+           (if (== d -1)
+             (throw (IllegalArgumentException. (str "Invalid digit: " (nth token i))))
+             (recur (inc i) (long (+ d (* uc base))))))))))
 
   ([rdr initch base length exact?]
-     (loop [i 1 uc (Character/digit (int initch) (int base))]
+   (let [base (long base)
+         length (long length)]
+     (loop [i 1 uc (long (Character/digit (int initch) (int base)))]
        (if (== uc -1)
          (throw (IllegalArgumentException. (str "Invalid digit: " initch)))
          (if-not (== i length)
@@ -127,7 +129,7 @@
                  (if (== d -1)
                    (throw (IllegalArgumentException. (str "Invalid digit: " ch)))
                    (recur (inc i) (long (+ d (* uc base))))))))
-           (char uc))))))
+           (char uc)))))))
 
 (def ^:private ^:const upper-limit (int \uD7ff))
 (def ^:private ^:const lower-limit (int \uE000))
@@ -175,7 +177,7 @@
 
 (defn ^:private starting-line-col-info [rdr]
   (when (indexing-reader? rdr)
-    [(get-line-number rdr) (int (dec (get-column-number rdr)))]))
+    [(get-line-number rdr) (int (dec (int (get-column-number rdr))))]))
 
 (defn ^:private ending-line-col-info [rdr]
   (when (indexing-reader? rdr)
@@ -388,7 +390,7 @@
   [rdr _ opts pending-forms]
   (let [[start-line start-column] (starting-line-col-info rdr)
         ;; subtract 1 from start-column so it includes the # in the leading #{
-        start-column (if start-column (int (dec start-column)))
+        start-column (if start-column (int (dec (int start-column))))
         the-set (PersistentHashSet/createWithCheck (read-delimited \} rdr opts pending-forms))
         [end-line end-column] (ending-line-col-info rdr)]
     (with-meta the-set
@@ -416,7 +418,7 @@
     (reader-error rdr (str "Feature should be a keyword: " feature))))
 
 (defn- check-eof-error
-  [form rdr first-line]
+  [form rdr ^long first-line]
   (when (identical? form READ_EOF)
     (if (< first-line 0)
       (reader-error rdr "EOF while reading")
@@ -428,7 +430,7 @@
     (reader-error rdr (str "Feature name " form " is reserved"))))
 
 (defn- check-invalid-read-cond
-  [form rdr first-line]
+  [form rdr ^long first-line]
   (when (identical? form READ_FINISHED)
     (if (< first-line 0)
       (reader-error rdr "read-cond requires an even number of forms")
@@ -517,7 +519,7 @@
 
 (defn- garg
   "Get a symbol for an anonymous ?argument?"
-  [n]
+  [^long n]
   (symbol (str (if (== -1 n) "rest" (str "p" n))
                "__" (RT/nextID) "#")))
 
@@ -529,7 +531,7 @@
     (let [form (read* (doto rdr (unread \()) true nil opts pending-forms) ;; this sets bindings
           rargs (rseq arg-env)
           args (if rargs
-                 (let [higharg (key (first rargs))]
+                 (let [higharg (long (key ( first rargs)))]
                    (let [args (loop [i 1 args (transient [])]
                                 (if (> i higharg)
                                   (persistent! args)

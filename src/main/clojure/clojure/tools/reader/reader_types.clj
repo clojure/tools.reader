@@ -45,7 +45,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (deftype StringReader
-    [^String s s-len ^:unsynchronized-mutable s-pos]
+    [^String s ^long s-len ^:unsynchronized-mutable ^long s-pos]
   Reader
   (read-char [reader]
     (when (> s-len s-pos)
@@ -78,7 +78,7 @@
     (.close is)))
 
 (deftype PushbackReader
-    [rdr ^"[Ljava.lang.Object;" buf buf-len ^:unsynchronized-mutable buf-pos]
+    [rdr ^"[Ljava.lang.Object;" buf ^long buf-len ^:unsynchronized-mutable ^long buf-pos]
   Reader
   (read-char [reader]
     (char
@@ -113,9 +113,9 @@
     ch))
 
 (deftype IndexingPushbackReader
-    [rdr ^:unsynchronized-mutable line ^:unsynchronized-mutable column
+    [rdr ^:unsynchronized-mutable ^long line ^:unsynchronized-mutable ^long column
      ^:unsynchronized-mutable line-start? ^:unsynchronized-mutable prev
-     ^:unsynchronized-mutable prev-column file-name]
+     ^:unsynchronized-mutable ^long prev-column file-name]
   Reader
   (read-char [reader]
     (when-let [ch (read-char rdr)]
@@ -246,9 +246,9 @@
     (.deleteCharAt buffer (dec (.length buffer)))))
 
 (deftype SourceLoggingPushbackReader
-    [rdr ^:unsynchronized-mutable line ^:unsynchronized-mutable column
+    [rdr ^:unsynchronized-mutable ^long line ^:unsynchronized-mutable ^long column
      ^:unsynchronized-mutable line-start? ^:unsynchronized-mutable prev
-     ^:unsynchronized-mutable prev-column file-name source-log-frames]
+     ^:unsynchronized-mutable ^long prev-column file-name source-log-frames]
   Reader
   (read-char [reader]
     (when-let [ch (read-char rdr)]
@@ -414,4 +414,4 @@
   "Returns true if rdr is an IndexingReader and the current char starts a new line"
   [rdr]
   (when (indexing-reader? rdr)
-    (== 1 (get-column-number rdr))))
+    (== 1 (int (get-column-number rdr)))))

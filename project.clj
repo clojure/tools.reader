@@ -17,6 +17,8 @@
   :aliases {"test-all" ["with-profile" "test,1.4:test,1.5:test,1.6:test,1.7:test,1.8" "test"]
             "check-all" ["with-profile" "1.4:1.5:1.6:1.7:1.8" "check"]}
   :min-lein-version "2.0.0"
+  :global-vars {*warn-on-reflection* true
+                *unchecked-math* :warn-on-boxed}
   :plugins [[lein-cljsbuild "1.0.5"]]
   :cljsbuild
   {:builds [{:id "dev"
