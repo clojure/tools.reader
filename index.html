@@ -57,31 +57,10 @@ namespace.
       <a href="#clojure.tools.reader/*alias-map*" class="toc-entry-anchor">*alias-map*</a>
       
     </div><div class="toc-entry" style="margin-left: 1em;">
-      <a href="#clojure.tools.reader/*data-readers*" class="toc-entry-anchor">*data-readers*</a>
-      
-    </div><div class="toc-entry" style="margin-left: 1em;">
-      <a href="#clojure.tools.reader/*default-data-reader-fn*" class="toc-entry-anchor">*default-data-reader-fn*</a>
-      
-    </div><div class="toc-entry" style="margin-left: 1em;">
-      <a href="#clojure.tools.reader/*read-eval*" class="toc-entry-anchor">*read-eval*</a>
-      
-    </div><div class="toc-entry" style="margin-left: 1em;">
-      <a href="#clojure.tools.reader/default-data-readers" class="toc-entry-anchor">default-data-readers</a>
-      
-    </div><div class="toc-entry" style="margin-left: 1em;">
       <a href="#clojure.tools.reader/map-func" class="toc-entry-anchor">map-func</a>
       
     </div><div class="toc-entry" style="margin-left: 1em;">
-      <a href="#clojure.tools.reader/read" class="toc-entry-anchor">read</a>
-      
-    </div><div class="toc-entry" style="margin-left: 1em;">
-      <a href="#clojure.tools.reader/read-string" class="toc-entry-anchor">read-string</a>
-      
-    </div><div class="toc-entry" style="margin-left: 1em;">
       <a href="#clojure.tools.reader/resolve-symbol" class="toc-entry-anchor">resolve-symbol</a>
-      
-    </div><div class="toc-entry" style="margin-left: 1em;">
-      <a href="#clojure.tools.reader/syntax-quote" class="toc-entry-anchor">syntax-quote</a>
       
     </div>
   </div><div class="toc-section" style="margin-left: 1em;">
@@ -242,71 +221,6 @@ Defaults to nil</pre>
   </div><div id="var-entry">
     <br />
     <hr />
-    <h2 id="clojure.tools.reader/*data-readers*">*data-readers*</h2>
-    <span id="var-type">dynamic var</span><br />
-    <pre id="var-usage"></pre>
-    <pre id="var-docstr">Map from reader tag symbols to data reader Vars.
-Reader tags without namespace qualifiers are reserved for Clojure.
-Default reader tags are defined in clojure.tools.reader/default-data-readers
-and may be overridden by binding this Var.</pre>
-    <pre id="var-specs"></pre>
-    
-    
-    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj#L893">Source</a>
-  </div><div id="var-entry">
-    <br />
-    <hr />
-    <h2 id="clojure.tools.reader/*default-data-reader-fn*">*default-data-reader-fn*</h2>
-    <span id="var-type">dynamic var</span><br />
-    <pre id="var-usage"></pre>
-    <pre id="var-docstr">When no data reader is found for a tag and *default-data-reader-fn*
-is non-nil, it will be called with two arguments, the tag and the value.
-If *default-data-reader-fn* is nil (the default value), an exception
-will be thrown for the unknown tag.</pre>
-    <pre id="var-specs"></pre>
-    
-    
-    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj#L900">Source</a>
-  </div><div id="var-entry">
-    <br />
-    <hr />
-    <h2 id="clojure.tools.reader/*read-eval*">*read-eval*</h2>
-    <span id="var-type">dynamic var</span><br />
-    <pre id="var-usage"></pre>
-    <pre id="var-docstr">Defaults to true.
-
-***WARNING***
-This setting implies that the full power of the reader is in play,
-including syntax that can cause code to execute. It should never be
-used with untrusted sources. See also: clojure.tools.reader.edn/read.
-
-When set to logical false in the thread-local binding,
-the eval reader (#=) and *record/type literal syntax* are disabled in read/load.
-Example (will fail): (binding [*read-eval* false] (read-string "#=(* 2 21)"))
-
-When set to :unknown all reads will fail in contexts where *read-eval*
-has not been explicitly bound to either true or false. This setting
-can be a useful diagnostic tool to ensure that all of your reads
-occur in considered contexts.</pre>
-    <pre id="var-specs"></pre>
-    
-    
-    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj#L875">Source</a>
-  </div><div id="var-entry">
-    <br />
-    <hr />
-    <h2 id="clojure.tools.reader/default-data-readers">default-data-readers</h2>
-    <span id="var-type">var</span><br />
-    <pre id="var-usage"></pre>
-    <pre id="var-docstr">Default map of data reader functions provided by Clojure.
-May be overridden by binding *data-readers*</pre>
-    <pre id="var-specs"></pre>
-    
-    
-    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj#L909">Source</a>
-  </div><div id="var-entry">
-    <br />
-    <hr />
     <h2 id="clojure.tools.reader/map-func">map-func</h2>
     <span id="var-type">function</span><br />
     <pre id="var-usage">Usage: (map-func coll)
@@ -319,62 +233,6 @@ May be overridden by binding *data-readers*</pre>
   </div><div id="var-entry">
     <br />
     <hr />
-    <h2 id="clojure.tools.reader/read">read</h2>
-    <span id="var-type">function</span><br />
-    <pre id="var-usage">Usage: (read)
-       (read reader)
-       (read opts reader)
-       (read reader eof-error? eof-value)
-</pre>
-    <pre id="var-docstr">Reads the first object from an IPushbackReader or a java.io.PushbackReader.
-Returns the object read. If EOF, throws if eof-error? is true.
-Otherwise returns sentinel. If no stream is providen, *in* will be used.
-
-Opts is a persistent map with valid keys:
- :read-cond - :allow to process reader conditionals, or
-              :preserve to keep all branches
- :features - persistent set of feature keywords for reader conditionals
- :eof - on eof, return value unless :eofthrow, then throw.
-        if not specified, will throw
-
-***WARNING***
-Note that read can execute code (controlled by *read-eval*),
-and as such should be used only with trusted sources.
-
-To read data structures only, use clojure.tools.reader.edn/read
-
-Note that the function signature of clojure.tools.reader/read and
-clojure.tools.reader.edn/read is not the same for eof-handling</pre>
-    <pre id="var-specs"></pre>
-    
-    
-    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj#L960">Source</a>
-  </div><div id="var-entry">
-    <br />
-    <hr />
-    <h2 id="clojure.tools.reader/read-string">read-string</h2>
-    <span id="var-type">function</span><br />
-    <pre id="var-usage">Usage: (read-string s)
-       (read-string opts s)
-</pre>
-    <pre id="var-docstr">Reads one object from the string s.
-Returns nil when s is nil or empty.
-
-***WARNING***
-Note that read-string can execute code (controlled by *read-eval*),
-and as such should be used only with trusted sources.
-
-To read data structures only, use clojure.tools.reader.edn/read-string
-
-Note that the function signature of clojure.tools.reader/read-string and
-clojure.tools.reader.edn/read-string is not the same for eof-handling</pre>
-    <pre id="var-specs"></pre>
-    
-    
-    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj#L986">Source</a>
-  </div><div id="var-entry">
-    <br />
-    <hr />
     <h2 id="clojure.tools.reader/resolve-symbol">resolve-symbol</h2>
     <span id="var-type">dynamic function</span><br />
     <pre id="var-usage">Usage: (resolve-symbol s)
@@ -384,18 +242,6 @@ clojure.tools.reader.edn/read-string is not the same for eof-handling</pre>
     
     
     <a id="var-source" href="https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj#L641">Source</a>
-  </div><div id="var-entry">
-    <br />
-    <hr />
-    <h2 id="clojure.tools.reader/syntax-quote">syntax-quote</h2>
-    <span id="var-type">macro</span><br />
-    <pre id="var-usage">Usage: (syntax-quote form)
-</pre>
-    <pre id="var-docstr">Macro equivalent to the syntax-quote reader macro (`).</pre>
-    <pre id="var-specs"></pre>
-    
-    
-    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj#L1004">Source</a>
   </div>
 </div>
 
