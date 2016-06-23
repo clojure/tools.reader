@@ -4,7 +4,7 @@
    :name "clojure.tools.reader",
    :wiki-url "http://clojure.github.io/tools.reader/index.html",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj"}
+   "https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj"}
   {:doc "An EDN reader in clojure",
    :author "Bronsa",
    :name "clojure.tools.reader.edn",
@@ -27,11 +27,11 @@
    "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj"}),
  :vars
  ({:raw-source-url
-   "https://github.com/clojure/tools.reader/raw/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj",
    :name "*alias-map*",
    :file "src/main/clojure/clojure/tools/reader.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj#L333",
+   "https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj#L333",
    :dynamic true,
    :line 333,
    :var-type "var",
@@ -42,13 +42,13 @@
    :wiki-url
    "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader/*alias-map*"}
   {:raw-source-url
-   "https://github.com/clojure/tools.reader/raw/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj",
    :name "*data-readers*",
    :file "src/main/clojure/clojure/tools/reader.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj#L850",
+   "https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj#L893",
    :dynamic true,
-   :line 850,
+   :line 893,
    :var-type "var",
    :arglists nil,
    :doc
@@ -57,13 +57,13 @@
    :wiki-url
    "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader/*data-readers*"}
   {:raw-source-url
-   "https://github.com/clojure/tools.reader/raw/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj",
    :name "*default-data-reader-fn*",
    :file "src/main/clojure/clojure/tools/reader.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj#L857",
+   "https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj#L900",
    :dynamic true,
-   :line 857,
+   :line 900,
    :var-type "var",
    :arglists nil,
    :doc
@@ -72,13 +72,13 @@
    :wiki-url
    "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader/*default-data-reader-fn*"}
   {:raw-source-url
-   "https://github.com/clojure/tools.reader/raw/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj",
    :name "*read-eval*",
    :file "src/main/clojure/clojure/tools/reader.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj#L832",
+   "https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj#L875",
    :dynamic true,
-   :line 832,
+   :line 875,
    :var-type "var",
    :arglists nil,
    :doc
@@ -87,12 +87,12 @@
    :wiki-url
    "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader/*read-eval*"}
   {:raw-source-url
-   "https://github.com/clojure/tools.reader/raw/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj",
    :name "default-data-readers",
    :file "src/main/clojure/clojure/tools/reader.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj#L866",
-   :line 866,
+   "https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj#L909",
+   :line 909,
    :var-type "var",
    :arglists nil,
    :doc
@@ -101,11 +101,11 @@
    :wiki-url
    "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader/default-data-readers"}
   {:raw-source-url
-   "https://github.com/clojure/tools.reader/raw/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj",
    :name "map-func",
    :file "src/main/clojure/clojure/tools/reader.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj#L676",
+   "https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj#L676",
    :line 676,
    :var-type "function",
    :arglists ([coll]),
@@ -115,12 +115,12 @@
    :wiki-url
    "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader/map-func"}
   {:raw-source-url
-   "https://github.com/clojure/tools.reader/raw/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj",
    :name "read",
    :file "src/main/clojure/clojure/tools/reader.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj#L917",
-   :line 917,
+   "https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj#L960",
+   :line 960,
    :var-type "function",
    :arglists ([] [reader] [opts reader] [reader eof-error? eof-value]),
    :doc
@@ -129,12 +129,12 @@
    :wiki-url
    "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader/read"}
   {:raw-source-url
-   "https://github.com/clojure/tools.reader/raw/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj",
    :name "read-string",
    :file "src/main/clojure/clojure/tools/reader.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj#L943",
-   :line 943,
+   "https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj#L986",
+   :line 986,
    :var-type "function",
    :arglists ([s] [opts s]),
    :doc
@@ -143,11 +143,11 @@
    :wiki-url
    "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader/read-string"}
   {:raw-source-url
-   "https://github.com/clojure/tools.reader/raw/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj",
    :name "resolve-symbol",
    :file "src/main/clojure/clojure/tools/reader.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj#L641",
+   "https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj#L641",
    :dynamic true,
    :line 641,
    :var-type "function",
@@ -158,12 +158,12 @@
    :wiki-url
    "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader/resolve-symbol"}
   {:raw-source-url
-   "https://github.com/clojure/tools.reader/raw/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj",
+   "https://github.com/clojure/tools.reader/raw/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj",
    :name "syntax-quote",
    :file "src/main/clojure/clojure/tools/reader.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader.clj#L961",
-   :line 961,
+   "https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj#L1004",
+   :line 1004,
    :var-type "macro",
    :arglists ([form]),
    :doc "Macro equivalent to the syntax-quote reader macro (`).",
