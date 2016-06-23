@@ -742,6 +742,47 @@
     (-> (read* rdr true nil opts pending-forms)
       syntax-quote*)))
 
+(defn namespace-keys [ns keys]
+  (for [key keys]
+    (if (or (symbol? key)
+            (keyword? key))
+      (let [[key-ns key-name] ((juxt namespace name) key)
+            ->key (if (symbol? key) symbol keyword)]
+        (cond
+          (nil? key-ns)
+          (->key ns key-name)
+
+          (= "_" key-ns)
+          (->key key-name)
+
+          :else
+          key))
+      key)))
+
+(defn- read-namespaced-map
+  [rdr _ opts pending-forms]
+  (let [token (read-token rdr (read-char rdr))]
+    (if-let [ns (cond
+                  (= token ":")
+                  (ns-name *ns*)
+
+                  (= \: (first token))
+                  (some-> token (subs 1) parse-symbol peek symbol resolve-ns ns-name)
+
+                  :else
+                  (some-> token parse-symbol peek))]
+
+      (let [ch (read-past whitespace? rdr)]
+        (if (identical? ch \{)
+          (let [items (read-delimited \} rdr opts pending-forms)]
+            (when-not (even? (count items))
+              (throw (Exception.)))
+            (let [keys (take-nth 2 items)
+                  vals (take-nth 2 (rest items))]
+              (zipmap (namespace-keys (str ns) keys) vals)))
+          (throw (Exception.))))
+      (throw (Exception.)))))
+
 (defn- macros [ch]
   (case ch
     \" read-string*
@@ -775,6 +816,7 @@
     \! read-comment
     \_ read-discard
     \? read-cond
+    \: read-namespaced-map
     nil))
 
 (defn- read-ctor [rdr class-name opts pending-forms]
