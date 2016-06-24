@@ -80,19 +80,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn- read-unicode-char
-  ([^String token offset length base]
-     (let [l (+ offset length)]
-       (when-not (== (count token) l)
-         (throw (IllegalArgumentException. (str "Invalid unicode character: \\" token))))
-       (loop [i offset uc 0]
-         (if (== i l)
-           (char uc)
-           (let [d (Character/digit (int (nth token i)) (int base))]
-             (if (== d -1)
-               (throw (IllegalArgumentException. (str "Invalid digit: " (nth token i))))
-               (recur (inc i) (long (+ d (* uc base))))))))))
+  ([^String token ^long offset ^long length ^long base]
+   (let [l (+ offset length)]
+     (when-not (== (count token) l)
+       (throw (IllegalArgumentException. (str "Invalid unicode character: \\" token))))
+     (loop [i offset uc 0]
+       (if (== i l)
+         (char uc)
+         (let [d (Character/digit (int (nth token i)) (int base))]
+           (if (== d -1)
+             (throw (IllegalArgumentException. (str "Invalid digit: " (nth token i))))
+             (recur (inc i) (long (+ d (* uc base))))))))))
 
   ([rdr initch base length exact?]
+   (let [length (long length)
+         base (long base)]
      (loop [i 1 uc (Character/digit (int initch) (int base))]
        (if (== uc -1)
          (throw (IllegalArgumentException. (str "Invalid digit: " initch)))
@@ -110,7 +112,7 @@
                  (if (== d -1)
                    (throw (IllegalArgumentException. (str "Invalid digit: " ch)))
                    (recur (inc i) (long (+ d (* uc base))))))))
-           (char uc))))))
+           (char uc)))))))
 
 (def ^:private ^:const upper-limit (int \uD7ff))
 (def ^:private ^:const lower-limit (int \uE000))
