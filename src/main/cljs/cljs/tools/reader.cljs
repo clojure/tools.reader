@@ -18,7 +18,7 @@
               get-line-number get-column-number get-file-name
               string-push-back-reader]]
             [cljs.tools.reader.impl.utils :refer
-             [char ex-info? whitespace? numeric? desugar-meta next-id namespace-keys
+             [char ex-info? whitespace? numeric? desugar-meta next-id namespace-keys second'
               ReaderConditional reader-conditional reader-conditional?]]
             [cljs.tools.reader.impl.commons :refer
              [number-literal? read-past match-number parse-symbol read-comment throwing-reader]]
@@ -771,10 +771,10 @@
                   (ns-name *ns*)
 
                   (= \: (first token))
-                  (some-> token (subs 1) parse-symbol peek symbol resolve-ns)
+                  (some-> token (subs 1) parse-symbol second' symbol resolve-ns)
 
                   :else
-                  (some-> token parse-symbol peek))]
+                  (some-> token parse-symbol second'))]
 
       (let [ch (read-past whitespace? rdr)]
         (if (identical? ch \{)

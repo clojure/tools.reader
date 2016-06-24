@@ -14,7 +14,7 @@
              [read-char reader-error unread peek-char indexing-reader?
               get-line-number get-column-number get-file-name string-push-back-reader]]
             [cljs.tools.reader.impl.utils :refer
-             [char ex-info? whitespace? numeric? desugar-meta namespace-keys]]
+             [char ex-info? whitespace? numeric? desugar-meta namespace-keys second']]
             [cljs.tools.reader.impl.commons :refer
              [number-literal? read-past match-number parse-symbol read-comment throwing-reader]]
             [cljs.tools.reader :refer [default-data-readers char-code]]
@@ -302,7 +302,7 @@
 (defn- read-namespaced-map
   [rdr _ opts]
   (let [token (read-token rdr (read-char rdr))]
-    (if-let [ns (some-> token parse-symbol peek)]
+    (if-let [ns (some-> token parse-symbol second')]
       (let [ch (read-past whitespace? rdr)]
         (if (identical? ch \{)
           (let [items (read-delimited \} rdr opts)]

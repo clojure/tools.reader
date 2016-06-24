@@ -750,10 +750,10 @@
                   (ns-name *ns*)
 
                   (= \: (first token))
-                  (some-> token (subs 1) parse-symbol peek symbol resolve-ns ns-name)
+                  (some-> token (subs 1) parse-symbol second' symbol resolve-ns ns-name)
 
                   :else
-                  (some-> token parse-symbol peek))]
+                  (some-> token parse-symbol second'))]
 
       (let [ch (read-past whitespace? rdr)]
         (if (identical? ch \{)

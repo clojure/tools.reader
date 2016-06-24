@@ -14,7 +14,7 @@
              [read-char reader-error unread peek-char indexing-reader?
               get-line-number get-column-number get-file-name string-push-back-reader]]
             [clojure.tools.reader.impl.utils :refer
-             [char ex-info? whitespace? numeric? desugar-meta namespace-keys]]
+             [char ex-info? whitespace? numeric? desugar-meta namespace-keys second']]
             [clojure.tools.reader.impl.commons :refer :all]
             [clojure.tools.reader :refer [default-data-readers]])
   (:import (clojure.lang PersistentHashSet IMeta RT PersistentVector)))
@@ -298,7 +298,7 @@
 (defn- read-namespaced-map
   [rdr _ opts]
   (let [token (read-token rdr (read-char rdr))]
-    (if-let [ns (some-> token parse-symbol peek)]
+    (if-let [ns (some-> token parse-symbol second')]
       (let [ch (read-past whitespace? rdr)]
         (if (identical? ch \{)
           (let [items (read-delimited \} rdr opts)]

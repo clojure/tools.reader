@@ -122,3 +122,6 @@
           :else
           key))
       key)))
+
+(defn second' [[a b]]
+  (when-not a b))
