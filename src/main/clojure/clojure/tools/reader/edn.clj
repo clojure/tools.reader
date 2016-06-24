@@ -296,12 +296,12 @@
     (read true nil true)))
 
 (defn- read-namespaced-map
-  [rdr _ opts pending-forms]
+  [rdr _ opts]
   (let [token (read-token rdr (read-char rdr))]
     (if-let [ns (some-> token parse-symbol peek)]
       (let [ch (read-past whitespace? rdr)]
         (if (identical? ch \{)
-          (let [items (read-delimited \} rdr opts pending-forms)]
+          (let [items (read-delimited \} rdr opts)]
             (when-not (even? (count items))
               (throw (Exception.)))
             (let [keys (take-nth 2 items)
