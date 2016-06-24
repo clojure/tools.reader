@@ -306,13 +306,13 @@
       (let [ch (read-past whitespace? rdr)]
         (if (identical? ch \{)
           (let [items (read-delimited \} rdr opts)]
-            (when-not (even? (count items))
-              (throw (js/Error.)))
+            (when (odd? (count items))
+              (reader-error rdr "Map literal must contain an even number of forms"))
             (let [keys (take-nth 2 items)
                   vals (take-nth 2 (rest items))]
               (zipmap (namespace-keys (str ns) keys) vals)))
-          (throw (js/Error.))))
-      (throw (js/Error.)))))
+          (reader-error rdr "Namespaced map must specify a map")))
+      (reader-error rdr "Invalid token used as namespace in namespaced map: " token))))
 
 (defn- macros [ch]
   (case ch
