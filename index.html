@@ -67,6 +67,24 @@ namespace.
     <a style="margin-top: 3px;" href="#"></a>
     
   </div><div class="toc-section" style="margin-left: 1em;">
+    <a style="margin-top: 3px;" href="#clojure.tools.reader.default-data-readers">clojure.tools.reader.default-data-readers</a>
+    <div class="toc-entry" style="margin-left: 1em;">
+      <a href="#clojure.tools.reader.default-data-readers/parse-timestamp" class="toc-entry-anchor">parse-timestamp</a>
+      
+    </div><div class="toc-entry" style="margin-left: 1em;">
+      <a href="#clojure.tools.reader.default-data-readers/read-instant-calendar" class="toc-entry-anchor">read-instant-calendar</a>
+      
+    </div><div class="toc-entry" style="margin-left: 1em;">
+      <a href="#clojure.tools.reader.default-data-readers/read-instant-date" class="toc-entry-anchor">read-instant-date</a>
+      
+    </div><div class="toc-entry" style="margin-left: 1em;">
+      <a href="#clojure.tools.reader.default-data-readers/read-instant-timestamp" class="toc-entry-anchor">read-instant-timestamp</a>
+      
+    </div><div class="toc-entry" style="margin-left: 1em;">
+      <a href="#clojure.tools.reader.default-data-readers/validated" class="toc-entry-anchor">validated</a>
+      
+    </div>
+  </div><div class="toc-section" style="margin-left: 1em;">
     <a style="margin-top: 3px;" href="#clojure.tools.reader.edn">clojure.tools.reader.edn</a>
     <div class="toc-entry" style="margin-left: 1em;">
       <a href="#clojure.tools.reader.edn/read" class="toc-entry-anchor">read</a>
@@ -88,6 +106,36 @@ namespace.
       
     </div><div class="toc-entry" style="margin-left: 1em;">
       <a href="#clojure.tools.reader.impl.commons/skip-line" class="toc-entry-anchor">skip-line</a>
+      
+    </div>
+  </div><div class="toc-section" style="margin-left: 1em;">
+    <a style="margin-top: 3px;" href="#clojure.tools.reader.impl.utils">clojure.tools.reader.impl.utils</a>
+    <div class="toc-entry" style="margin-left: 1em;">
+      <a href="#clojure.tools.reader.impl.utils/desugar-meta" class="toc-entry-anchor">desugar-meta</a>
+      
+    </div><div class="toc-entry" style="margin-left: 1em;">
+      <a href="#clojure.tools.reader.impl.utils/make-var" class="toc-entry-anchor">make-var</a>
+      
+    </div><div class="toc-entry" style="margin-left: 1em;">
+      <a href="#clojure.tools.reader.impl.utils/newline?" class="toc-entry-anchor">newline?</a>
+      
+    </div><div class="toc-entry" style="margin-left: 1em;">
+      <a href="#clojure.tools.reader.impl.utils/numeric?" class="toc-entry-anchor">numeric?</a>
+      
+    </div><div class="toc-entry" style="margin-left: 1em;">
+      <a href="#clojure.tools.reader.impl.utils/reader-conditional" class="toc-entry-anchor">reader-conditional</a>
+      
+    </div><div class="toc-entry" style="margin-left: 1em;">
+      <a href="#clojure.tools.reader.impl.utils/reader-conditional?" class="toc-entry-anchor">reader-conditional?</a>
+      
+    </div><div class="toc-entry" style="margin-left: 1em;">
+      <a href="#clojure.tools.reader.impl.utils/tagged-literal" class="toc-entry-anchor">tagged-literal</a>
+      
+    </div><div class="toc-entry" style="margin-left: 1em;">
+      <a href="#clojure.tools.reader.impl.utils/tagged-literal?" class="toc-entry-anchor">tagged-literal?</a>
+      
+    </div><div class="toc-entry" style="margin-left: 1em;">
+      <a href="#clojure.tools.reader.impl.utils/whitespace?" class="toc-entry-anchor">whitespace?</a>
       
     </div>
   </div><div class="toc-section" style="margin-left: 1em;">
@@ -246,6 +294,134 @@ Defaults to nil</pre>
 </div>
 
 <br />
+<h2 id="clojure.tools.reader.default-data-readers">clojure.tools.reader.default-data-readers</h2>
+<pre id="namespace-docstr"></pre>
+
+
+<br />
+
+
+<div id="var-section">
+  <p></p>
+  <h2>Public Variables and Functions</h2>
+  <div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.default-data-readers/parse-timestamp">parse-timestamp</h2>
+    <span id="var-type">var</span><br />
+    <pre id="var-usage"></pre>
+    <pre id="var-docstr">Parse a string containing an RFC3339-like like timestamp.
+
+The function new-instant is called with the following arguments.
+
+                min  max           default
+                ---  ------------  -------
+  years          0           9999      N/A (s must provide years)
+  months         1             12        1
+  days           1             31        1 (actual max days depends
+  hours          0             23        0  on month and year)
+  minutes        0             59        0
+  seconds        0             60        0 (though 60 is only valid
+  nanoseconds    0      999999999        0  when minutes is 59)
+  offset-sign   -1              1        0
+  offset-hours   0             23        0
+  offset-minutes 0             59        0
+
+These are all integers and will be non-nil. (The listed defaults
+will be passed if the corresponding field is not present in s.)
+
+Grammar (of s):
+
+  date-fullyear   = 4DIGIT
+  date-month      = 2DIGIT  ; 01-12
+  date-mday       = 2DIGIT  ; 01-28, 01-29, 01-30, 01-31 based on
+                            ; month/year
+  time-hour       = 2DIGIT  ; 00-23
+  time-minute     = 2DIGIT  ; 00-59
+  time-second     = 2DIGIT  ; 00-58, 00-59, 00-60 based on leap second
+                            ; rules
+  time-secfrac    = '.' 1*DIGIT
+  time-numoffset  = ('+' / '-') time-hour ':' time-minute
+  time-offset     = 'Z' / time-numoffset
+
+  time-part       = time-hour [ ':' time-minute [ ':' time-second
+                    [time-secfrac] [time-offset] ] ]
+
+  timestamp       = date-year [ '-' date-month [ '-' date-mday
+                    [ 'T' time-part ] ] ]
+
+Unlike RFC3339:
+
+  - we only parse the timestamp format
+  - timestamp can elide trailing components
+  - time-offset is optional (defaults to +00:00)
+
+Though time-offset is syntactically optional, a missing time-offset
+will be treated as if the time-offset zero (+00:00) had been
+specified.</pre>
+    <pre id="var-specs"></pre>
+    
+    
+    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/default_data_readers.clj#L51">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.default-data-readers/read-instant-calendar">read-instant-calendar</h2>
+    <span id="var-type">var</span><br />
+    <pre id="var-usage"></pre>
+    <pre id="var-docstr">To read an instant as a java.util.Calendar, bind *data-readers* to a map with
+this var as the value for the 'inst key.  Calendar preserves the timezone
+offset.</pre>
+    <pre id="var-specs"></pre>
+    
+    
+    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/default_data_readers.clj#L280">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.default-data-readers/read-instant-date">read-instant-date</h2>
+    <span id="var-type">var</span><br />
+    <pre id="var-usage"></pre>
+    <pre id="var-docstr">To read an instant as a java.util.Date, bind *data-readers* to a map with
+this var as the value for the 'inst key. The timezone offset will be used
+to convert into UTC.</pre>
+    <pre id="var-specs"></pre>
+    
+    
+    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/default_data_readers.clj#L274">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.default-data-readers/read-instant-timestamp">read-instant-timestamp</h2>
+    <span id="var-type">var</span><br />
+    <pre id="var-usage"></pre>
+    <pre id="var-docstr">To read an instant as a java.sql.Timestamp, bind *data-readers* to a
+map with this var as the value for the 'inst key. Timestamp preserves
+fractional seconds with nanosecond precision. The timezone offset will
+be used to convert into UTC.</pre>
+    <pre id="var-specs"></pre>
+    
+    
+    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/default_data_readers.clj#L286">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.default-data-readers/validated">validated</h2>
+    <span id="var-type">function</span><br />
+    <pre id="var-usage">Usage: (validated new-instance)
+</pre>
+    <pre id="var-docstr">Return a function which constructs and instant by calling constructor
+after first validating that those arguments are in range and otherwise
+plausible. The resulting function will throw an exception if called
+with invalid arguments.</pre>
+    <pre id="var-specs"></pre>
+    
+    
+    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/default_data_readers.clj#L139">Source</a>
+  </div>
+</div>
+
+<br />
 <h2 id="clojure.tools.reader.edn">clojure.tools.reader.edn</h2>
 <pre id="namespace-docstr">An EDN reader in clojure</pre>
 
@@ -372,8 +548,132 @@ char.</pre>
 </div>
 
 <br />
+<h2 id="clojure.tools.reader.impl.utils">clojure.tools.reader.impl.utils</h2>
+<pre id="namespace-docstr"></pre>
+
+
+<br />
+
+
+<div id="var-section">
+  <p></p>
+  <h2>Public Variables and Functions</h2>
+  <div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.impl.utils/desugar-meta">desugar-meta</h2>
+    <span id="var-type">function</span><br />
+    <pre id="var-usage">Usage: (desugar-meta f)
+</pre>
+    <pre id="var-docstr">Resolves syntactical sugar in metadata</pre>
+    <pre id="var-specs"></pre>
+    
+    
+    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L106">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.impl.utils/make-var">make-var</h2>
+    <span id="var-type">function</span><br />
+    <pre id="var-usage">Usage: (make-var)
+</pre>
+    <pre id="var-docstr">Returns an anonymous unbound Var</pre>
+    <pre id="var-specs"></pre>
+    
+    
+    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L115">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.impl.utils/newline?">newline?</h2>
+    <span id="var-type">function</span><br />
+    <pre id="var-usage">Usage: (newline? c)
+</pre>
+    <pre id="var-docstr">Checks whether the character is a newline</pre>
+    <pre id="var-specs"></pre>
+    
+    
+    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L100">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.impl.utils/numeric?">numeric?</h2>
+    <span id="var-type">function</span><br />
+    <pre id="var-usage">Usage: (numeric? ch)
+</pre>
+    <pre id="var-docstr">Checks whether a given character is numeric</pre>
+    <pre id="var-specs"></pre>
+    
+    
+    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L94">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.impl.utils/reader-conditional">reader-conditional</h2>
+    <span id="var-type">function</span><br />
+    <pre id="var-usage">Usage: (reader-conditional form splicing?)
+</pre>
+    <pre id="var-docstr">Construct a data representation of a reader conditional.
+If true, splicing? indicates read-cond-splicing.</pre>
+    <pre id="var-specs"></pre>
+    
+    
+    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L76">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.impl.utils/reader-conditional?">reader-conditional?</h2>
+    <span id="var-type">function</span><br />
+    <pre id="var-usage">Usage: (reader-conditional? value)
+</pre>
+    <pre id="var-docstr">Return true if the value is the data representation of a reader conditional</pre>
+    <pre id="var-specs"></pre>
+    
+    
+    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L71">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.impl.utils/tagged-literal">tagged-literal</h2>
+    <span id="var-type">function</span><br />
+    <pre id="var-usage">Usage: (tagged-literal tag form)
+</pre>
+    <pre id="var-docstr">Construct a data representation of a tagged literal from a
+tag symbol and a form.</pre>
+    <pre id="var-specs"></pre>
+    
+    
+    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L52">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.impl.utils/tagged-literal?">tagged-literal?</h2>
+    <span id="var-type">function</span><br />
+    <pre id="var-usage">Usage: (tagged-literal? value)
+</pre>
+    <pre id="var-docstr">Return true if the value is the data representation of a tagged literal</pre>
+    <pre id="var-specs"></pre>
+    
+    
+    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L47">Source</a>
+  </div><div id="var-entry">
+    <br />
+    <hr />
+    <h2 id="clojure.tools.reader.impl.utils/whitespace?">whitespace?</h2>
+    <span id="var-type">function</span><br />
+    <pre id="var-usage">Usage: (whitespace? ch)
+</pre>
+    <pre id="var-docstr">Checks whether a given character is whitespace</pre>
+    <pre id="var-specs"></pre>
+    
+    
+    <a id="var-source" href="https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L87">Source</a>
+  </div>
+</div>
+
+<br />
 <h2 id="clojure.tools.reader.reader-types">clojure.tools.reader.reader-types</h2>
-<pre id="namespace-docstr">Protocols and default Reader types implementation</pre>
+<pre id="namespace-docstr"></pre>
 
 
 <br />

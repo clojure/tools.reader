@@ -5,6 +5,12 @@
    :wiki-url "http://clojure.github.io/tools.reader/index.html",
    :source-url
    "https://github.com/clojure/tools.reader/blob/afbe6a5ef809db1b99f0b3dbeb7c99dba5daaadc/src/main/clojure/clojure/tools/reader.clj"}
+  {:doc nil,
+   :name "clojure.tools.reader.default-data-readers",
+   :wiki-url
+   "http://clojure.github.io/tools.reader/index.html#clojure.tools.reader.default-data-readers",
+   :source-url
+   "https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/default_data_readers.clj"}
   {:doc "An EDN reader in clojure",
    :author "Bronsa",
    :name "clojure.tools.reader.edn",
@@ -18,8 +24,13 @@
    "http://clojure.github.io/tools.reader/index.html#clojure.tools.reader.impl.commons",
    :source-url
    "https://github.com/clojure/tools.reader/blob/7039837e121ff7d60b7e6e324a995bcca87f82b4/src/main/clojure/clojure/tools/reader/impl/commons.clj"}
-  {:doc "Protocols and default Reader types implementation",
-   :author "Bronsa",
+  {:doc nil,
+   :name "clojure.tools.reader.impl.utils",
+   :wiki-url
+   "http://clojure.github.io/tools.reader/index.html#clojure.tools.reader.impl.utils",
+   :source-url
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj"}
+  {:doc nil,
    :name "clojure.tools.reader.reader-types",
    :wiki-url
    "http://clojure.github.io/tools.reader/index.html#clojure.tools.reader.reader-types",
@@ -70,6 +81,81 @@
    :namespace "clojure.tools.reader",
    :wiki-url
    "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader/resolve-symbol"}
+  {:raw-source-url
+   "https://github.com/clojure/tools.reader/raw/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/default_data_readers.clj",
+   :name "parse-timestamp",
+   :file
+   "src/main/clojure/clojure/tools/reader/default_data_readers.clj",
+   :source-url
+   "https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/default_data_readers.clj#L51",
+   :line 51,
+   :var-type "var",
+   :arglists nil,
+   :doc
+   "Parse a string containing an RFC3339-like like timestamp.\n\nThe function new-instant is called with the following arguments.\n\n                min  max           default\n                ---  ------------  -------\n  years          0           9999      N/A (s must provide years)\n  months         1             12        1\n  days           1             31        1 (actual max days depends\n  hours          0             23        0  on month and year)\n  minutes        0             59        0\n  seconds        0             60        0 (though 60 is only valid\n  nanoseconds    0      999999999        0  when minutes is 59)\n  offset-sign   -1              1        0\n  offset-hours   0             23        0\n  offset-minutes 0             59        0\n\nThese are all integers and will be non-nil. (The listed defaults\nwill be passed if the corresponding field is not present in s.)\n\nGrammar (of s):\n\n  date-fullyear   = 4DIGIT\n  date-month      = 2DIGIT  ; 01-12\n  date-mday       = 2DIGIT  ; 01-28, 01-29, 01-30, 01-31 based on\n                            ; month/year\n  time-hour       = 2DIGIT  ; 00-23\n  time-minute     = 2DIGIT  ; 00-59\n  time-second     = 2DIGIT  ; 00-58, 00-59, 00-60 based on leap second\n                            ; rules\n  time-secfrac    = '.' 1*DIGIT\n  time-numoffset  = ('+' / '-') time-hour ':' time-minute\n  time-offset     = 'Z' / time-numoffset\n\n  time-part       = time-hour [ ':' time-minute [ ':' time-second\n                    [time-secfrac] [time-offset] ] ]\n\n  timestamp       = date-year [ '-' date-month [ '-' date-mday\n                    [ 'T' time-part ] ] ]\n\nUnlike RFC3339:\n\n  - we only parse the timestamp format\n  - timestamp can elide trailing components\n  - time-offset is optional (defaults to +00:00)\n\nThough time-offset is syntactically optional, a missing time-offset\nwill be treated as if the time-offset zero (+00:00) had been\nspecified.",
+   :namespace "clojure.tools.reader.default-data-readers",
+   :wiki-url
+   "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader.default-data-readers/parse-timestamp"}
+  {:raw-source-url
+   "https://github.com/clojure/tools.reader/raw/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/default_data_readers.clj",
+   :name "read-instant-calendar",
+   :file
+   "src/main/clojure/clojure/tools/reader/default_data_readers.clj",
+   :source-url
+   "https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/default_data_readers.clj#L280",
+   :line 280,
+   :var-type "var",
+   :arglists nil,
+   :doc
+   "To read an instant as a java.util.Calendar, bind *data-readers* to a map with\nthis var as the value for the 'inst key.  Calendar preserves the timezone\noffset.",
+   :namespace "clojure.tools.reader.default-data-readers",
+   :wiki-url
+   "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader.default-data-readers/read-instant-calendar"}
+  {:raw-source-url
+   "https://github.com/clojure/tools.reader/raw/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/default_data_readers.clj",
+   :name "read-instant-date",
+   :file
+   "src/main/clojure/clojure/tools/reader/default_data_readers.clj",
+   :source-url
+   "https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/default_data_readers.clj#L274",
+   :line 274,
+   :var-type "var",
+   :arglists nil,
+   :doc
+   "To read an instant as a java.util.Date, bind *data-readers* to a map with\nthis var as the value for the 'inst key. The timezone offset will be used\nto convert into UTC.",
+   :namespace "clojure.tools.reader.default-data-readers",
+   :wiki-url
+   "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader.default-data-readers/read-instant-date"}
+  {:raw-source-url
+   "https://github.com/clojure/tools.reader/raw/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/default_data_readers.clj",
+   :name "read-instant-timestamp",
+   :file
+   "src/main/clojure/clojure/tools/reader/default_data_readers.clj",
+   :source-url
+   "https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/default_data_readers.clj#L286",
+   :line 286,
+   :var-type "var",
+   :arglists nil,
+   :doc
+   "To read an instant as a java.sql.Timestamp, bind *data-readers* to a\nmap with this var as the value for the 'inst key. Timestamp preserves\nfractional seconds with nanosecond precision. The timezone offset will\nbe used to convert into UTC.",
+   :namespace "clojure.tools.reader.default-data-readers",
+   :wiki-url
+   "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader.default-data-readers/read-instant-timestamp"}
+  {:raw-source-url
+   "https://github.com/clojure/tools.reader/raw/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/default_data_readers.clj",
+   :name "validated",
+   :file
+   "src/main/clojure/clojure/tools/reader/default_data_readers.clj",
+   :source-url
+   "https://github.com/clojure/tools.reader/blob/1beaf845da2a3965c05c2c19e7b5297c5d59acbb/src/main/clojure/clojure/tools/reader/default_data_readers.clj#L139",
+   :line 139,
+   :var-type "function",
+   :arglists ([new-instance]),
+   :doc
+   "Return a function which constructs and instant by calling constructor\nafter first validating that those arguments are in range and otherwise\nplausible. The resulting function will throw an exception if called\nwith invalid arguments.",
+   :namespace "clojure.tools.reader.default-data-readers",
+   :wiki-url
+   "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader.default-data-readers/validated"}
   {:raw-source-url
    "https://github.com/clojure/tools.reader/raw/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/edn.clj",
    :name "read",
@@ -156,6 +242,127 @@
    :namespace "clojure.tools.reader.impl.commons",
    :wiki-url
    "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader.impl.commons/skip-line"}
+  {:raw-source-url
+   "https://github.com/clojure/tools.reader/raw/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj",
+   :name "desugar-meta",
+   :file "src/main/clojure/clojure/tools/reader/impl/utils.clj",
+   :source-url
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L106",
+   :line 106,
+   :var-type "function",
+   :arglists ([f]),
+   :doc "Resolves syntactical sugar in metadata",
+   :namespace "clojure.tools.reader.impl.utils",
+   :wiki-url
+   "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader.impl.utils/desugar-meta"}
+  {:raw-source-url
+   "https://github.com/clojure/tools.reader/raw/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj",
+   :name "make-var",
+   :file "src/main/clojure/clojure/tools/reader/impl/utils.clj",
+   :source-url
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L115",
+   :line 115,
+   :var-type "function",
+   :arglists ([]),
+   :doc "Returns an anonymous unbound Var",
+   :namespace "clojure.tools.reader.impl.utils",
+   :wiki-url
+   "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader.impl.utils/make-var"}
+  {:raw-source-url
+   "https://github.com/clojure/tools.reader/raw/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj",
+   :name "newline?",
+   :file "src/main/clojure/clojure/tools/reader/impl/utils.clj",
+   :source-url
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L100",
+   :line 100,
+   :var-type "function",
+   :arglists ([c]),
+   :doc "Checks whether the character is a newline",
+   :namespace "clojure.tools.reader.impl.utils",
+   :wiki-url
+   "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader.impl.utils/newline?"}
+  {:raw-source-url
+   "https://github.com/clojure/tools.reader/raw/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj",
+   :name "numeric?",
+   :file "src/main/clojure/clojure/tools/reader/impl/utils.clj",
+   :source-url
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L94",
+   :line 94,
+   :var-type "function",
+   :arglists ([ch]),
+   :doc "Checks whether a given character is numeric",
+   :namespace "clojure.tools.reader.impl.utils",
+   :wiki-url
+   "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader.impl.utils/numeric?"}
+  {:raw-source-url
+   "https://github.com/clojure/tools.reader/raw/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj",
+   :name "reader-conditional",
+   :file "src/main/clojure/clojure/tools/reader/impl/utils.clj",
+   :source-url
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L76",
+   :line 76,
+   :var-type "function",
+   :arglists ([form splicing?]),
+   :doc
+   "Construct a data representation of a reader conditional.\nIf true, splicing? indicates read-cond-splicing.",
+   :namespace "clojure.tools.reader.impl.utils",
+   :wiki-url
+   "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader.impl.utils/reader-conditional"}
+  {:raw-source-url
+   "https://github.com/clojure/tools.reader/raw/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj",
+   :name "reader-conditional?",
+   :file "src/main/clojure/clojure/tools/reader/impl/utils.clj",
+   :source-url
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L71",
+   :line 71,
+   :var-type "function",
+   :arglists ([value]),
+   :doc
+   "Return true if the value is the data representation of a reader conditional",
+   :namespace "clojure.tools.reader.impl.utils",
+   :wiki-url
+   "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader.impl.utils/reader-conditional?"}
+  {:raw-source-url
+   "https://github.com/clojure/tools.reader/raw/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj",
+   :name "tagged-literal",
+   :file "src/main/clojure/clojure/tools/reader/impl/utils.clj",
+   :source-url
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L52",
+   :line 52,
+   :var-type "function",
+   :arglists ([tag form]),
+   :doc
+   "Construct a data representation of a tagged literal from a\ntag symbol and a form.",
+   :namespace "clojure.tools.reader.impl.utils",
+   :wiki-url
+   "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader.impl.utils/tagged-literal"}
+  {:raw-source-url
+   "https://github.com/clojure/tools.reader/raw/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj",
+   :name "tagged-literal?",
+   :file "src/main/clojure/clojure/tools/reader/impl/utils.clj",
+   :source-url
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L47",
+   :line 47,
+   :var-type "function",
+   :arglists ([value]),
+   :doc
+   "Return true if the value is the data representation of a tagged literal",
+   :namespace "clojure.tools.reader.impl.utils",
+   :wiki-url
+   "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader.impl.utils/tagged-literal?"}
+  {:raw-source-url
+   "https://github.com/clojure/tools.reader/raw/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj",
+   :name "whitespace?",
+   :file "src/main/clojure/clojure/tools/reader/impl/utils.clj",
+   :source-url
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L87",
+   :line 87,
+   :var-type "function",
+   :arglists ([ch]),
+   :doc "Checks whether a given character is whitespace",
+   :namespace "clojure.tools.reader.impl.utils",
+   :wiki-url
+   "http://clojure.github.io/tools.reader//index.html#clojure.tools.reader.impl.utils/whitespace?"}
   {:raw-source-url
    "https://github.com/clojure/tools.reader/raw/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj",
    :name "->IndexingPushbackReader",
