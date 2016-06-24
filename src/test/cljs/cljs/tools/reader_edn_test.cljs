@@ -139,3 +139,7 @@
   (let [my-unknown (fn [tag val] {:unknown-tag tag :value val})]
     (is (= {:unknown-tag 'foo :value 'bar}
            (read-string {:default my-unknown} "#foo bar")))))
+
+(deftest read-namespaced-map
+  (is (= {:foo/bar 1 :baz 2} (read-string "#:foo{:bar 1 :_/baz 2}")))
+  (is (= '{foo/bar 1 :baz 2} (read-string "#:foo{bar 1 :_/baz 2}"))))

@@ -304,3 +304,10 @@
                "#?(:cljs #js {:y 2, :x 1})"
                "#?(:clj #cljs.test_clojure.reader.TestRecord [42 85])"]]
       (is (= s (pr-str (read-string {:read-cond :preserve} s)))))))
+
+(deftest read-namespaced-map
+  (is (= {:foo/bar 1 :baz 2} (read-string "#:foo{:bar 1 :_/baz 2}")))
+  (is (= '{foo/bar 1 :baz 2} (read-string "#:foo{bar 1 :_/baz 2}")))
+  (is (= {::foo 1} (read-string "#::{:foo 1}")))
+  (is (= {::foo 1 :bar 2} (read-string "#::{:foo 1 :_/bar 2}")))
+  (is (= {:a/foo 1 :bar 2} (read-string "#:a{:foo 1 :_/bar 2}"))))
