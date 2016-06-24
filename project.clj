@@ -19,7 +19,7 @@
   :min-lein-version "2.0.0"
   :global-vars {*warn-on-reflection* true
                 *unchecked-math* :warn-on-boxed}
-  :plugins [[lein-cljsbuild "1.0.5"]]
+  :plugins [[lein-cljsbuild "1.1.3"]]
   :cljsbuild
   {:builds [{:id "dev"
              :source-paths ["src/main/cljs"]

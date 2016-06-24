@@ -307,12 +307,12 @@
         (if (identical? ch \{)
           (let [items (read-delimited \} rdr opts)]
             (when-not (even? (count items))
-              (throw (Exception.)))
+              (throw (js/Error.)))
             (let [keys (take-nth 2 items)
                   vals (take-nth 2 (rest items))]
               (zipmap (namespace-keys (str ns) keys) vals)))
-          (throw (Exception.))))
-      (throw (Exception.)))))
+          (throw (js/Error.))))
+      (throw (js/Error.)))))
 
 (defn- macros [ch]
   (case ch
