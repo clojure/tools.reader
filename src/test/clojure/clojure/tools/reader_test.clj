@@ -168,3 +168,12 @@
                "#?(:cljs #js {:x 1, :y 2})"
                "#?(:clj #clojure.test_clojure.reader.TestRecord [42 85])"]]
       (is (= s (pr-str (read-string {:read-cond :preserve} s)))))))
+
+(alias 'c.c 'clojure.core)
+
+(deftest read-namespaced-map
+  (binding [*ns* (the-ns 'clojure.tools.reader-test)]
+    (is (= {::foo 1} (read-string "#::{:foo 1}")))
+    (is (= {::foo 1 :bar 2} (read-string "#::{:foo 1 :_/bar 2}")))
+    (is (= {:a/foo 1 :bar 2} (read-string "#:a{:foo 1 :_/bar 2}")))
+    (is (= {:clojure.core/foo 2} (read-string "#::c.c{:foo 2}")))))

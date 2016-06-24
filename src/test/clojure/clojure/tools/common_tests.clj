@@ -246,3 +246,7 @@
   (is (= {:foo 'bar} (meta (read-string "^{:foo bar} 'baz"))))
   (is (= {:tag "foo"} (meta (read-string "^\"foo\" 'bar"))))
   (is (= {:tag 'String} (meta (read-string "^String 'x")))))
+
+(deftest read-namespaced-map
+  (is (= {:foo/bar 1 :baz 2} (read-string "#:foo{:bar 1 :_/baz 2}")))
+  (is (= '{foo/bar 1 :baz 2} (read-string "#:foo{bar 1 :_/baz 2}"))))
