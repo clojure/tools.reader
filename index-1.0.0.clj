@@ -75,8 +75,8 @@
    :name "read",
    :file "src/main/clojure/clojure/tools/reader/edn.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/edn.clj#L370",
-   :line 370,
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/edn.clj#L372",
+   :line 372,
    :var-type "function",
    :arglists
    ([]
@@ -93,8 +93,8 @@
    :name "read-string",
    :file "src/main/clojure/clojure/tools/reader/edn.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/edn.clj#L428",
-   :line 428,
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/edn.clj#L430",
+   :line 430,
    :var-type "function",
    :arglists ([s] [opts s]),
    :doc
