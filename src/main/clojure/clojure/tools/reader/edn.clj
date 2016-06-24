@@ -14,7 +14,7 @@
              [read-char reader-error unread peek-char indexing-reader?
               get-line-number get-column-number get-file-name string-push-back-reader]]
             [clojure.tools.reader.impl.utils :refer
-             [char ex-info? whitespace? numeric? desugar-meta]]
+             [char ex-info? whitespace? numeric? desugar-meta namespace-keys]]
             [clojure.tools.reader.impl.commons :refer :all]
             [clojure.tools.reader :refer [default-data-readers]])
   (:import (clojure.lang PersistentHashSet IMeta RT PersistentVector)))
@@ -294,23 +294,6 @@
   [rdr _ opts]
   (doto rdr
     (read true nil true)))
-
-(defn namespace-keys [ns keys]
-  (for [key keys]
-    (if (or (symbol? key)
-            (keyword? key))
-      (let [[key-ns key-name] ((juxt namespace name) key)
-            ->key (if (symbol? key) symbol keyword)]
-        (cond
-          (nil? key-ns)
-          (->key ns key-name)
-
-          (= "_" key-ns)
-          (->key key-name)
-
-          :else
-          key))
-      key)))
 
 (defn- read-namespaced-map
   [rdr _ opts pending-forms]

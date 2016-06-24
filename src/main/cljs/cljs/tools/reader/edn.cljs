@@ -14,7 +14,7 @@
              [read-char reader-error unread peek-char indexing-reader?
               get-line-number get-column-number get-file-name string-push-back-reader]]
             [cljs.tools.reader.impl.utils :refer
-             [char ex-info? whitespace? numeric? desugar-meta]]
+             [char ex-info? whitespace? numeric? desugar-meta namespace-keys]]
             [cljs.tools.reader.impl.commons :refer
              [number-literal? read-past match-number parse-symbol read-comment throwing-reader]]
             [cljs.tools.reader :refer [default-data-readers char-code]]
@@ -298,23 +298,6 @@
   [rdr _ opts]
   (doto rdr
     (read true nil true)))
-
-(defn namespace-keys [ns keys]
-  (for [key keys]
-    (if (or (symbol? key)
-            (keyword? key))
-      (let [[key-ns key-name] ((juxt namespace name) key)
-            ->key (if (symbol? key) symbol keyword)]
-        (cond
-          (nil? key-ns)
-          (->key ns key-name)
-
-          (= "_" key-ns)
-          (->key key-name)
-
-          :else
-          key))
-      key)))
 
 (defn- read-namespaced-map
   [rdr _ opts pending-forms]

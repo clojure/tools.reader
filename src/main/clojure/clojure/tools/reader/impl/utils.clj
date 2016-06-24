@@ -116,3 +116,20 @@
   "Returns an anonymous unbound Var"
   []
   (with-local-vars [x nil] x))
+
+(defn namespace-keys [ns keys]
+  (for [key keys]
+    (if (or (symbol? key)
+            (keyword? key))
+      (let [[key-ns key-name] ((juxt namespace name) key)
+            ->key (if (symbol? key) symbol keyword)]
+        (cond
+          (nil? key-ns)
+          (->key ns key-name)
+
+          (= "_" key-ns)
+          (->key key-name)
+
+          :else
+          key))
+      key)))
