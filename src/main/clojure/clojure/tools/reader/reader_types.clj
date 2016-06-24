@@ -11,7 +11,7 @@
     clojure.tools.reader.reader-types
   (:refer-clojure :exclude [char read-line])
   (:require [clojure.tools.reader.impl.utils :refer
-             [char whitespace? newline? compile-if >=clojure-1-5-alpha*? make-var]])
+             [char whitespace? newline? make-var]])
   (:import clojure.lang.LineNumberingPushbackReader
            (java.io InputStream BufferedReader Closeable)))
 
@@ -173,10 +173,8 @@
 (extend LineNumberingPushbackReader
   IndexingReader
   {:get-line-number (fn [rdr] (.getLineNumber ^LineNumberingPushbackReader rdr))
-   :get-column-number (compile-if >=clojure-1-5-alpha*?
-                        (fn [rdr]
-                          (.getColumnNumber ^LineNumberingPushbackReader rdr))
-                        (fn [rdr] 0))
+   :get-column-number (fn [rdr]
+                        (.getColumnNumber ^LineNumberingPushbackReader rdr))
    :get-file-name (constantly nil)})
 
 (defprotocol ReaderCoercer
