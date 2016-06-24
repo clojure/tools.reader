@@ -161,8 +161,8 @@
    :name "read",
    :file "src/main/clojure/clojure/tools/reader/edn.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/edn.clj#L372",
-   :line 372,
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/edn.clj#L355",
+   :line 355,
    :var-type "function",
    :arglists
    ([]
@@ -179,8 +179,8 @@
    :name "read-string",
    :file "src/main/clojure/clojure/tools/reader/edn.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/edn.clj#L430",
-   :line 430,
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/edn.clj#L413",
+   :line 413,
    :var-type "function",
    :arglists ([s] [opts s]),
    :doc
@@ -247,8 +247,8 @@
    :name "desugar-meta",
    :file "src/main/clojure/clojure/tools/reader/impl/utils.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L106",
-   :line 106,
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L95",
+   :line 95,
    :var-type "function",
    :arglists ([f]),
    :doc "Resolves syntactical sugar in metadata",
@@ -260,8 +260,8 @@
    :name "make-var",
    :file "src/main/clojure/clojure/tools/reader/impl/utils.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L115",
-   :line 115,
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L104",
+   :line 104,
    :var-type "function",
    :arglists ([]),
    :doc "Returns an anonymous unbound Var",
@@ -273,8 +273,8 @@
    :name "newline?",
    :file "src/main/clojure/clojure/tools/reader/impl/utils.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L100",
-   :line 100,
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L89",
+   :line 89,
    :var-type "function",
    :arglists ([c]),
    :doc "Checks whether the character is a newline",
@@ -286,8 +286,8 @@
    :name "numeric?",
    :file "src/main/clojure/clojure/tools/reader/impl/utils.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L94",
-   :line 94,
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L83",
+   :line 83,
    :var-type "function",
    :arglists ([ch]),
    :doc "Checks whether a given character is numeric",
@@ -299,8 +299,8 @@
    :name "reader-conditional",
    :file "src/main/clojure/clojure/tools/reader/impl/utils.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L76",
-   :line 76,
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L65",
+   :line 65,
    :var-type "function",
    :arglists ([form splicing?]),
    :doc
@@ -313,8 +313,8 @@
    :name "reader-conditional?",
    :file "src/main/clojure/clojure/tools/reader/impl/utils.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L71",
-   :line 71,
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L60",
+   :line 60,
    :var-type "function",
    :arglists ([value]),
    :doc
@@ -327,8 +327,8 @@
    :name "tagged-literal",
    :file "src/main/clojure/clojure/tools/reader/impl/utils.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L52",
-   :line 52,
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L41",
+   :line 41,
    :var-type "function",
    :arglists ([tag form]),
    :doc
@@ -341,8 +341,8 @@
    :name "tagged-literal?",
    :file "src/main/clojure/clojure/tools/reader/impl/utils.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L47",
-   :line 47,
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L36",
+   :line 36,
    :var-type "function",
    :arglists ([value]),
    :doc
@@ -355,8 +355,8 @@
    :name "whitespace?",
    :file "src/main/clojure/clojure/tools/reader/impl/utils.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L87",
-   :line 87,
+   "https://github.com/clojure/tools.reader/blob/5f0d3bd1f1cdcd648f8ff76663c1f087914d2cdf/src/main/clojure/clojure/tools/reader/impl/utils.clj#L76",
+   :line 76,
    :var-type "function",
    :arglists ([ch]),
    :doc "Checks whether a given character is whitespace",
@@ -411,8 +411,8 @@
    :name "->SourceLoggingPushbackReader",
    :file "src/main/clojure/clojure/tools/reader/reader_types.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L248",
-   :line 248,
+   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L246",
+   :line 246,
    :var-type "function",
    :arglists
    ([rdr
@@ -447,8 +447,8 @@
    :name "indexing-push-back-reader",
    :file "src/main/clojure/clojure/tools/reader/reader_types.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L345",
-   :line 345,
+   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L343",
+   :line 343,
    :var-type "function",
    :arglists
    ([s-or-rdr] [s-or-rdr buf-len] [s-or-rdr buf-len file-name]),
@@ -462,8 +462,8 @@
    :name "indexing-reader?",
    :file "src/main/clojure/clojure/tools/reader/reader_types.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L306",
-   :line 306,
+   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L304",
+   :line 304,
    :var-type "function",
    :arglists ([rdr]),
    :doc "Returns true if the reader satisfies IndexingReader",
@@ -475,8 +475,8 @@
    :name "input-stream-push-back-reader",
    :file "src/main/clojure/clojure/tools/reader/reader_types.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L338",
-   :line 338,
+   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L336",
+   :line 336,
    :var-type "function",
    :arglists ([is] [is buf-len]),
    :doc "Creates a PushbackReader from a given InputStream",
@@ -488,8 +488,8 @@
    :name "input-stream-reader",
    :file "src/main/clojure/clojure/tools/reader/reader_types.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L333",
-   :line 333,
+   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L331",
+   :line 331,
    :var-type "function",
    :arglists ([is]),
    :doc "Creates an InputStreamReader from an InputStream",
@@ -501,8 +501,8 @@
    :name "line-start?",
    :file "src/main/clojure/clojure/tools/reader/reader_types.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L413",
-   :line 413,
+   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L411",
+   :line 411,
    :var-type "function",
    :arglists ([rdr]),
    :doc
@@ -515,8 +515,8 @@
    :name "log-source",
    :file "src/main/clojure/clojure/tools/reader/reader_types.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L404",
-   :line 404,
+   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L402",
+   :line 402,
    :var-type "macro",
    :arglists ([reader & body]),
    :doc
@@ -529,8 +529,8 @@
    :name "merge-meta",
    :file "src/main/clojure/clojure/tools/reader/reader_types.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L221",
-   :line 221,
+   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L219",
+   :line 219,
    :var-type "function",
    :arglists ([obj m]),
    :doc
@@ -543,8 +543,8 @@
    :name "push-back-reader",
    :file "src/main/clojure/clojure/tools/reader/reader_types.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L321",
-   :line 321,
+   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L319",
+   :line 319,
    :var-type "function",
    :arglists ([rdr] [rdr buf-len]),
    :doc "Creates a PushbackReader from a given reader or string",
@@ -556,8 +556,8 @@
    :name "read-line",
    :file "src/main/clojure/clojure/tools/reader/reader_types.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L374",
-   :line 374,
+   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L372",
+   :line 372,
    :var-type "function",
    :arglists ([] [rdr]),
    :doc
@@ -570,8 +570,8 @@
    :name "reader-error",
    :file "src/main/clojure/clojure/tools/reader/reader_types.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L387",
-   :line 387,
+   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L385",
+   :line 385,
    :var-type "function",
    :arglists ([rdr & msg]),
    :doc
@@ -584,8 +584,8 @@
    :name "source-logging-push-back-reader",
    :file "src/main/clojure/clojure/tools/reader/reader_types.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L355",
-   :line 355,
+   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L353",
+   :line 353,
    :var-type "function",
    :arglists
    ([s-or-rdr] [s-or-rdr buf-len] [s-or-rdr buf-len file-name]),
@@ -599,8 +599,8 @@
    :name "string-push-back-reader",
    :file "src/main/clojure/clojure/tools/reader/reader_types.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L326",
-   :line 326,
+   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L324",
+   :line 324,
    :var-type "function",
    :arglists ([s] [s buf-len]),
    :doc "Creates a PushbackReader from a given string",
@@ -612,8 +612,8 @@
    :name "string-reader",
    :file "src/main/clojure/clojure/tools/reader/reader_types.clj",
    :source-url
-   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L316",
-   :line 316,
+   "https://github.com/clojure/tools.reader/blob/e130ceae22a96bb05b489dca33f7b5d7d4b2196d/src/main/clojure/clojure/tools/reader/reader_types.clj#L314",
+   :line 314,
    :var-type "function",
    :arglists ([s]),
    :doc "Creates a StringReader from a given string",
