@@ -306,8 +306,9 @@
       (is (= s (pr-str (read-string {:read-cond :preserve} s)))))))
 
 (deftest read-namespaced-map
-  (is (= {:foo/bar 1 :baz 2} (read-string "#:foo{:bar 1 :_/baz 2}")))
-  (is (= '{foo/bar 1 :baz 2} (read-string "#:foo{bar 1 :_/baz 2}")))
-  (is (= {::foo 1} (read-string "#::{:foo 1}")))
-  (is (= {::foo 1 :bar 2} (read-string "#::{:foo 1 :_/bar 2}")))
-  (is (= {:a/foo 1 :bar 2} (read-string "#:a{:foo 1 :_/bar 2}"))))
+  (binding [*ns* (create-ns 'cljs.tools.reader-test)]
+    (is (= {:foo/bar 1 :baz 2} (read-string "#:foo{:bar 1 :_/baz 2}")))
+    (is (= '{foo/bar 1 :baz 2} (read-string "#:foo{bar 1 :_/baz 2}")))
+    (is (= {::foo 1} (read-string "#::{:foo 1}")))
+    (is (= {::foo 1 :bar 2} (read-string "#::{:foo 1 :_/bar 2}")))
+    (is (= {:a/foo 1 :bar 2} (read-string "#:a{:foo 1 :_/bar 2}")))))
