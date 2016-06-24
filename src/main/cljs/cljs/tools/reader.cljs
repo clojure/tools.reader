@@ -768,7 +768,7 @@
   (let [token (read-token rdr (read-char rdr))]
     (if-let [ns (cond
                   (= token ":")
-                  (ns-name cljs.analyzer/*cljs-ns*)
+                  cljs.analyzer/*cljs-ns*
 
                   (= \: (first token))
                   (some-> token (subs 1) parse-symbol peek symbol resolve-ns)
