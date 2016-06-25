@@ -1,5 +1,18 @@
 Changelog
 ========================================
+
+* Release 1.0.0-beta3 on 25 Jun 2016
+  * Initial implementation of new namespaced maps support
+  * Removed further boxed math
+  * Droped clojure 1.4.0 support
+* Release 1.0.0-beta2 on 10 Jun 2016
+  * Removed some boxed math
+* Release 1.0.0-beta1 on 30 Mar 2016
+  * Error out on invalid numbers
+* Release 1.0.0-alpha4 on 29 Feb 2016
+  * Throw exception on duplicate keys in sets/maps in cljs port
+* Release 1.0.0-alpha3 on 05 Jan 2016
+  * Auto qualify symbols in cljs syntax-quote
 * Release 1.0.0-alpha2 on 05 Dec 2015
   * Renamed pushback-reader to push-back-reader
   * Added Closeable type hint to reader ctor functions
