@@ -312,3 +312,11 @@
     (is (= {::foo 1} (read-string "#::{:foo 1}")))
     (is (= {::foo 1 :bar 2} (read-string "#::{:foo 1 :_/bar 2}")))
     (is (= {:a/foo 1 :bar 2} (read-string "#:a{:foo 1 :_/bar 2}")))))
+
+(deftest read-map-types
+  (let [a (reader/read-string "{:a 1 :b 2 :c 3}")
+        b (reader/read-string "{:a 1 :b 2 :c 3 :d 4 :e 5 :f 6 :g 7 :h 8 :i 9}")]
+    (is (= a {:a 1 :b 2 :c 3}))
+    (is (instance? PersistentArrayMap a))
+    (is (= b {:a 1 :b 2 :c 3 :d 4 :e 5 :f 6 :g 7 :h 8 :i 9}))
+    (is (instance? PersistentHashMap b))))

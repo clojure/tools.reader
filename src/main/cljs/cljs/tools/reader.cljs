@@ -282,9 +282,9 @@
       (reader-error rdr (duplicate-keys-error
                          "Map literal contains duplicate key" ks)))
     (with-meta
-      (if (zero? map-count)
-        {}
-        (apply hash-map (to-array the-map)))
+      (if (<= map-count (* 2 (.-HASHMAP-THRESHOLD PersistentArrayMap)))
+        (.fromArray PersistentArrayMap (to-array the-map) true true)
+        (.fromArray PersistentHashMap (to-array the-map) true))
       (when start-line
         (merge
          (when-let [file (get-file-name rdr)]
