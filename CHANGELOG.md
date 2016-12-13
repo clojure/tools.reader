@@ -2,6 +2,8 @@ Changelog
 ========================================
 
 * Release 1.0.0-beta3 on 25 Jun 2016
+  * Respect array-map/hash-map in cljs port (#TRDR-40)
+* Release 1.0.0-beta3 on 25 Jun 2016
   * Initial implementation of new namespaced maps support
   * Removed further boxed math
   * Droped clojure 1.4.0 support
