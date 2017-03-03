@@ -394,11 +394,12 @@
                 name (-nth s 1)]
             (if (identical? \: (.charAt token 0))
               (if-not (nil? ns)
-                (let [ns (resolve-ns (symbol (subs ns 1)))]
-                  (if-not (nil? ns)
-                    (keyword (str ns) name)
-                    (reader-error reader "Invalid token: :" token)))
-                (keyword (str *ns*) (subs name 1)))
+                (if-let [ns (resolve-ns (symbol (subs ns 1)))]
+                  (keyword (str ns) name)
+                  (reader-error reader "Invalid token: :" token))
+                (if-let [ns *ns*]
+                  (keyword (str ns) (subs name 1))
+                  (reader-error reader "Invalid token: :" token)))
               (keyword ns name)))
           (reader-error reader "Invalid token: :" token)))
       (reader-error reader "Invalid token: :"))))
