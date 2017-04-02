@@ -782,9 +782,11 @@
           (let [items (read-delimited \} rdr opts pending-forms)]
             (when (odd? (count items))
               (reader-error rdr "Map literal must contain an even number of forms"))
-            (let [keys (take-nth 2 items)
+            (let [keys (namespace-keys (str ns) (take-nth 2 items))
                   vals (take-nth 2 (rest items))]
-              (zipmap (namespace-keys (str ns) keys) vals)))
+              (when-not (= (count (set keys)) (count keys))
+                (reader-error rdr (duplicate-keys-error "Map literal contains duplicate key" keys)))
+              (zipmap keys vals)))
           (reader-error rdr "Namespaced map must specify a map")))
       (reader-error rdr "Invalid token used as namespace in namespaced map: " token))))
 
