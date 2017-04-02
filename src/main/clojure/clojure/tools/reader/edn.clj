@@ -306,7 +306,7 @@
               (reader-error rdr "Map literal must contain an even number of forms"))
             (let [keys (take-nth 2 items)
                   vals (take-nth 2 (rest items))]
-              (zipmap (namespace-keys (str ns) keys) vals)))
+              (RT/map (to-array (mapcat list (namespace-keys (str ns) keys) vals)))))
           (reader-error rdr "Namespaced map must specify a map")))
       (reader-error rdr "Invalid token used as namespace in namespaced map: " token))))
 
