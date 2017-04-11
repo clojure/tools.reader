@@ -192,11 +192,27 @@
   [rdr _ opts]
   (read-delimited \] rdr opts))
 
+(defn- duplicate-keys-error [msg coll]
+  (letfn [(duplicates [seq]
+            (for [[id freq] (frequencies seq)
+                  :when (> freq 1)]
+              id))]
+    (let [dups (duplicates coll)]
+      (apply str msg
+             (when (> (count dups) 1) "s")
+             ": " (interpose ", " dups)))))
+
 (defn- read-map
   [rdr _ opts]
-  (let [l (to-array (read-delimited \} rdr opts))]
+  (let [the-map (read-delimited \} rdr opts)
+        ks (take-nth 2 the-map)
+        key-set (set ks)
+        l (to-array the-map)]
     (when (== 1 (bit-and (alength l) 1))
       (reader-error rdr "Map literal must contain an even number of forms"))
+    (when-not (= (count key-set) (count ks))
+      (reader-error rdr (duplicate-keys-error
+                         "Map literal contains duplicate key" ks)))
     (apply hash-map l)))
 
 (defn- read-number
