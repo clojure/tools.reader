@@ -33,7 +33,7 @@
   (is (== -511 (js/parseInt "-777" 8) (read-string "-0777")))
   (is (== 1340 (js/parseInt "02474" 8) (read-string "02474")))
   (is (== -1340 (js/parseInt "-02474" 8) (read-string "-02474")))
-  (is (thrown-with-msg? js/Error #"Invalid number format \[09\]"
+  (is (thrown-with-msg? js/Error #"Invalid number: 09."
                         (read-string "09"))))
 
 (deftest read-floating
@@ -106,7 +106,7 @@
   (is (= '{foo bar} (read-string "{foo bar}")))
   (is (= '{foo {bar baz}} (read-string "{foo {bar baz}}")))
   (is (thrown-with-msg? js/Error
-                        #"Map literal must contain an even number of forms"
+                        #"Map literals must contain an even number of forms."
                         (read-string "{foo bar bar}")))
   (is (thrown-with-msg? js/Error #"Map literal contains duplicate key: foo"
                       (read-string "{foo bar foo bar}"))))
