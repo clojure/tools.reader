@@ -1,7 +1,7 @@
 clojure.tools.reader
 ========================================
 
-A complete Clojure reader and an EDN-only reader, works with Clojure versions >= 1.4.0 and Clojurescript  >=3308 and since version 0.10.0-alpha1
+A complete Clojure reader and an EDN-only reader, works with Clojure versions >= 1.4.0 and Clojurescript  >=0.3308 and since version 0.10.0-alpha1
 
 * [Rationale](#rationale)
 * [Releases and Dependency Information](#releases-and-dependency-information)
@@ -15,7 +15,7 @@ A complete Clojure reader and an EDN-only reader, works with Clojure versions >=
 Rationale
 ========================================
 
-clojure.tools.reader offers all functionality of the reader from clojure-1.7.0, and more.
+clojure.tools.reader offers all functionality of the reader from clojure-1.9.0, and more.
 
 For a list of additional features of the reader, read [Differences from LispReader.java](#differences-from-lispreaderjava)
 
