@@ -1,7 +1,7 @@
 Changelog
 ========================================
-
-* Release 1.0.0-beta4 on 24 May 2017
+* Release 1.0.0 on 08 Jun 2017
+* Release 1.0.0-RC1 on 24 May 2017
   * Throw on nil ns in namespaced map (#CLJ-2152)
   * Better map keys duplicate checks in cljs port
 * Release 1.0.0-beta4 on 13 Dec 2016
