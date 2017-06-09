@@ -346,7 +346,7 @@
       (f object)
       (if-let [d (:default opts)]
         (d tag object)
-        (reader-error rdr "No reader function for tag " (name tag))))))
+        (reader-error rdr "No reader function for tag " tag)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public API

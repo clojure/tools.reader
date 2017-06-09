@@ -848,7 +848,7 @@
           (read-ctor rdr tag opts pending-forms)
           (if-let [f *default-data-reader-fn*]
             (f tag (read* rdr true nil opts pending-forms))
-            (reader-error rdr "No reader function for tag " (name tag))))))))
+            (reader-error rdr "No reader function for tag " tag)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public API
