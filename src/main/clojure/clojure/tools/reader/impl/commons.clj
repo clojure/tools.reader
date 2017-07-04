@@ -9,7 +9,7 @@
 (ns clojure.tools.reader.impl.commons
   (:refer-clojure :exclude [char])
   (:require [clojure.tools.reader.reader-types :refer [peek-char read-char]]
-            [clojure.tools.reader.errors :refer [reader-error]]
+            [clojure.tools.reader.impl.errors :refer [reader-error]]
             [clojure.tools.reader.impl.utils :refer [numeric? newline? char]])
   (:import (clojure.lang BigInt Numbers)
            (java.util.regex Pattern Matcher)

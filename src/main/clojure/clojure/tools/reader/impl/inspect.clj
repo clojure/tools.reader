@@ -6,9 +6,7 @@
 ;;   the terms of this license.
 ;;   You must not remove this notice, or any other, from this software.
 
-(ns ^{:doc "Simple value inspector."
-      :author "Russ Olsen"}
-  clojure.tools.reader.inspect)
+(ns clojure.tools.reader.impl.inspect)
 
 (declare inspect*)
 

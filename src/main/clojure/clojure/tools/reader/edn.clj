@@ -12,16 +12,13 @@
   (:refer-clojure :exclude [read read-string char default-data-readers])
   (:require [clojure.tools.reader.reader-types :refer
              [read-char unread peek-char indexing-reader?
-              get-line-number get-column-number get-file-name indexing-push-back-reader]]
+              get-line-number get-column-number get-file-name string-push-back-reader]]
             [clojure.tools.reader.impl.utils :refer
              [char ex-info? whitespace? numeric? desugar-meta namespace-keys second']]
-            [clojure.tools.reader.inspect :refer [inspect]]
             [clojure.tools.reader.impl.commons :refer :all]
-            [clojure.tools.reader.errors :as err]
+            [clojure.tools.reader.impl.errors :as err]
             [clojure.tools.reader :refer [default-data-readers]])
   (:import (clojure.lang PersistentHashSet IMeta RT PersistentVector)))
-
-(println "loaded")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; helpers
@@ -132,7 +129,7 @@
                           (not-constituent? ch)
                           (whitespace? ch))
                     (str ch)
-                    (read-token rdr "character" ch false))
+                    (read-token rdr :character ch false))
             token-len (count token)]
         (cond
 
@@ -165,15 +162,18 @@
          :else (err/throw-unsupported-character rdr token)))
       (err/throw-eof-in-character rdr))))
 
+(defn ^:private starting-line-col-info [rdr]
+  (when (indexing-reader? rdr)
+    [(get-line-number rdr) (int (dec (int (get-column-number rdr))))]))
+
 (defn- ^PersistentVector read-delimited
   [kind delim rdr opts]
-  (let [first-line (when (indexing-reader? rdr)
-                     (get-line-number rdr))
+  (let [[start-line start-column] (starting-line-col-info rdr)
         delim (char delim)]
     (loop [a (transient [])]
       (let [ch (read-past whitespace? rdr)]
         (when-not ch
-          (err/throw-eof-delimited rdr kind first-line (count a)))
+          (err/throw-eof-delimited rdr kind start-line start-column (count a)))
 
         (if (identical? delim (char ch))
           (persistent! a)
@@ -185,21 +185,22 @@
 
 (defn- read-list
   [rdr _ opts]
-  (let [the-list (read-delimited "list" \) rdr opts)]
+  (let [the-list (read-delimited :list \) rdr opts)]
     (if (empty? the-list)
       '()
       (clojure.lang.PersistentList/create the-list))))
 
 (defn- read-vector
   [rdr _ opts]
-  (read-delimited "vector" \] rdr opts))
+  (read-delimited :vector \] rdr opts))
 
 (defn- read-map
   [rdr _ opts]
-  (let [col (read-delimited "map" \} rdr opts)
-        l (to-array col)]
+  (let [[start-line start-column] (starting-line-col-info rdr)
+        coll (read-delimited :map \} rdr opts)
+        l (to-array coll)]
     (when (== 1 (bit-and (alength l) 1))
-      (err/throw-odd-map rdr nil nil col))
+      (err/throw-odd-map rdr start-line start-column coll))
     (RT/map l)))
 
 (defn- read-number
@@ -240,7 +241,7 @@
   (loop [sb (StringBuilder.)
          ch (read-char rdr)]
     (case ch
-      nil (err/throw-eof-reading rdr "string" \" sb)
+      nil (err/throw-eof-reading rdr :string \" sb)
       \\ (recur (doto sb (.append (escape-char sb rdr)))
                 (read-char rdr))
       \" (str sb)
@@ -248,7 +249,7 @@
 
 (defn- read-symbol
   [rdr initch]
-  (when-let [token (read-token rdr "symbol" initch)]
+  (when-let [token (read-token rdr :symbol initch)]
     (case token
 
       ;; special symbols
@@ -262,28 +263,27 @@
 
       (or (when-let [p (parse-symbol token)]
             (symbol (p 0) (p 1)))
-          (err/throw-invalid rdr "symbol" token)))))
+          (err/throw-invalid rdr :symbol token)))))
 
 (defn- read-keyword
   [reader initch opts]
   (let [ch (read-char reader)]
     (if-not (whitespace? ch)
-      (let [token (read-token reader "keyword" ch)
+      (let [token (read-token reader :keyword ch)
             s (parse-symbol token)]
         (if (and s (== -1 (.indexOf token "::")))
           (let [^String ns (s 0)
                 ^String name (s 1)]
             (if (identical? \: (nth token 0))
-              (err/throw-invalid reader "keyword" token) ; No ::kw in edn.
+              (err/throw-invalid reader :keyword token) ; No ::kw in edn.
               (keyword ns name)))
-          (err/throw-invalid reader "keyword" token)))
+          (err/throw-invalid reader :keyword token)))
       (err/throw-single-colon reader))))
 
 (defn- wrapping-reader
   [sym]
   (fn [rdr _ opts]
     (list sym (read rdr true nil opts))))
-
 
 (defn- read-meta
   [rdr _ opts]
@@ -298,7 +298,7 @@
 
 (defn- read-set
   [rdr _ opts]
-  (PersistentHashSet/createWithCheck (read-delimited "set" \} rdr opts)))
+  (PersistentHashSet/createWithCheck (read-delimited :set \} rdr opts)))
 
 (defn- read-discard
   [rdr _ opts]
@@ -307,18 +307,18 @@
 
 (defn- read-namespaced-map
   [rdr _ opts]
-  (let [token (read-token rdr "namespaced map" (read-char rdr))]
+  (let [token (read-token rdr :namespaced-map (read-char rdr))]
     (if-let [ns (some-> token parse-symbol second)]
       (let [ch (read-past whitespace? rdr)]
         (if (identical? ch \{)
-          (let [items (read-delimited  "namespaced map" \} rdr opts)]
+          (let [items (read-delimited  :namespaced-map \} rdr opts)]
             (when (odd? (count items))
               (err/throw-odd-map rdr nil nil items))
             (let [keys (take-nth 2 items)
                   vals (take-nth 2 (rest items))]
               (RT/map (to-array (mapcat list (namespace-keys (str ns) keys) vals)))))
-              (err/throw-ns-map-no-map rdr token)))
-          (err/throw-bad-ns rdr token))))
+          (err/throw-ns-map-no-map rdr token)))
+      (err/throw-bad-ns rdr token))))
 
 (defn- macros [ch]
   (case ch
@@ -346,7 +346,6 @@
     \: read-namespaced-map
     nil))
 
-
 (defn- read-tagged [rdr initch opts]
   (let [tag (read rdr true nil opts)
         object (read rdr true nil opts)]
@@ -357,7 +356,7 @@
       (f object)
       (if-let [d (:default opts)]
         (d tag object)
-        (err/throw-unknown-reader-tag rdr (name tag))))))
+        (err/throw-unknown-reader-tag rdr tag)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public API
@@ -432,4 +431,4 @@
   ([s] (read-string {:eof nil} s))
   ([opts s]
      (when (and s (not (identical? s "")))
-       (read opts (indexing-push-back-reader s)))))
+       (read opts (string-push-back-reader s)))))

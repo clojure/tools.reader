@@ -10,9 +10,7 @@
       :author "Bronsa"}
     clojure.tools.reader.reader-types
   (:refer-clojure :exclude [char read-line])
-  (:require [clojure.tools.reader.impl.utils :refer
-             [char whitespace? newline? make-var]]
-             [clojure.tools.reader.inspect :refer [inspect]])
+  (:require [clojure.tools.reader.impl.utils :refer [char whitespace? newline? make-var]])
   (:import clojure.lang.LineNumberingPushbackReader
            (java.io InputStream BufferedReader Closeable)))
 
