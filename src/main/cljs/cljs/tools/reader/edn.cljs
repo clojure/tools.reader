@@ -298,7 +298,11 @@
 
 (defn- read-set
   [rdr _ opts]
-  (set (read-delimited :set \} rdr opts)))
+  (let [coll (read-delimited :set \} rdr opts)
+        the-set (set coll)]
+      (when-not (= (count coll) (count the-set))
+        (err/throw-dup-keys rdr :set coll))
+      the-set))
 
 (defn- read-discard
   [rdr _ opts]

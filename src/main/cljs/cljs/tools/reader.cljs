@@ -250,16 +250,6 @@
           :end-line end-line
           :end-column end-column})))))
 
-(defn- duplicate-keys-error [msg coll]
-  (letfn [(duplicates [seq]
-            (for [[id freq] (frequencies seq)
-                  :when (> freq 1)]
-              id))]
-    (let [dups (duplicates coll)]
-      (apply str msg
-           (when (> (count dups) 1) "s")
-           ": " (interpose ", " dups)))))
-
 (defn- read-map
   "Read in a map, including its location if the reader is an indexing reader"
   [rdr _ opts pending-forms]
@@ -272,8 +262,7 @@
     (when (odd? map-count)
       (err/throw-odd-map rdr start-line start-column the-map))
     (when-not (= (count key-set) (count ks))
-      (err/reader-error rdr (duplicate-keys-error
-                         "Map literal contains duplicate key" ks)))
+      (err/throw-dup-keys rdr :map ks))
     (with-meta
       (if (<= map-count (* 2 (.-HASHMAP-THRESHOLD cljs.core/PersistentArrayMap)))
         (.fromArray cljs.core/PersistentArrayMap (to-array the-map) true true)
@@ -430,8 +419,7 @@
         the-set (set coll)
         [end-line end-column] (ending-line-col-info rdr)]
       (when-not (= (count coll) (count the-set))
-        (err/reader-error rdr (duplicate-keys-error
-                           "Set literal contains duplicate key" coll)))
+        (err/reader-error rdr (err/throw-dup-keys rdr :set coll)))
       (with-meta the-set
         (when start-line
           (merge
@@ -778,7 +766,7 @@
             (let [keys (namespace-keys (str ns) (take-nth 2 items))
                   vals (take-nth 2 (rest items))]
               (when-not (= (count (set keys)) (count keys))
-                (err/reader-error rdr (duplicate-keys-error "Map literal contains duplicate key" keys)))
+                (err/throw-dup-keys rdr :namespaced-map keys))
               (zipmap keys vals)))
               (err/throw-ns-map-no-map rdr token)))
           (err/throw-bad-ns rdr token))))

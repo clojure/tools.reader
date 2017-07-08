@@ -8,6 +8,7 @@
 
 (ns cljs.tools.reader.impl.errors
   (:require [cljs.tools.reader.reader-types :as types]
+            [clojure.string :as s]
             [cljs.tools.reader.impl.inspect :as i]))
 
 (defn- ex-details
@@ -230,11 +231,11 @@
     (let [dups (duplicates coll)]
       (apply str msg
              (when (> (count dups) 1) "s")
-             ".: " (interpose ", " dups)))))
+             ": " (interpose ", " dups)))))
 
 (defn throw-dup-keys [rdr kind ks]
   (reader-error
     rdr
     (duplicate-keys-error
-      (str (name kind) " literal contains duplicate key")
+      (str (s/capitalize (name kind)) " literal contains duplicate key")
       ks)))
