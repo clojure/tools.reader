@@ -213,9 +213,9 @@
     (when-not (= (count key-set) (count ks))
       (reader-error rdr (duplicate-keys-error
                          "Map literal contains duplicate key" ks)))
-    (if (<= map-count (* 2 (.-HASHMAP-THRESHOLD PersistentArrayMap)))
-      (.fromArray PersistentArrayMap (to-array the-map) true true)
-      (.fromArray PersistentHashMap (to-array the-map) true))))
+    (if (<= map-count (* 2 (.-HASHMAP-THRESHOLD cljs.core/PersistentArrayMap)))
+      (.fromArray cljs.core/PersistentArrayMap (to-array the-map) true true)
+      (.fromArray cljs.core/PersistentHashMap (to-array the-map) true))))
 
 (defn- read-number
   [reader initch opts]
