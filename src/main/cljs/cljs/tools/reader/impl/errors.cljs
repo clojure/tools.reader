@@ -1,18 +1,14 @@
-(ns cljs.tools.reader.errors
+;;   Copyright (c) Russ Olsen, Nicola Mometto, Rich Hickey & contributors.
+;;   The use and distribution terms for this software are covered by the
+;;   Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
+;;   which can be found in the file epl-v10.html at the root of this distribution.
+;;   By using this software in any fashion, you are agreeing to be bound by
+;;   the terms of this license.
+;;   You must not remove this notice, or any other, from this software.
+
+(ns cljs.tools.reader.impl.errors
   (:require [cljs.tools.reader.reader-types :as types]
-            [cljs.tools.reader.inspect :as i]))
-
-;;tbd some exceptions should have type :illegal-argument
-
-#_(defn- location-details [rdr]
-  (let [details {:type :reader-exception}]
-    (if (types/indexing-reader? rdr)
-      (assoc
-        details
-        :file (types/get-file-name rdr)
-        :line (types/get-line-number rdr)
-        :col (types/get-column-number rdr))
-      details)))
+            [cljs.tools.reader.impl.inspect :as i]))
 
 (defn- ex-details
   [rdr ex-type]
@@ -51,16 +47,16 @@
   (throw-ex rdr :illegal-argument (apply str msgs)))
 
 (defn throw-eof-delimited
-  ([rdr kind line] (throw-eof-delimited rdr kind line nil))
-  ([rdr kind line n]
+  ([rdr kind column line] (throw-eof-delimited rdr kind line column nil))
+  ([rdr kind line column n]
     (reader-error
       rdr
       "Unexpected EOF while reading "
       (if n
         (str "item " n " of "))
-      kind
+      (name kind)
       (if line
-        (str ", starting at line " line))
+        (str ", starting at line " line " and column " column))
       ".")))
 
 (defn throw-odd-map [rdr line col elements]
@@ -96,13 +92,13 @@
     "."))
 
 (defn throw-invalid [rdr kind token]
-  (reader-error rdr "Invalid " kind ": " token "."))
+  (reader-error rdr "Invalid " (name kind) ": " token "."))
 
 (defn throw-eof-at-start [rdr kind]
-  (reader-error rdr "Unexpected EOF while reading start of " kind "."))
+  (reader-error rdr "Unexpected EOF while reading start of " (name kind) "."))
 
 (defn throw-bad-char [rdr kind ch]
-  (reader-error rdr "Invalid character: " ch " found while reading " kind "."))
+  (reader-error rdr "Invalid character: " ch " found while reading " (name kind) "."))
 
 (defn throw-eof-at-dispatch [rdr]
   (reader-error rdr "Unexpected EOF while reading dispatch character."))
@@ -114,7 +110,8 @@
   (reader-error rdr "Unmatched delimiter " ch "."))
 
 (defn throw-eof-reading [rdr kind & start]
-  (reader-error rdr "Unexpected EOF reading " kind " starting " (apply str start) "."))
+  (let [init (case kind :regex "#\"" :string \")]
+    (reader-error rdr "Unexpected EOF reading " (name kind) " starting " (apply str init start) ".")))
 
 (defn throw-no-dispatch [rdr ch]
   (throw-bad-dispatch rdr ch))
@@ -177,13 +174,11 @@
     rdr
     "Unexpected EOF while reading character."))
 
-
 (defn throw-bad-escape-char [rdr ch]
   (reader-error rdr "Unsupported escape character: \\" ch "."))
 
 (defn throw-single-colon [rdr]
   (reader-error rdr "A single colon is not a valid keyword."))
-
 
 (defn throw-bad-metadata [rdr x]
   (reader-error
@@ -207,7 +202,6 @@
     (i/inspect feature)
     " Features must be keywords."))
 
-
 (defn throw-ns-map-no-map [rdr ns-name]
   (reader-error rdr "Namespaced map with namespace " ns-name " does not specify a map."))
 
@@ -220,7 +214,6 @@
     "Invalid reader tag: "
     (i/inspect tag)
     ". Reader tags must be symbols."))
-
 
 (defn throw-unknown-reader-tag [rdr tag]
   (reader-error
@@ -243,5 +236,5 @@
   (reader-error
     rdr
     (duplicate-keys-error
-      (str  kind " literal contains duplicate key")
+      (str (name kind) " literal contains duplicate key")
       ks)))

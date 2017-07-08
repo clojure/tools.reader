@@ -22,7 +22,7 @@
               ReaderConditional reader-conditional reader-conditional?]]
             [cljs.tools.reader.impl.commons :refer
              [number-literal? read-past match-number parse-symbol read-comment throwing-reader]]
-            [cljs.tools.reader.errors :as err]
+            [cljs.tools.reader.impl.errors :as err]
             [goog.array :as garray]
             [goog.string :as gstring])
   (:import goog.string.StringBuffer))
@@ -89,13 +89,13 @@
       (if (identical? \" ch)
         (re-pattern (str sb))
         (if (nil? ch)
-          (err/throw-eof-reading rdr "regex" "#\"" sb)
+          (err/throw-eof-reading rdr :regex sb)
           (do
             (.append sb ch )
             (when (identical? \\ ch)
               (let [ch (read-char rdr)]
                 (if (nil? ch)
-                  (err/throw-eof-reading rdr "regex" "#\"" sb))
+                  (err/throw-eof-reading rdr :regex sb))
                 (.append sb ch)))
             (recur (read-char rdr))))))))
 
@@ -151,7 +151,7 @@
       (let [token (if (or (macro-terminating? ch)
                           (whitespace? ch))
                     (str ch)
-                    (read-token rdr "character" ch))
+                    (read-token rdr :character ch))
             token-len (. token -length)]
         (cond
 
@@ -207,7 +207,7 @@
         (if (identical? form READ_FINISHED)
           (persistent! a)
           (if (identical? form READ_EOF)
-            (err/throw-eof-delimited rdr kind start-line (count a))
+            (err/throw-eof-delimited rdr kind start-line start-column (count a))
             (recur (conj! a form))))))))
 
 (defn- read-delimited
@@ -220,7 +220,7 @@
   "Read in a list, including its location if the reader is an indexing reader"
   [rdr _ opts pending-forms]
   (let [[start-line start-column] (starting-line-col-info rdr)
-        the-list (read-delimited "list" \) rdr opts pending-forms)
+        the-list (read-delimited :list \) rdr opts pending-forms)
         [end-line end-column] (ending-line-col-info rdr)]
     (with-meta (if (empty? the-list)
                  '()
@@ -238,7 +238,7 @@
   "Read in a vector, including its location if the reader is an indexing reader"
   [rdr _ opts pending-forms]
   (let [[start-line start-column] (starting-line-col-info rdr)
-        the-vector (read-delimited "vector" \] rdr opts pending-forms)
+        the-vector (read-delimited :vector \] rdr opts pending-forms)
         [end-line end-column] (ending-line-col-info rdr)]
     (with-meta the-vector
       (when start-line
@@ -264,7 +264,7 @@
   "Read in a map, including its location if the reader is an indexing reader"
   [rdr _ opts pending-forms]
   (let [[start-line start-column] (starting-line-col-info rdr)
-        the-map (read-delimited "map" \} rdr opts pending-forms)
+        the-map (read-delimited :map \} rdr opts pending-forms)
         map-count (count the-map)
         ks (take-nth 2 the-map)
         key-set (set ks)
@@ -324,7 +324,7 @@
   (loop [sb (StringBuffer.)
          ch (read-char reader)]
     (if (nil? ch)
-      (err/throw-eof-reading reader "string" \" sb)
+      (err/throw-eof-reading reader :string \" sb)
       (case ch
         \\ (recur (doto sb (.append (escape-char sb reader)))
              (read-char reader))
@@ -345,7 +345,7 @@
 (defn- read-symbol
   [rdr initch]
   (let [[line column] (starting-line-col-info rdr)
-        token (read-token rdr "symbol" initch)]
+        token (read-token rdr :symbol initch)]
     (when-not (nil? token)
       (case token
 
@@ -362,7 +362,7 @@
           (if-not (nil? p)
             (let [^not-native sym (symbol (-nth p 0) (-nth p 1))]
               (-with-meta sym (loc-info rdr line column)))
-            (err/throw-invalid rdr "symbol" token)))))))
+            (err/throw-invalid rdr :symbol token)))))))
 
 (def ^:dynamic *alias-map*
   "Map from ns alias to ns, if non-nil, it will be used to resolve read-time
@@ -380,7 +380,7 @@
   [^not-native reader initch opts pending-forms]
   (let [ch (read-char reader)]
     (if-not (whitespace? ch)
-      (let [token (read-token reader "keyword" ch)
+      (let [token (read-token reader :keyword ch)
             ^not-native s (parse-symbol token)]
         (if-not (nil? s)
           (let [ns (-nth s 0)
@@ -389,12 +389,12 @@
               (if-not (nil? ns)
                 (if-let [ns (resolve-ns (symbol (subs ns 1)))]
                   (keyword (str ns) name)
-                  (err/throw-invalid reader "keyword" (str \: token)))
+                  (err/throw-invalid reader :keyword (str \: token)))
                 (if-let [ns *ns*]
                   (keyword (str ns) (subs name 1))
                   (err/reader-error reader "Invalid token: :" token)))
               (keyword ns name)))
-          (err/throw-invalid reader "keyword" (str \: token))))
+          (err/throw-invalid reader :keyword (str \: token))))
       (err/throw-single-colon reader))))
 
 (defn- wrapping-reader
@@ -426,7 +426,7 @@
   (let [[start-line start-column] (starting-line-col-info rdr)
         ;; subtract 1 from start-column so it includes the # in the leading #{
         start-column (if start-column (int (dec start-column)))
-        coll (read-delimited "set" \} rdr opts pending-forms)
+        coll (read-delimited :set \} rdr opts pending-forms)
         the-set (set coll)
         [end-line end-column] (ending-line-col-info rdr)]
       (when-not (= (count coll) (count the-set))
@@ -454,7 +454,7 @@
   [rdr feature opts]
   (if (keyword? feature)
     (or (= :default feature) (contains? (get opts :features) feature))
-    (err/reader-error rdr (str "Feature should be a keyword: " feature))))
+    (err/reader-error rdr "Feature should be a keyword: " feature)))
 
 (defn- check-eof-error
   [form rdr first-line]
@@ -466,14 +466,14 @@
 (defn- check-reserved-features
   [rdr form]
   (when (get RESERVED_FEATURES form)
-    (err/reader-error rdr (str "Feature name " form " is reserved"))))
+    (err/reader-error rdr "Feature name " form " is reserved")))
 
 (defn- check-invalid-read-cond
   [form rdr first-line]
   (when (identical? form READ_FINISHED)
     (if (< first-line 0)
       (err/reader-error rdr "read-cond requires an even number of forms")
-      (err/reader-error rdr (str "read-cond starting on line " first-line " requires an even number of forms")))))
+      (err/reader-error rdr "read-cond starting on line " first-line " requires an even number of forms"))))
 
 (defn- read-suppress
   "Read next form and suppress. Return nil or READ_FINISHED."
@@ -532,7 +532,7 @@
             (do
               (garray/insertArrayAt pending-forms (to-array result) 0)
               rdr)
-            (err/reader-error rdr "Spliced form list in read-cond-splicing must implement java.util.List.")))
+            (err/reader-error rdr "Spliced form list in read-cond-splicing must implement ISequential")))
         result))))
 
 (defn- read-cond
@@ -759,7 +759,7 @@
 
 (defn- read-namespaced-map
   [rdr _ opts pending-forms]
-  (let [token (read-token rdr "namespaced map"(read-char rdr))]
+  (let [token (read-token rdr :namespaced-map (read-char rdr))]
     (if-let [ns (cond
                   (= token ":")
                   (ns-name *ns*)
@@ -772,7 +772,7 @@
 
       (let [ch (read-past whitespace? rdr)]
         (if (identical? ch \{)
-          (let [items (read-delimited "namespaced map" \} rdr opts pending-forms)]
+          (let [items (read-delimited :namespaced-map \} rdr opts pending-forms)]
             (when (odd? (count items))
               (err/throw-odd-map rdr nil nil items))
             (let [keys (namespace-keys (str ns) (take-nth 2 items))
@@ -830,7 +830,7 @@
         (f (read* rdr true nil opts pending-forms))
         (if-let [f *default-data-reader-fn*]
           (f tag (read* rdr true nil opts pending-forms))
-          (err/throw-unknown-reader-tag rdr (name tag)))))))
+          (err/throw-unknown-reader-tag rdr tag))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public API
@@ -868,7 +868,7 @@
         (let [ch (read-char reader)]
           (cond
             (whitespace? ch) (recur)
-            (nil? ch) (if eof-error? (err/reader-error reader "EOF") sentinel)
+            (nil? ch) (if eof-error? (err/reader-error reader "Unexpected EOF.") sentinel)
             (identical? ch return-on) READ_FINISHED
             (number-literal? reader ch) (read-number reader ch)
             :else (let [f (macros ch)]
@@ -907,7 +907,7 @@
                            e)))))))
 
 (defn read
-  "Reads the first object from an IPushbackReader or a java.io.PushbackReader.
+  "Reads the first object from an IPushbackReader.
    Returns the object read. If EOF, throws if eof-error? is true.
    Otherwise returns sentinel. If no stream is providen, *in* will be used.
 

@@ -10,17 +10,16 @@
       :author "Bronsa"}
   cljs.tools.reader.edn
   (:refer-clojure :exclude [read read-string char default-data-readers])
-  (:require
-    [cljs.tools.reader.errors :as err]
-    [cljs.tools.reader.reader-types :refer
-     [read-char unread peek-char indexing-reader?
-      get-line-number get-column-number get-file-name indexing-push-back-reader]]
-    [cljs.tools.reader.impl.utils :refer
-     [char ex-info? whitespace? numeric? desugar-meta namespace-keys second']]
-    [cljs.tools.reader.impl.commons :refer
-     [number-literal? read-past match-number parse-symbol read-comment throwing-reader]]
-    [cljs.tools.reader :refer [default-data-readers char-code]]
-    [goog.string :as gstring])
+  (:require [cljs.tools.reader.impl.errors :as err]
+            [cljs.tools.reader.reader-types :refer
+             [read-char unread peek-char indexing-reader?
+              get-line-number get-column-number get-file-name string-push-back-reader]]
+            [cljs.tools.reader.impl.utils :refer
+             [char ex-info? whitespace? numeric? desugar-meta namespace-keys second']]
+            [cljs.tools.reader.impl.commons :refer
+             [number-literal? read-past match-number parse-symbol read-comment throwing-reader]]
+            [cljs.tools.reader :refer [default-data-readers char-code]]
+            [goog.string :as gstring])
   (:import goog.string.StringBuffer))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -126,7 +125,7 @@
                           (not-constituent? ch)
                           (whitespace? ch))
                     (str ch)
-                    (read-token rdr "character" ch false))
+                    (read-token rdr :character ch false))
             token-len (count token)]
         (cond
 
@@ -159,15 +158,18 @@
          :else (err/throw-unsupported-character rdr token)))
       (err/throw-eof-in-character rdr))))
 
+(defn ^:private starting-line-col-info [rdr]
+  (when (indexing-reader? rdr)
+    [(get-line-number rdr) (int (dec (int (get-column-number rdr))))]))
+
 (defn- read-delimited
   [kind delim rdr opts]
-  (let [first-line (when (indexing-reader? rdr)
-                     (get-line-number rdr))
+  (let [[start-line start-column] (starting-line-col-info rdr)
         delim (char delim)]
     (loop [a (transient [])]
       (let [ch (read-past whitespace? rdr)]
         (when-not ch
-          (err/throw-eof-delimited rdr kind first-line (count a)))
+          (err/throw-eof-delimited rdr kind start-line start-column (count a)))
         (if (= delim (char ch))
           (persistent! a)
           (if-let [macrofn (macros ch)]
@@ -178,26 +180,27 @@
 
 (defn- read-list
   [rdr _ opts]
-  (let [the-list (read-delimited "list" \) rdr opts)]
+  (let [the-list (read-delimited :list \) rdr opts)]
     (if (empty? the-list)
       '()
       (apply list the-list))))
 
 (defn- read-vector
   [rdr _ opts]
-  (read-delimited "vector" \] rdr opts))
+  (read-delimited :vector \] rdr opts))
 
 
 (defn- read-map
   [rdr _ opts]
-  (let [the-map (read-delimited \} rdr opts)
+  (let [[start-line start-column] (starting-line-col-info rdr)
+        the-map (read-delimited :map \} rdr opts)
         map-count (count the-map)
         ks (take-nth 2 the-map)
         key-set (set ks)]
     (when (odd? map-count)
-      (err/throw-odd-map rdr nil nil the-map))
+      (err/throw-odd-map rdr start-line start-column the-map))
     (when-not (= (count key-set) (count ks))
-      (err/throw-dup-keys rdr "Map" ks))
+      (err/throw-dup-keys rdr :map ks))
     (if (<= map-count (* 2 (.-HASHMAP-THRESHOLD cljs.core/PersistentArrayMap)))
       (.fromArray cljs.core/PersistentArrayMap (to-array the-map) true true)
       (.fromArray cljs.core/PersistentHashMap (to-array the-map) true))))
@@ -239,7 +242,7 @@
   (loop [sb (StringBuffer.)
          ch (read-char rdr)]
     (case ch
-      nil (err/throw-eof-reading rdr "string" \" sb)
+      nil (err/throw-eof-reading rdr :string \" sb)
       \\ (recur (doto sb (.append (escape-char sb rdr)))
                 (read-char rdr))
       \" (str sb)
@@ -247,7 +250,7 @@
 
 (defn- read-symbol
   [rdr initch]
-  (when-let [token (read-token rdr "symbol" initch)]
+  (when-let [token (read-token rdr :symbol initch)]
     (case token
 
       ;; special symbols
@@ -261,21 +264,21 @@
 
       (or (when-let [p (parse-symbol token)]
             (symbol (p 0) (p 1)))
-          (err/throw-invalid rdr "symbol" token)))))
+          (err/throw-invalid rdr :symbol token)))))
 
 (defn- read-keyword
   [reader initch opts]
   (let [ch (read-char reader)]
     (if-not (whitespace? ch)
-      (let [token (read-token reader "keyword" ch)
+      (let [token (read-token reader :keyword ch)
             s (parse-symbol token)]
         (if (and s (== -1 (.indexOf token "::")))
           (let [ns (s 0)
                 name (s 1)]
             (if (identical? \: (nth token 0))
-              (err/throw-invalid reader "keyword" token) ;; no ::keyword in edn
+              (err/throw-invalid reader :keyword token) ;; no ::keyword in edn
               (keyword ns name)))
-          (err/throw-invalid reader "keyword" token)))
+          (err/throw-invalid reader :keyword token)))
       (err/throw-single-colon reader))))
 
 (defn- wrapping-reader
@@ -295,7 +298,7 @@
 
 (defn- read-set
   [rdr _ opts]
-  (set (read-delimited "set" \} rdr opts)))
+  (set (read-delimited :set \} rdr opts)))
 
 (defn- read-discard
   [rdr _ opts]
@@ -304,17 +307,17 @@
 
 (defn- read-namespaced-map
   [rdr _ opts]
-  (let [token (read-token rdr "namespaced map" (read-char rdr))]
+  (let [token (read-token rdr :namespaced-map (read-char rdr))]
     (if-let [ns (some-> token parse-symbol second')]
       (let [ch (read-past whitespace? rdr)]
         (if (identical? ch \{)
-          (let [items (read-delimited "namespaced map" \} rdr opts)]
+          (let [items (read-delimited :namespaced-map \} rdr opts)]
             (when (odd? (count items))
               (err/throw-odd-map rdr nil nil items))
             (let [keys (namespace-keys (str ns) (take-nth 2 items))
                   vals (take-nth 2 (rest items))]
               (when-not (= (count (set keys)) (count keys))
-                (err/throw-dup-keys rdr "Namespaced map" keys))
+                (err/throw-dup-keys rdr :namespaced-map keys))
               (zipmap keys vals)))
           (err/throw-ns-map-no-map rdr token)))
       (err/throw-bad-ns rdr token))))
@@ -356,14 +359,14 @@
       (f object)
       (if-let [d (:default opts)]
         (d tag object)
-        (err/throw-unknown-reader-tag rdr (name tag))))))
+        (err/throw-unknown-reader-tag rdr tag)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn read
-  "Reads the first object from an IPushbackReader or a java.io.PushbackReader.
+  "Reads the first object from an IPushbackReader.
    Returns the object read. If EOF, throws if eof-error? is true otherwise returns eof.
    If no reader is provided, *in* will be used.
 
@@ -430,4 +433,4 @@
   ([s] (read-string {:eof nil} s))
   ([opts s]
      (when (and s (not= s ""))
-       (read opts (indexing-push-back-reader s)))))
+       (read opts (string-push-back-reader s)))))
