@@ -205,15 +205,17 @@
 (defn- read-map
   [rdr _ opts]
   (let [the-map (read-delimited \} rdr opts)
+        map-count (count the-map)
         ks (take-nth 2 the-map)
-        key-set (set ks)
-        l (to-array the-map)]
-    (when (== 1 (bit-and (alength l) 1))
+        key-set (set ks)]
+    (when (odd? map-count)
       (reader-error rdr "Map literal must contain an even number of forms"))
     (when-not (= (count key-set) (count ks))
       (reader-error rdr (duplicate-keys-error
                          "Map literal contains duplicate key" ks)))
-    (apply hash-map l)))
+    (if (<= map-count (* 2 (.-HASHMAP-THRESHOLD PersistentArrayMap)))
+      (.fromArray PersistentArrayMap (to-array the-map) true true)
+      (.fromArray PersistentHashMap (to-array the-map) true))))
 
 (defn- read-number
   [reader initch opts]
