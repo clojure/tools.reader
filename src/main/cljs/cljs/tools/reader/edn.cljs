@@ -396,7 +396,7 @@
          (let [ch (read-char reader)]
            (cond
             (whitespace? ch) (recur)
-            (nil? ch) (if eof-error? (err/reader-error reader "EOF") eof)
+            (nil? ch) (if eof-error? (err/throw-eof-error reader nil) eof)
             (number-literal? reader ch) (read-number reader ch opts)
             :else (let [f (macros ch)]
                     (if f

@@ -447,9 +447,7 @@
 (defn- check-eof-error
   [form rdr first-line]
   (when (identical? form READ_EOF)
-    (if (< first-line 0)
-      (err/reader-error rdr "EOF while reading")
-      (err/reader-error rdr "EOF while reading, starting at line " first-line))))
+    (err/throw-eof-error rdr (and (< first-line 0) first-line))))
 
 (defn- check-reserved-features
   [rdr form]
@@ -542,8 +540,8 @@
             (if *suppress-read*
               (reader-conditional (read-list rdr ch opts pending-forms) splicing)
               (read-cond-delimited rdr splicing opts pending-forms))))
-        (err/reader-error rdr "EOF while reading character")))
-    (err/reader-error rdr "EOF while reading character")))
+        (err/throw-eof-in-character rdr)))
+    (err/throw-eof-in-character rdr)))
 
 (def ^:private ^:dynamic arg-env nil)
 
@@ -856,7 +854,7 @@
         (let [ch (read-char reader)]
           (cond
             (whitespace? ch) (recur)
-            (nil? ch) (if eof-error? (err/reader-error reader "Unexpected EOF.") sentinel)
+            (nil? ch) (if eof-error? (err/throw-eof-error reader nil) sentinel)
             (identical? ch return-on) READ_FINISHED
             (number-literal? reader ch) (read-number reader ch)
             :else (let [f (macros ch)]
