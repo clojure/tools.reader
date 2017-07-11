@@ -1,5 +1,11 @@
 Changelog
 ========================================
+* Release 1.0.2 on 11 Jul 2017
+  * Improved error messages (#TRDR-44)
+  * Duplicate checks for sets in CLJS port
+* Release 1.0.1 on 08 Jul 2017
+  * More informative error messages for tagged literals
+  * Ported the Fix for #TRDR-44 in the edn namespace
 * Release 1.0.0 on 08 Jun 2017
 * Release 1.0.0-RC1 on 24 May 2017
   * Throw on nil ns in namespaced map (#CLJ-2152)
