@@ -10,8 +10,7 @@
       :author "Bronsa"}
     clojure.tools.reader.reader-types
   (:refer-clojure :exclude [char read-line])
-  (:require [clojure.tools.reader.impl.utils :refer
-             [char whitespace? newline? make-var]])
+  (:require [clojure.tools.reader.impl.utils :refer [char whitespace? newline? make-var]])
   (:import clojure.lang.LineNumberingPushbackReader
            (java.io InputStream BufferedReader Closeable)))
 
@@ -381,19 +380,6 @@
        (if (newline? c)
          (str s)
          (recur (read-char rdr) (.append s c)))))))
-
-(defn reader-error
-  "Throws an ExceptionInfo with the given message.
-   If rdr is an IndexingReader, additional information about column and line number is provided"
-  [rdr & msg]
-  (throw (ex-info (apply str msg)
-                  (merge {:type :reader-exception}
-                         (when (indexing-reader? rdr)
-                           (merge
-                            {:line (get-line-number rdr)
-                             :column (get-column-number rdr)}
-                            (when-let [file-name (get-file-name rdr)]
-                              {:file file-name})))))))
 
 (defn source-logging-reader?
   [rdr]
