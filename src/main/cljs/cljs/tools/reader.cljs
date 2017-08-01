@@ -704,7 +704,11 @@
           (if (and (not (namespace form))
                    (gstring/endsWith (name form) "#"))
             (register-gensym form)
-            (resolve-symbol form)))
+            (let [sym (str form)]
+              (if (gstring/endsWith sym ".")
+                (let [csym (symbol (subs sym 0 (dec (count sym))))]
+                  (symbol (str (resolve-symbol csym) ".")))
+                (resolve-symbol form)))))
 
     (unquote? form) (second form)
     (unquote-splicing? form) (throw (ex-info "unquote-splice not in list"

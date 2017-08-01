@@ -690,7 +690,7 @@
               (if (class? maybe-class)
                 (symbol (.getName ^Class maybe-class) (name form))
                 (resolve-symbol form)))
-            (let [sym (name form)]
+            (let [sym (str form)]
               (cond
                (.endsWith sym "#")
                (register-gensym form)
