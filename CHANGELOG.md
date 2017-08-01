@@ -1,5 +1,7 @@
 Changelog
 ========================================
+* Release 1.0.3 on 19 Jul 2017
+  * ALl errors throw ex-info, add :ex-kind :eof for EOF errors
 * Release 1.0.2 on 11 Jul 2017
   * Improved error messages (#TRDR-44)
   * Duplicate checks for sets in CLJS port
