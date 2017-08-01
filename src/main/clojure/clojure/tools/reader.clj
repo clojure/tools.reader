@@ -639,7 +639,10 @@
   "Resolve a symbol s into its fully qualified namespace version"
   [s]
   (if (pos? (.indexOf (name s) "."))
-    s ;; If there is a period, it is interop
+    (if (.endsWith (name s) ".")
+      (let [csym (symbol (subs (name s) 0 (dec (count (name s)))))]
+        (symbol (str (name (resolve-symbol csym)) ".")))
+      s)
     (if-let [ns-str (namespace s)]
       (let [ns (resolve-ns (symbol ns-str))]
         (if (or (nil? ns)
@@ -698,9 +701,6 @@
                (.startsWith sym ".")
                form
 
-               (.endsWith sym ".")
-               (let [csym (symbol (subs sym 0 (dec (count sym))))]
-                 (symbol (str (resolve-symbol csym) ".")))
                :else (resolve-symbol form)))))
 
     (unquote? form) (second form)
