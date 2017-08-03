@@ -1,5 +1,7 @@
 Changelog
 ========================================
+* Release 1.0.4 on 03 Aug 2017
+  * Syntax-quote delegates `Foo.` symbols to `resolve-symbol`, cljs needs to resolve namespaces while clj classes
 * Release 1.0.3 on 19 Jul 2017
   * ALl errors throw ex-info, add :ex-kind :eof for EOF errors
 * Release 1.0.2 on 11 Jul 2017
