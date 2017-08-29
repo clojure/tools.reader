@@ -360,8 +360,11 @@
    Defaults to nil"
   nil)
 
+(defn- resolve-alias [sym]
+  (get *alias-map* sym))
+
 (defn- resolve-ns [sym]
-  (or (get *alias-map* sym)
+  (or (resolve-alias sym)
       (when-let [ns (find-ns sym)]
         (symbol (ns-name ns)))))
 
@@ -376,7 +379,7 @@
                 name (-nth s 1)]
             (if (identical? \: (.charAt token 0))
               (if-not (nil? ns)
-                (if-let [ns (resolve-ns (symbol (subs ns 1)))]
+                (if-let [ns (resolve-alias (symbol (subs ns 1)))]
                   (keyword (str ns) name)
                   (err/throw-invalid reader :keyword (str \: token)))
                 (if-let [ns *ns*]
