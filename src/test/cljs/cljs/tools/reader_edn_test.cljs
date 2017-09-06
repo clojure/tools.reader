@@ -52,10 +52,9 @@
   (is (= 'abc:def/ghi:jkl.mno (read-string "abc:def/ghi:jkl.mno")))
   (is (instance? cljs.core/Symbol (read-string "alphabet")))
   (is (= "foo//" (str (read-string "foo//"))))
-  (is (js/isNaN (read-string "NaN")))
-  (is (= js/Number.POSITIVE_INFINITY (read-string "Infinity")))
-  (is (= js/Number.POSITIVE_INFINITY (read-string "+Infinity")))
-  (is (= js/Number.NEGATIVE_INFINITY (read-string "-Infinity"))))
+  (is (js/isNaN (read-string "##NaN")))
+  (is (= js/Number.POSITIVE_INFINITY (read-string "##Inf")))
+  (is (= js/Number.NEGATIVE_INFINITY (read-string "##-Inf"))))
 
 (deftest read-specials
   (is (= 'nil nil))

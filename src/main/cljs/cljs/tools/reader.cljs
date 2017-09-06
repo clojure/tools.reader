@@ -343,9 +343,6 @@
         "true" true
         "false" false
         "/" '/
-        "NaN" js/Number.NaN
-        "-Infinity" js/Number.NEGATIVE_INFINITY
-        ("Infinity" "+Infinity") js/Number.POSITIVE_INFINITY
 
         (let [^not-native p (parse-symbol token)]
           (if-not (nil? p)
@@ -438,6 +435,17 @@
   [rdr _ opts pending-forms]
   (doto rdr
     (read* true nil opts pending-forms)))
+
+(defn- read-symbolic-value
+  [rdr _ opts pending-forms]
+  (let [sym (read* rdr true nil opts pending-forms)]
+    (case sym
+
+      NaN js/Number.NaN
+      -Inf js/Number.NEGATIVE_INFINITY
+      Inf js/Number.POSITIVE_INFINITY
+
+      (err/reader-error rdr (str "Invalid token: ##" sym)))))
 
 (def ^:private RESERVED_FEATURES #{:else :none})
 
@@ -810,6 +818,7 @@
     \_ read-discard
     \? read-cond
     \: read-namespaced-map
+    \# read-symbolic-value
     nil))
 
 (defn- read-tagged [^not-native rdr initch opts pending-forms]
