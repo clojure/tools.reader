@@ -46,7 +46,7 @@
 
 (defmethod inspect* :strable [truncate x] (str x))
 
-(defmethod inspect* cljs.coreIndexedSeq [truncate x]
+(defmethod inspect* cljs.core/IndexedSeq [truncate x]
   "<indexed seq>")
 
 (defmethod inspect* cljs.core/PersistentArrayMapSeq [truncate x]
