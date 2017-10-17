@@ -232,7 +232,7 @@
              (read-unicode-char rdr ch 16 4 true)))
       (if (numeric? ch)
         (let [ch (read-unicode-char rdr ch 8 3 false)]
-          (if (> (int ch) 0337)
+          (if (> (int ch) 0377)
             (err/throw-bad-octal-number rdr)
             ch))
         (err/throw-bad-escape-char rdr ch)))))
