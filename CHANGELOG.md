@@ -1,6 +1,14 @@
 Changelog
 ========================================
-* Release 1.0.4 on 03 Aug 2017
+* Release 1.1.1 on 07 Nov 2017
+  * Fix typo in cljs inspector (#TRDR-46)
+  * Fix typo in ocatal string validation (#TRDR-47)
+* Release 1.1.0 on 09 Sept 2017
+  * Remove +-Inf/NaN experimental feature
+  * Add support for ##Inf ##-Inf and ##NaN (#CLJ-1074)
+* Release 1.0.6 on 29 Aug 2017
+  * Disallow non-aliases after ::
+* Release 1.0.5 on 03 Aug 2017
   * Syntax-quote delegates `Foo.` symbols to `resolve-symbol`, cljs needs to resolve namespaces while clj classes
 * Release 1.0.3 on 19 Jul 2017
   * ALl errors throw ex-info, add :ex-kind :eof for EOF errors
