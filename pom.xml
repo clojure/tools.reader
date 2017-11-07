@@ -110,7 +110,7 @@
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojurescript</artifactId>
-      <version>1.9.89</version>
+      <version>1.9.946</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
