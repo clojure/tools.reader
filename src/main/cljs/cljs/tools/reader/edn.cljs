@@ -114,8 +114,8 @@
                    (recur (inc i) (+ d (* uc base)))))))
            (js/String.fromCharCode uc))))))
 
-(def ^:private ^:const upper-limit (int \uD7ff))
-(def ^:private ^:const lower-limit (int \uE000))
+(def ^:private ^:const upper-limit (.charCodeAt \uD7ff 0))
+(def ^:private ^:const lower-limit (.charCodeAt \uE000 0))
 
 (defn- read-char*
   [rdr backslash opts]
