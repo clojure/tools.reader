@@ -81,7 +81,10 @@
   (is (= \@ (read-string "\\@")))
   (is (= (char 0xd7ff) (read-string "\\ud7ff")))
   (is (= (char 0xe000) (read-string "\\ue000")))
-  (is (= (char 0xffff) (read-string "\\uffff"))))
+  (is (= (char 0xffff) (read-string "\\uffff")))
+  (is (thrown-with-msg? js/Error
+        #"Invalid character literal \\ud800"
+        (read-string "\\ud800"))))
 
 (deftest read-string*
   (is (= "foo bar" (read-string "\"foo bar\"")))

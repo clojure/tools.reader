@@ -143,7 +143,7 @@
                ic (.charCodeAt c)]
            (if (and (> ic upper-limit)
                     (< ic lower-limit))
-             (err/throw-invalid-character-literal rdr c)
+             (err/throw-invalid-character-literal rdr (.toString ic 16))
              c))
 
          (gstring/startsWith token "o")
