@@ -1,8 +1,12 @@
 Changelog
 ========================================
+* Release 1.1.3 on 19 Jan 2017
+  * Fix malformed error message for cljs reaer (#TRDR-51)
+* Release 1.1.2 on 17 Jan 2017
+  * Fixed cljs edn reader wrt unicode limits (#TRDR-50)
 * Release 1.1.1 on 07 Nov 2017
   * Fix typo in cljs inspector (#TRDR-46)
-  * Fix typo in ocatal string validation (#TRDR-47)
+  * Fix typo in octal string validation (#TRDR-47)
 * Release 1.1.0 on 09 Sept 2017
   * Remove +-Inf/NaN experimental feature
   * Add support for ##Inf ##-Inf and ##NaN (#CLJ-1074)
