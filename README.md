@@ -175,6 +175,6 @@ There are small differences from clojure.lang.LispReader:
 
 ## License
 
-Copyright © 2013-2017 Nicola Mometto, Rich Hickey & contributors.
+Copyright © 2013-2018 Nicola Mometto, Rich Hickey & contributors.
 
 Licensed under the EPL. (See the file epl.html.)
