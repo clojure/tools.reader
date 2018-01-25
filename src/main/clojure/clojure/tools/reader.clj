@@ -919,10 +919,9 @@
                            (nil? ch) (if eof-error? (err/throw-eof-error reader nil) sentinel)
                            (= ch return-on) READ_FINISHED
                            (number-literal? reader ch) (read-number reader ch)
-                           :else (let [f (macros ch)]
-                                   (if f
-                                     (f reader ch opts pending-forms)
-                                     (read-symbol reader ch)))))))]
+                           :else (if-let [f (macros ch)]
+                                   (f reader ch opts pending-forms)
+                                   (read-symbol reader ch))))))]
            (if (identical? ret reader)
              (recur)
              ret)))
