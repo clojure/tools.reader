@@ -909,43 +909,43 @@
      (when (= :unknown *read-eval*)
        (err/reader-error "Reading disallowed - *read-eval* bound to :unknown"))
      (try
-       (loop []
-         (log-source reader
-           (if (seq pending-forms)
-             (.remove ^List pending-forms 0)
-             (let [ch (read-char reader)]
-               (cond
-                (whitespace? ch) (recur)
-                (nil? ch) (if eof-error? (err/throw-eof-error reader nil) sentinel)
-                (= ch return-on) READ_FINISHED
-                (number-literal? reader ch) (read-number reader ch)
-                :else (let [f (macros ch)]
-                        (if f
-                          (let [res (f reader ch opts pending-forms)]
-                            (if (identical? res reader)
-                              (recur)
-                              res))
-                          (read-symbol reader ch))))))))
-       (catch Exception e
-         (if (ex-info? e)
-           (let [d (ex-data e)]
-             (if (= :reader-exception (:type d))
-               (throw e)
-               (throw (ex-info (.getMessage e)
-                               (merge {:type :reader-exception}
-                                      d
-                                      (if (indexing-reader? reader)
-                                        {:line   (get-line-number reader)
-                                         :column (get-column-number reader)
-                                         :file   (get-file-name reader)}))
-                               e))))
-           (throw (ex-info (.getMessage e)
-                           (merge {:type :reader-exception}
-                                  (if (indexing-reader? reader)
-                                    {:line   (get-line-number reader)
-                                     :column (get-column-number reader)
-                                     :file   (get-file-name reader)}))
-                           e)))))))
+       ((fn read' []
+          (log-source reader
+            (if (seq pending-forms)
+              (.remove ^List pending-forms 0)
+              (let [ch (read-char reader)]
+                (cond
+                  (whitespace? ch) (read')
+                  (nil? ch) (if eof-error? (err/throw-eof-error reader nil) sentinel)
+                  (= ch return-on) READ_FINISHED
+                  (number-literal? reader ch) (read-number reader ch)
+                  :else (let [f (macros ch)]
+                          (if f
+                            (let [res (f reader ch opts pending-forms)]
+                              (if (identical? res reader)
+                                (read')
+                                res))
+                            (read-symbol reader ch)))))))))
+        (catch Exception e
+          (if (ex-info? e)
+            (let [d (ex-data e)]
+              (if (= :reader-exception (:type d))
+                (throw e)
+                (throw (ex-info (.getMessage e)
+                                (merge {:type :reader-exception}
+                                       d
+                                       (if (indexing-reader? reader)
+                                         {:line   (get-line-number reader)
+                                          :column (get-column-number reader)
+                                          :file   (get-file-name reader)}))
+                                e))))
+            (throw (ex-info (.getMessage e)
+                            (merge {:type :reader-exception}
+                                   (if (indexing-reader? reader)
+                                     {:line   (get-line-number reader)
+                                      :column (get-column-number reader)
+                                      :file   (get-file-name reader)}))
+                            e)))))))
 
 (defn read
   "Reads the first object from an IPushbackReader or a java.io.PushbackReader.
