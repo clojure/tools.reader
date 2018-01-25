@@ -34,16 +34,21 @@ YourKit is kindly supporting open source projects with its full-featured Java Pr
 Releases and Dependency Information
 ========================================
 
-Latest stable release: 1.1.3.1
+Latest stable release: 1.2.0
 
 * [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
 * [Development Snapshot Versions](https://oss.sonatype.org/index.html#nexus-search;gav%7Eorg.clojure%7Etools.reader%7E%7E%7E)
 
+[clj](https://clojure.org/guides/getting_started) dependency information:
+```clojure
+org.clojure/tools.reader {:mvn/version "1.2.0"}
+```
+
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "1.1.3.1"]
+[org.clojure/tools.reader "1.2.0"]
 ```
 [Maven](http://maven.apache.org/) dependency information:
 
@@ -51,7 +56,7 @@ Latest stable release: 1.1.3.1
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>1.1.3.1</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
