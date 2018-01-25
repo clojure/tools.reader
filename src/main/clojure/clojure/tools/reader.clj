@@ -909,23 +909,23 @@
      (when (= :unknown *read-eval*)
        (err/reader-error "Reading disallowed - *read-eval* bound to :unknown"))
      (try
-       ((fn read' []
-          (log-source reader
-            (if (seq pending-forms)
-              (.remove ^List pending-forms 0)
-              (let [ch (read-char reader)]
-                (cond
-                  (whitespace? ch) (read')
-                  (nil? ch) (if eof-error? (err/throw-eof-error reader nil) sentinel)
-                  (= ch return-on) READ_FINISHED
-                  (number-literal? reader ch) (read-number reader ch)
-                  :else (let [f (macros ch)]
-                          (if f
-                            (let [res (f reader ch opts pending-forms)]
-                              (if (identical? res reader)
-                                (read')
-                                res))
-                            (read-symbol reader ch)))))))))
+       (loop []
+         (let [ret (log-source reader
+                     (if (seq pending-forms)
+                       (.remove ^List pending-forms 0)
+                       (let [ch (read-char reader)]
+                         (cond
+                           (whitespace? ch) reader
+                           (nil? ch) (if eof-error? (err/throw-eof-error reader nil) sentinel)
+                           (= ch return-on) READ_FINISHED
+                           (number-literal? reader ch) (read-number reader ch)
+                           :else (let [f (macros ch)]
+                                   (if f
+                                     (f reader ch opts pending-forms)
+                                     (read-symbol reader ch)))))))]
+           (if (identical? ret reader)
+             (recur)
+             ret)))
         (catch Exception e
           (if (ex-info? e)
             (let [d (ex-data e)]
