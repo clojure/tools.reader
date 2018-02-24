@@ -924,7 +924,7 @@
 
    Note that the function signature of clojure.tools.reader/read and
    clojure.tools.reader.edn/read is not the same for eof-handling"
-  {:arglists '([] [reader] [opts reader] [reader eof-error? eof-value])}
+  {:arglists '([reader] [opts reader] [reader eof-error? eof-value])}
   ([reader] (read reader true nil))
   ([{eof :eof :as opts :or {eof :eofthrow}} reader] (read* reader (= eof :eofthrow) eof nil opts (to-array [])))
   ([reader eof-error? sentinel] (read* reader eof-error? sentinel nil {} (to-array []))))
@@ -942,3 +942,13 @@
   ([opts s]
      (when (and s (not (identical? s "")))
        (read opts (string-push-back-reader s)))))
+
+(defn read+string
+  "Like read, and taking the same args. reader must be a SourceLoggingPushbackReader.
+  Returns a vector containing the object read and the (whitespace-trimmed) string read."
+  ([reader & args]
+   (let [buf (fn [reader] (str (:buffer @(.-frames reader))))
+         offset (count (buf reader))
+         o (log-source reader (apply read reader args))
+         s (subs (buf reader) offset)]
+     [o s])))

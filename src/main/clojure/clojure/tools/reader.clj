@@ -13,7 +13,7 @@
                             default-data-readers *default-data-reader-fn*
                             *read-eval* *data-readers* *suppress-read*])
   (:require [clojure.tools.reader.reader-types :refer
-             [read-char unread peek-char indexing-reader?
+             [read-char unread peek-char indexing-reader? source-logging-push-back-reader
               get-line-number get-column-number get-file-name string-push-back-reader log-source]]
             [clojure.tools.reader.impl.utils :refer :all] ;; [char ex-info? whitespace? numeric? desugar-meta]
             [clojure.tools.reader.impl.errors :as err]
@@ -22,6 +22,7 @@
   (:import (clojure.lang PersistentHashSet IMeta
                          RT Symbol Reflector Var IObj
                          PersistentVector IRecord Namespace)
+           clojure.tools.reader.reader_types.SourceLoggingPushbackReader
            java.lang.reflect.Constructor
            (java.util regex.Pattern List LinkedList)))
 
@@ -995,3 +996,14 @@
   [form]
   (binding [gensym-env {}]
     (syntax-quote* form)))
+
+(defn read+string
+  "Like read, and taking the same args. reader must be a SourceLoggingPushbackReader.
+  Returns a vector containing the object read and the (whitespace-trimmed) string read."
+  ([] (read+string (source-logging-push-back-reader *in*)))
+  ([^SourceLoggingPushbackReader reader & args]
+   (let [buf (fn [^SourceLoggingPushbackReader reader] (str (:buffer @(.source-log-frames reader))))
+         offset (count (buf reader))
+         o (log-source reader (apply read reader args))
+         s (subs (buf reader) offset)]
+     [o s])))
