@@ -13,7 +13,7 @@
                             default-data-readers *default-data-reader-fn*
                             *read-eval* *data-readers* *suppress-read*])
   (:require [clojure.tools.reader.reader-types :refer
-             [read-char unread peek-char indexing-reader? source-logging-push-back-reader
+             [read-char unread peek-char indexing-reader? source-logging-push-back-reader source-logging-reader?
               get-line-number get-column-number get-file-name string-push-back-reader log-source]]
             [clojure.tools.reader.impl.utils :refer :all] ;; [char ex-info? whitespace? numeric? desugar-meta]
             [clojure.tools.reader.impl.errors :as err]
@@ -971,7 +971,14 @@
   ([] (read *in* true nil))
   ([reader] (read reader true nil))
   ([{eof :eof :as opts :or {eof :eofthrow}} reader] (read* reader (= eof :eofthrow) eof nil opts (LinkedList.)))
-  ([reader eof-error? sentinel] (read* reader eof-error? sentinel nil {} (LinkedList.))))
+  ([reader eof-error? sentinel]
+   (let [ret (read* reader eof-error? sentinel nil {} (LinkedList.))]
+     (when (source-logging-reader? reader)
+       (let [^StringBuilder buf (:buffer @(.source-log-frames ^SourceLoggingPushbackReader reader))
+             len (.length buf)]
+         (when (pos? len)
+           (.delete buf 0 len))))
+     ret)))
 
 (defn read-string
   "Reads one object from the string s.
