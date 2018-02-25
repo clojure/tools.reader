@@ -970,13 +970,16 @@
   {:arglists '([] [reader] [opts reader] [reader eof-error? eof-value])}
   ([] (read *in* true nil))
   ([reader] (read reader true nil))
-  ([{eof :eof :as opts :or {eof :eofthrow}} reader] (read* reader (= eof :eofthrow) eof nil opts (LinkedList.)))
+  ([{eof :eof :as opts :or {eof :eofthrow}} reader]
+   (when (source-logging-reader? reader)
+     (let [^StringBuilder buf (:buffer @(.source-log-frames ^SourceLoggingPushbackReader reader))]
+       (.setLength buf 0)))
+   (read* reader (= eof :eofthrow) eof nil opts (LinkedList.)))
   ([reader eof-error? sentinel]
-   (let [ret (read* reader eof-error? sentinel nil {} (LinkedList.))]
-     #_(when (source-logging-reader? reader)
-       (let [^StringBuilder buf (:buffer @(.source-log-frames ^SourceLoggingPushbackReader reader))]
-         (.setLength buf 0)))
-     ret)))
+   (when (source-logging-reader? reader)
+     (let [^StringBuilder buf (:buffer @(.source-log-frames ^SourceLoggingPushbackReader reader))]
+       (.setLength buf 0)))
+   (read* reader eof-error? sentinel nil {} (LinkedList.))))
 
 (defn read-string
   "Reads one object from the string s.
@@ -1007,8 +1010,6 @@
   Returns a vector containing the object read and the (whitespace-trimmed) string read."
   ([] (read+string (source-logging-push-back-reader *in*)))
   ([^SourceLoggingPushbackReader reader & args]
-   (let [^StringBuilder buf (:buffer @(.source-log-frames reader))
-         offset (.length buf)
-         o (log-source reader (apply read reader args))
-         s (.trim (subs (str buf) offset))]
+   (let [o (log-source reader (apply read reader args))
+         s (.trim (str (:buffer @(.source-log-frames reader))))]
      [o s])))
