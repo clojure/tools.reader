@@ -973,7 +973,7 @@
   ([{eof :eof :as opts :or {eof :eofthrow}} reader] (read* reader (= eof :eofthrow) eof nil opts (LinkedList.)))
   ([reader eof-error? sentinel]
    (let [ret (read* reader eof-error? sentinel nil {} (LinkedList.))]
-     (when (source-logging-reader? reader)
+     #_(when (source-logging-reader? reader)
        (let [^StringBuilder buf (:buffer @(.source-log-frames ^SourceLoggingPushbackReader reader))]
          (.setLength buf 0)))
      ret)))
