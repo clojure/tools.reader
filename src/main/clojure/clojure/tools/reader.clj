@@ -1011,7 +1011,7 @@
   ([] (read+string (source-logging-push-back-reader *in*)))
   ([^SourceLoggingPushbackReader reader & args]
    (let [o (log-source reader (if (= 1 (count args))
-                                (read (first args) reader)x
+                                (read (first args) reader)
                                 (apply read reader args)))
          s (.trim (str (:buffer @(.source-log-frames reader))))]
      [o s])))
