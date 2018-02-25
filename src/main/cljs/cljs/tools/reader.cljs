@@ -949,6 +949,8 @@
   ([reader & args]
    (let [buf (fn [reader] (str (:buffer @(.-frames reader))))
          offset (count (buf reader))
-         o (log-source reader (apply read reader args))
+         o (log-source reader (if (= 1 (count args))
+                                (read (first args) reader)
+                                (apply read reader args)))
          s (.trim (subs (buf reader) offset))]
      [o s])))
