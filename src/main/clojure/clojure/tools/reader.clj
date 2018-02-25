@@ -9,7 +9,7 @@
 (ns ^{:doc "A clojure reader in clojure"
       :author "Bronsa"}
   clojure.tools.reader
-  (:refer-clojure :exclude [read read-line read-string char
+  (:refer-clojure :exclude [read read-line read-string char read+string
                             default-data-readers *default-data-reader-fn*
                             *read-eval* *data-readers* *suppress-read*])
   (:require [clojure.tools.reader.reader-types :refer

@@ -9,7 +9,7 @@
 (ns ^{:doc "A clojure reader in clojure"
       :author "Bronsa"}
   cljs.tools.reader
-  (:refer-clojure :exclude [read read-line read-string char
+  (:refer-clojure :exclude [read read-line read-string char read+string
                             default-data-readers *default-data-reader-fn*
                             *data-readers* *suppress-read*])
   (:require-macros [cljs.tools.reader.reader-types :refer [log-source]])
