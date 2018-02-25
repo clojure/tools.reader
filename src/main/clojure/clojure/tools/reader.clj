@@ -1007,8 +1007,8 @@
   Returns a vector containing the object read and the (whitespace-trimmed) string read."
   ([] (read+string (source-logging-push-back-reader *in*)))
   ([^SourceLoggingPushbackReader reader & args]
-   (let [buf (fn [^SourceLoggingPushbackReader reader] (str (:buffer @(.source-log-frames reader))))
-         offset (count (buf reader))
+   (let [^StringBuilder buf (:buffer @(.source-log-frames reader))
+         offset (.length buf)
          o (log-source reader (apply read reader args))
-         s (subs (buf reader) offset)]
+         s (subs (str buf) offset)]
      [o s])))
