@@ -15,10 +15,10 @@
              [read-char unread peek-char indexing-reader?
               get-line-number get-column-number get-file-name string-push-back-reader]]
             [cljs.tools.reader.impl.utils :refer
-             [char ex-info? whitespace? numeric? desugar-meta namespace-keys second']]
+             [char ex-info? whitespace? numeric? desugar-meta namespace-keys second' char-code]]
             [cljs.tools.reader.impl.commons :refer
              [number-literal? read-past match-number parse-symbol read-comment throwing-reader]]
-            [cljs.tools.reader :refer [default-data-readers char-code]]
+            [cljs.tools.reader :refer [default-data-readers]]
             [goog.string :as gstring])
   (:import goog.string.StringBuffer))
 

@@ -19,7 +19,7 @@
               string-push-back-reader]]
             [cljs.tools.reader.impl.utils :refer
              [char ex-info? whitespace? numeric? desugar-meta next-id namespace-keys second'
-              ReaderConditional reader-conditional reader-conditional?]]
+              ReaderConditional reader-conditional reader-conditional? char-code]]
             [cljs.tools.reader.impl.commons :refer
              [number-literal? read-past match-number parse-symbol read-comment throwing-reader]]
             [cljs.tools.reader.impl.errors :as err]
@@ -98,12 +98,6 @@
                   (err/throw-eof-reading rdr :regex sb))
                 (.append sb ch)))
             (recur (read-char rdr))))))))
-
-(defn- char-code [ch base]
-  (let [code (js/parseInt ch base)]
-    (if (js/isNaN code)
-      -1
-      code)))
 
 (defn- read-unicode-char
   ([token offset length base]

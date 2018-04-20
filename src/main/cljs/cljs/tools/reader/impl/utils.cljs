@@ -95,3 +95,9 @@
 
 (defn second' [[a b]]
   (when-not a b))
+
+(defn char-code [ch base]
+  (let [code (js/parseInt ch base)]
+    (if (js/isNaN code)
+      -1
+      code)))
