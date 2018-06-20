@@ -1,7 +1,7 @@
 Changelog
 ========================================
 * Release 1.1.3.1 on 19 Jan 2017
-  * Fix malformed error message for cljs reaer (#TRDR-51)
+  * Fix malformed error message for cljs reader (#TRDR-51)
 * Release 1.1.2 on 17 Jan 2017
   * Fixed cljs edn reader wrt unicode limits (#TRDR-50)
 * Release 1.1.1 on 07 Nov 2017
