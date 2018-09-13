@@ -905,7 +905,7 @@
 (defn read
   "Reads the first object from an IPushbackReader.
    Returns the object read. If EOF, throws if eof-error? is true.
-   Otherwise returns sentinel. If no stream is providen, *in* will be used.
+   Otherwise returns sentinel. If no stream is provided, *in* will be used.
 
    Opts is a persistent map with valid keys:
     :read-cond - :allow to process reader conditionals, or
