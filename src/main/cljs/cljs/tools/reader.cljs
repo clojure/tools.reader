@@ -940,11 +940,17 @@
 (defn read+string
   "Like read, and taking the same args. reader must be a SourceLoggingPushbackReader.
   Returns a vector containing the object read and the (whitespace-trimmed) string read."
-  ([reader & args]
-   (let [buf (fn [reader] (str (:buffer @(.-frames reader))))
+  ([stream] (read+string stream true nil))
+  ([stream eof-error? eof-value] (read+string stream eof-error? eof-value false))
+  ([stream eof-error? eof-value recursive?]
+   (let [buf (fn [reader] (str (:buffer @(.-frames stream))))
          offset (count (buf reader))
-         o (log-source reader (if (= 1 (count args))
-                                (read (first args) reader)
-                                (apply read reader args)))
+         o (log-source stream (read stream eof-error? eof-value recursive?))
+         s (.trim (subs (buf reader) offset))]
+     [o s]))
+  ([opts stream]
+   (let [buf (fn [reader] (str (:buffer @(.-frames stream))))
+         offset (count (buf reader))
+         o (log-source stream (read opts stream))
          s (.trim (subs (buf reader) offset))]
      [o s])))
