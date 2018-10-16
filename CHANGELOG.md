@@ -1,5 +1,25 @@
 Changelog
 ========================================
+* Release 1.3.1 on ?
+  * Changes to read+string 2-arity to match new clojure arity (CLJ-2358)
+* Release 1.3.0 on 5 Jul 2018
+  * Fix private var warning in cljs impl
+* Release 1.3.0-alpha3 on 25 Feb 2018
+  * Improve memory footprint of source-logging-pushback-reader
+  * Trim output of read+string to match clojure impl
+  * Workaround for bad read+string 2-arity
+* Release 1.3.0-alpha2 on 25 Feb 2018
+  * Reduce memory footprint of source-logging-pushback-reader by cleaning up buffer after use
+  * Exclude read+string from import to remove warning when using clojure 1.9.0
+* Release 1.3.0-alpha1 on 24 Feb 2018
+  * Implement read+string
+  * Attach metadata to all IObjs instead of requiring IMeta
+* Release 1.2.2 on 18 Feb 2018
+  * Exclude reader-conditional and tagged-literal import to remove warning when using newer versions of clojure
+* Release 1.2.1 on 25 Jan 2018
+  * Fix potential stack overflow introduced by previous release
+* Release 1.2.0 on 25 Jan 2018
+  * Fixed wrong recurson point in read, that caused source logging issues
 * Release 1.1.3.1 on 19 Jan 2017
   * Fix malformed error message for cljs reader (#TRDR-51)
 * Release 1.1.2 on 17 Jan 2017
