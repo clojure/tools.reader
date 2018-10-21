@@ -6,7 +6,7 @@
             [clojure.string :as str]
             [clojure.walk :as walk])
   (:import java.nio.charset.Charset
-           (java.io StringReader)
+           (java.io StringReader BufferedReader)
            clojure.lang.LineNumberingPushbackReader))
 
 (defn compare-forms-with-meta [expected-form actual-form]
@@ -28,8 +28,11 @@
 
 (defn test-reader
   "Return a fresh byte array input stream reading off test-bytes"
-  []
+  [test-contents]
   (StringReader. test-contents))
+
+(defn replace-newlines [s replacement]
+  (str/replace s "\n" replacement))
 
 (def expected-haiku-ns
   (with-meta  '(^{:line 1 :column 2 :end-line 1 :end-column 4 :file "haiku.clj"} ns
@@ -56,15 +59,30 @@
                 {:line 8 :column 5 :end-line 10 :end-column 32 :file "haiku.clj"}))
     {:line 3 :column 1 :end-line 10 :end-column 33 :file "haiku.clj"}))
 
-(deftest read-metadata
-  (let [reader (-> (test-reader)
-                   (LineNumberingPushbackReader.)
-                   (reader-types/indexing-push-back-reader 1 "haiku.clj"))
-        first-form (read reader)
-        second-form (read reader)]
+(defn multiple-reader-variants-from-string [s filename]
+  [(-> (test-reader s)
+       (LineNumberingPushbackReader.)
+       (reader-types/indexing-push-back-reader 1 filename))
+   (-> (test-reader s)
+       (BufferedReader.)
+       (reader-types/indexing-push-back-reader 1 filename))
+   ])
+
+(defn read-metadata-helper [reader]
+  (let [first-form (read reader)
+        second-form (read reader)
+        third-form (read reader false :eof)]
     (is (= {:line 1 :column 1 :end-line 1 :end-column 32 :file "haiku.clj"} (meta first-form)))
     (compare-forms-with-meta expected-haiku-ns first-form)
-    (compare-forms-with-meta expected-haiku-defn second-form)))
+    (compare-forms-with-meta expected-haiku-defn second-form)
+    (is (= :eof third-form))))
+
+(deftest read-metadata
+  (doseq [s [test-contents
+             (replace-newlines test-contents "\r")
+             (replace-newlines test-contents "\r\n")]
+          rdr (multiple-reader-variants-from-string s "haiku.clj")]
+    (read-metadata-helper rdr)))
 
 (def expected-haiku-ns-with-source
   (with-meta  '(^{:line 1 :column 2 :end-line 1 :end-column 4 :source "ns" :file "haiku.clj"} ns
@@ -101,8 +119,8 @@
               ^{:last last-five} [1 2 3])
        first-five middle-seven))" :file "haiku.clj"}))
 
-(deftest read-metadata-with-source
-  (let [reader (-> (test-reader)
+(defn read-metadata-with-source-helper [rdr]
+  (let [reader (-> rdr
                    (LineNumberingPushbackReader.)
                    (reader-types/source-logging-push-back-reader 1 "haiku.clj"))
         first-form (read reader)
@@ -110,6 +128,12 @@
     (is (= {:line 1 :column 1 :end-line 1 :end-column 32 :source "(ns clojure.tools.reader.haiku)" :file "haiku.clj"} (meta first-form)))
     (compare-forms-with-meta expected-haiku-ns-with-source first-form)
     (compare-forms-with-meta expected-haiku-defn-with-source second-form)))
+
+(deftest read-metadata-with-source
+  (doseq [s [test-contents
+             (replace-newlines test-contents "\r")
+             (replace-newlines test-contents "\r\n")]]
+    (read-metadata-with-source-helper (test-reader s))))
 
 
 (def test2-contents
@@ -157,3 +181,23 @@
                    (reader-types/indexing-push-back-reader 1 "vector.clj"))
         first-form (read reader)]
     (compare-forms-with-meta expected-vector first-form)))
+
+(defn test-string [n linesep]
+  (apply str (concat ["a "] (repeat n linesep) [" b"])))
+
+(deftest many-consecutive-lineseps
+  ;; With older versions of tools.reader, consecutive-lineseps of
+  ;; 10,000, linesep "\r", and one of the variants of reader, would
+  ;; cause a StackOverflowError exception.
+  (doseq [consecutive-lineseps [1 10 10000]
+          linesep ["\n" "\r" "\r\n"]
+          reader (multiple-reader-variants-from-string
+                  (test-string consecutive-lineseps linesep) "foo.clj")]
+    (let [first-form (read reader)
+          second-form (read reader)
+          third-form (read reader false :eof)]
+      (is (= {:line 1 :column 1 :end-line 1 :end-column 2 :file "foo.clj"} (meta first-form)))
+      (is (= {:line (inc consecutive-lineseps) :column 2
+              :end-line (inc consecutive-lineseps) :end-column 3 :file "foo.clj"}
+             (meta second-form)))
+      (is (= :eof third-form)))))

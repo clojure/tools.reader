@@ -140,7 +140,23 @@
           (set! column prev-column))
       (update! column dec))
     (set! line-start? prev)
-    (unread rdr ch))
+    ;; This may look a bit convoluted, but it helps in the following
+    ;; scenario:
+    ;; + The underlying reader is about to return \return from the
+    ;;   next read-char, and then \newline after that.
+    ;; + read-char gets \return, sets normalize? to true, returns
+    ;;   \newline instead.
+    ;; + Caller calls unread on the \newline it just got.  If we
+    ;;   unread the \newline to the underlying reader, now it is ready
+    ;;   to return two \newline chars in a row, which will throw off
+    ;;   the tracked line numbers.
+    (let [ch (if normalize?
+               (do (set! normalize? false)
+                   (if (identical? \newline ch)
+                     \return
+                     ch))
+               ch)]
+      (unread rdr ch)))
 
   IndexingReader
   (get-line-number [reader] (int line))
@@ -157,7 +173,9 @@
 (extend-type java.io.PushbackReader
   Reader
   (read-char [rdr]
-    (char (.read ^java.io.PushbackReader rdr)))
+    (let [c (.read ^java.io.PushbackReader rdr)]
+      (when (>= c 0)
+        (char c))))
 
   (peek-char [rdr]
     (when-let [c (read-char rdr)]
