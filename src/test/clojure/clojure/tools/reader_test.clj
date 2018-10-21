@@ -1,10 +1,14 @@
 (ns clojure.tools.reader-test
   (:refer-clojure :exclude [read read-string *default-data-reader-fn* *data-readers*])
   (:use [clojure.tools.reader :only [read read-string *default-data-reader-fn* *data-readers*]]
-        [clojure.tools.reader.reader-types :only [string-push-back-reader]]
+        [clojure.tools.reader.reader-types :only [string-push-back-reader
+                                                  indexing-push-back-reader]]
         [clojure.test :only [deftest is are testing]]
         [clojure.tools.reader.impl.utils :exclude [char]])
-  (:import clojure.lang.BigInt))
+  (:require [clojure.tools.reader.edn :as tre])
+  (:import clojure.lang.BigInt
+           (java.io StringReader BufferedReader)
+           clojure.lang.LineNumberingPushbackReader))
 
 (load "common_tests")
 
@@ -177,3 +181,21 @@
     (is (= {::foo 1 :bar 2} (read-string "#::{:foo 1 :_/bar 2}")))
     (is (= {:a/foo 1 :bar 2} (read-string "#:a{:foo 1 :_/bar 2}")))
     (is (= {:clojure.core/foo 2} (read-string "#::c.c{:foo 2}")))))
+
+(defn multiple-reader-variants-from-string [s filename]
+  [(-> (StringReader. s)
+       (LineNumberingPushbackReader.)
+       (indexing-push-back-reader 1 filename))
+   (-> (StringReader. s)
+       (BufferedReader.)
+       (indexing-push-back-reader 1 filename))])
+
+(defn first-reads-from-multiple-readers [s]
+  (for [rdr (multiple-reader-variants-from-string s "file.edn")]
+    (tre/read rdr)))
+
+(deftest trdr-54
+  (let [read-vals (mapcat first-reads-from-multiple-readers
+                          ["[a\rb]" "[a\r b]" "[a \rb]"])]
+    (doseq [pairs (partition 2 1 read-vals)]
+      (is (= (first pairs) (second pairs))))))
