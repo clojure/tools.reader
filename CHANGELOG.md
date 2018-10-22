@@ -1,7 +1,8 @@
 Changelog
 ========================================
-* Release 1.3.1 on ?
-  * Changes to read+string 2-arity to match new clojure arity (CLJ-2358)
+* Release 1.3.1 on 22 Oct 2018
+  * Changes to read+string 2-arity to match new clojure arity (#CLJ-2358)
+  * Fix buffer overflow when reading files with consecutive carriage returns (#TRDR-54)
 * Release 1.3.0 on 5 Jul 2018
   * Fix private var warning in cljs impl
 * Release 1.3.0-alpha3 on 25 Feb 2018
