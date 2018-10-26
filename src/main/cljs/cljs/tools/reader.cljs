@@ -944,13 +944,13 @@
   ([stream eof-error? eof-value] (read+string stream eof-error? eof-value false))
   ([stream eof-error? eof-value recursive?]
    (let [buf (fn [reader] (str (:buffer @(.-frames stream))))
-         offset (count (buf reader))
+         offset (count (buf stream))
          o (log-source stream (read stream eof-error? eof-value recursive?))
-         s (.trim (subs (buf reader) offset))]
+         s (.trim (subs (buf stream) offset))]
      [o s]))
   ([opts stream]
    (let [buf (fn [reader] (str (:buffer @(.-frames stream))))
-         offset (count (buf reader))
+         offset (count (buf stream))
          o (log-source stream (read opts stream))
-         s (.trim (subs (buf reader) offset))]
+         s (.trim (subs (buf stream) offset))]
      [o s])))
