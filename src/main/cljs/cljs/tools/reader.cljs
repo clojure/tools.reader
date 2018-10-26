@@ -914,10 +914,10 @@
     :eof - on eof, return value unless :eofthrow, then throw.
            if not specified, will throw
 
-   To read data structures only, use clojure.tools.reader.edn/read
+   To read data structures only, use cljs.tools.reader.edn/read
 
-   Note that the function signature of clojure.tools.reader/read and
-   clojure.tools.reader.edn/read is not the same for eof-handling"
+   Note that the function signature of cljs.tools.reader/read and
+   cljs.tools.reader.edn/read is not the same for eof-handling"
   {:arglists '([reader] [opts reader] [reader eof-error? eof-value])}
   ([reader] (read reader true nil))
   ([{eof :eof :as opts :or {eof :eofthrow}} reader] (read* reader (= eof :eofthrow) eof nil opts (to-array [])))
@@ -927,10 +927,10 @@
   "Reads one object from the string s.
    Returns nil when s is nil or empty.
 
-   To read data structures only, use clojure.tools.reader.edn/read-string
+   To read data structures only, use cljs.tools.reader.edn/read-string
 
-   Note that the function signature of clojure.tools.reader/read-string and
-   clojure.tools.reader.edn/read-string is not the same for eof-handling"
+   Note that the function signature of cljs.tools.reader/read-string and
+   cljs.tools.reader.edn/read-string is not the same for eof-handling"
   ([s]
      (read-string {} s))
   ([opts s]
