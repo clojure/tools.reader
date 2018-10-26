@@ -1010,9 +1010,8 @@
   Returns a vector containing the object read and the (whitespace-trimmed) string read."
   ([] (read+string (source-logging-push-back-reader *in*)))
   ([stream] (read+string stream true nil))
-  ([stream eof-error? eof-value] (read+string stream eof-error? eof-value false))
-  ([^SourceLoggingPushbackReader stream eof-error? eof-value recursive?]
-   (let [o (log-source stream (read stream eof-error? eof-value recursive?))
+  ([^SourceLoggingPushbackReader stream eof-error? eof-value]
+   (let [o (log-source stream (read stream eof-error? eof-value))
          s (.trim (str (:buffer @(.source-log-frames stream))))]
      [o s]))
   ([opts ^SourceLoggingPushbackReader stream]
