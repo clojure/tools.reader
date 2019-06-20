@@ -1,6 +1,6 @@
 Changelog
 ========================================
-* Release 1.3.2 on 26 Oct 2016
+* Release 1.3.2 on 26 Oct 2018
   * Fix bad arities for read+string
 * Release 1.3.1 on 22 Oct 2018
   * Changes to read+string 2-arity to match new clojure arity (#CLJ-2358)
