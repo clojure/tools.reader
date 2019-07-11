@@ -24,7 +24,8 @@
                          PersistentVector IRecord Namespace)
            clojure.tools.reader.reader_types.SourceLoggingPushbackReader
            java.lang.reflect.Constructor
-           (java.util regex.Pattern List LinkedList)))
+           java.util.regex.Pattern
+           (java.util List LinkedList)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; helpers
