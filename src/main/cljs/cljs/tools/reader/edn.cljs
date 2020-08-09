@@ -69,9 +69,7 @@
   (if-let [ch (read-char rdr)]
     (if-let [dm (dispatch-macros ch)]
       (dm rdr ch opts)
-      (if-let [obj (read-tagged (doto rdr (unread ch)) ch opts)]
-        obj
-        (err/throw-no-dispatch rdr ch)))
+      (read-tagged (doto rdr (unread ch)) ch opts))
     (err/throw-eof-at-dispatch rdr)))
 
 (defn- read-unmatched-delimiter

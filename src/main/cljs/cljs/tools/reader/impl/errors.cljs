@@ -111,18 +111,12 @@
 (defn throw-eof-at-dispatch [rdr]
   (eof-error rdr "Unexpected EOF while reading dispatch character."))
 
-(defn throw-bad-dispatch [rdr ch]
-  (reader-error rdr "No dispatch macro for " ch "."))
-
 (defn throw-unmatch-delimiter [rdr ch]
   (reader-error rdr "Unmatched delimiter " ch "."))
 
 (defn throw-eof-reading [rdr kind & start]
   (let [init (case kind :regex "#\"" :string \")]
     (eof-error rdr "Unexpected EOF reading " (name kind) " starting " (apply str init start) ".")))
-
-(defn throw-no-dispatch [rdr ch]
-  (throw-bad-dispatch rdr ch))
 
 (defn throw-invalid-unicode-char[rdr token]
   (reader-error

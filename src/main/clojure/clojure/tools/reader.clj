@@ -70,7 +70,7 @@
   (if-let [ch (read-char rdr)]
     (if-let [dm (dispatch-macros ch)]
       (dm rdr ch opts pending-forms)
-      (read-tagged (doto rdr (unread ch)) ch opts pending-forms)) ;; ctor reader is implemented as a tagged literal
+      (read-tagged (doto rdr (unread ch)) ch opts pending-forms)) ;; ctor reader is implemented as a taggedx literal
     (err/throw-eof-at-dispatch rdr)))
 
 (defn- read-unmatched-delimiter
