@@ -1,5 +1,9 @@
 Changelog
 ========================================
+
+* Release 1.3.3 on 9 Aug 2020
+  * Fix tagged literals returning non truthy values in EDN reader (#TRDR-62)
+  * Refer to `cljs.tools.reader` instead of `clojure.tools.reader` in docstrings (#TRDR-56)
 * Release 1.3.2 on 26 Oct 2018
   * Fix bad arities for read+string
 * Release 1.3.1 on 22 Oct 2018
