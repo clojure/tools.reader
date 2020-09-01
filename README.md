@@ -66,7 +66,6 @@ org.clojure/tools.reader {:mvn/version "1.3.3"}
 API Index
 ========================================
 
-* [CrossClj Documentation](http://crossclj.info/doc/org.clojure/tools.reader/lastest/index.html)
 * [API index](http://clojure.github.io/tools.reader)
 
 Developer Information
