@@ -1,7 +1,7 @@
 (ns clojure.tools.reader-edn-test
   (:refer-clojure :exclude [read-string])
-  (:use [clojure.tools.reader.edn :only [read-string]]
-        [clojure.test :only [deftest is]])
+  (:use [clojure.tools.reader.edn :as edn :only [read-string]]
+        [clojure.test :only [deftest is testing]])
   (:import clojure.lang.BigInt))
 
 (load "common_tests")
@@ -32,3 +32,7 @@
   (let [my-unknown (fn [tag val] {:unknown-tag tag :value val})]
     (is (= {:unknown-tag 'foo :value 'bar}
            (read-string {:default my-unknown} "#foo bar")))))
+
+(deftest pushback-reader-test
+  (testing "TRDR-63"
+    (is (= '(+) (edn/read (java.io.PushbackReader. (java.io.StringReader. "(+)")))))))
