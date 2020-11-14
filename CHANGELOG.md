@@ -1,6 +1,7 @@
 Changelog
 ========================================
-
+* Release 1.3.4 on 14 Nov 2020
+  * Fix double unread when reading from a java.io.PushbackReader (#TRDR-63)
 * Release 1.3.3 on 9 Aug 2020
   * Fix tagged literals returning non truthy values in EDN reader (#TRDR-62)
   * Refer to `cljs.tools.reader` instead of `clojure.tools.reader` in docstrings (#TRDR-56)
