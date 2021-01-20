@@ -271,9 +271,9 @@
           (let [ns (s 0)
                 name (s 1)]
             (if (identical? \: (nth token 0))
-              (err/throw-invalid reader :keyword token) ;; no ::keyword in edn
+              (err/throw-invalid reader :keyword (str \: token)) ;; no ::keyword in edn
               (keyword ns name)))
-          (err/throw-invalid reader :keyword token)))
+          (err/throw-invalid reader :keyword (str \: token))))
       (err/throw-single-colon reader))))
 
 (defn- wrapping-reader

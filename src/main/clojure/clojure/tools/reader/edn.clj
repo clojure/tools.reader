@@ -271,9 +271,9 @@
           (let [^String ns (s 0)
                 ^String name (s 1)]
             (if (identical? \: (nth token 0))
-              (err/throw-invalid reader :keyword token) ; No ::kw in edn.
+              (err/throw-invalid reader :keyword (str \: token)) ; No ::kw in edn.
               (keyword ns name)))
-          (err/throw-invalid reader :keyword token)))
+          (err/throw-invalid reader :keyword (str \: token))))
       (err/throw-single-colon reader))))
 
 (defn- wrapping-reader
