@@ -146,10 +146,10 @@
    rdr
    "Invalid unicode literal. Unicode literals should be "
    expected
-   "characters long.  "
-   "value suppled is "
+   "characters long. "
+   "Value supplied is "
    actual
-   "characters long."))
+   " characters long."))
 
 (defn throw-invalid-character-literal[rdr token]
   (reader-error rdr "Invalid character literal \\u" token "."))
@@ -157,7 +157,7 @@
 (defn throw-invalid-octal-len[rdr token]
   (reader-error
    rdr
-   "Invalid octal escape sequence in a character literal:"
+   "Invalid octal escape sequence in a character literal: "
    token
    ". Octal escape sequences must be 3 or fewer digits."))
 
@@ -202,7 +202,7 @@
    rdr
    "Feature cannot be "
    (i/inspect feature)
-   " Features must be keywords."))
+   ". Features must be keywords."))
 
 (defn throw-ns-map-no-map [rdr ns-name]
   (reader-error rdr "Namespaced map with namespace " ns-name " does not specify a map."))

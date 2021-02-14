@@ -70,7 +70,7 @@
   (if-let [ch (read-char rdr)]
     (if-let [dm (dispatch-macros ch)]
       (dm rdr ch opts pending-forms)
-      (read-tagged (doto rdr (unread ch)) ch opts pending-forms)) ;; ctor reader is implemented as a taggedx literal
+      (read-tagged (doto rdr (unread ch)) ch opts pending-forms)) ;; ctor reader is implemented as a tagged literal
     (err/throw-eof-at-dispatch rdr)))
 
 (defn- read-unmatched-delimiter
@@ -830,7 +830,7 @@
           (loop [i 0]
             (if (>= i ctors-num)
               (err/reader-error rdr "Unexpected number of constructor arguments to " (str class)
-                            ": got" numargs)
+                            ": got " numargs)
               (if (== (count (.getParameterTypes ^Constructor (aget all-ctors i)))
                       numargs)
                 (Reflector/invokeConstructor class entries)
@@ -951,7 +951,7 @@
 (defn read
   "Reads the first object from an IPushbackReader or a java.io.PushbackReader.
    Returns the object read. If EOF, throws if eof-error? is true.
-   Otherwise returns sentinel. If no stream is providen, *in* will be used.
+   Otherwise returns sentinel. If no stream is provided, *in* will be used.
 
    Opts is a persistent map with valid keys:
     :read-cond - :allow to process reader conditionals, or
