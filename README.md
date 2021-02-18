@@ -28,15 +28,15 @@ YourKit has given an open source license for their profiler, greatly simplifying
 
 YourKit is kindly supporting open source projects with its full-featured Java Profiler. YourKit, LLC is the creator of innovative and intelligent tools for profiling Java and .NET applications. Take a look at YourKit's leading software products:
 
-* <a href="http://www.yourkit.com/java/profiler/index.jsp">YourKit Java Profiler</a> and
-* <a href="http://www.yourkit.com/.net/profiler/index.jsp">YourKit .NET Profiler</a>.
+* <a href="https://www.yourkit.com/java/profiler/index.jsp">YourKit Java Profiler</a> and
+* <a href="https://www.yourkit.com/.net/profiler/index.jsp">YourKit .NET Profiler</a>.
 
 Releases and Dependency Information
 ========================================
 
 Latest stable release: 1.3.4
 
-* [All Released Versions](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
+* [All Released Versions](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.clojure%22%20AND%20a%3A%22tools.reader%22)
 
 * [Development Snapshot Versions](https://oss.sonatype.org/index.html#nexus-search;gav%7Eorg.clojure%7Etools.reader%7E%7E%7E)
 
@@ -50,7 +50,7 @@ org.clojure/tools.reader {:mvn/version "1.3.4"}
 ```clojure
 [org.clojure/tools.reader "1.3.4"]
 ```
-[Maven](http://maven.apache.org/) dependency information:
+[Maven](https://maven.apache.org/) dependency information:
 
 ```xml
 <dependency>
@@ -66,18 +66,15 @@ org.clojure/tools.reader {:mvn/version "1.3.4"}
 API Index
 ========================================
 
-* [API index](http://clojure.github.io/tools.reader)
+* [API index](https://clojure.github.io/tools.reader)
 
 Developer Information
 ========================================
 
 * [GitHub project](https://github.com/clojure/tools.reader)
-
-* [Bug Tracker](http://dev.clojure.org/jira/browse/TRDR)
-
-* [Continuous Integration](http://build.clojure.org/job/tools.reader/)
-
-* [Compatibility Test Matrix](http://build.clojure.org/job/tools.reader-test-matrix/)
+* [Bug Tracker](https://clojure.atlassian.net/browse/TRDR)
+* [Continuous Integration](https://build.clojure.org/job/tools.reader/)
+* [Compatibility Test Matrix](https://build.clojure.org/job/tools.reader-test-matrix/)
 
 Example Usage
 ========================================
@@ -172,7 +169,7 @@ Differences from LispReader.java
 There are small differences from clojure.lang.LispReader:
 
 * `read` throws an `ex-info` for almost every exception, whereas `clojure.lang.LispReader/read` throws a `ReaderException` wrapping the causing exception.
-* `read` is capable of reading literal tags containing periods, fixing [#CLJ-1100](http://dev.clojure.org/jira/browse/CLJ-1100)
+* `read` is capable of reading literal tags containing periods, fixing [#CLJ-1100](https://clojure.atlassian.net/browse/CLJ-1100)
 * `clojure.tools.reader/read` checks if `clojure.tools.reader/*alias-map*` is bound, if that's the case, aliases will be resolved by querying it (must be a map), otherwhise (ns-aliases \*ns\*) will be used
 * `clojure.tools.reader/read` adds additional line/column info to symbols, vectors and maps when possible
 * `clojure.tools.reader.reader-types/read-line` has an additional arity with which is possible to specify the reader to read from
