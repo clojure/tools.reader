@@ -752,7 +752,8 @@
 
 (defn- read-namespaced-map
   [rdr _ opts pending-forms]
-  (let [token (read-token rdr :namespaced-map (read-char rdr))]
+  (let [[start-line start-column] (starting-line-col-info rdr)
+        token (read-token rdr :namespaced-map (read-char rdr))]
     (if-let [ns (cond
                   (= token ":")
                   (ns-name *ns*)
@@ -765,13 +766,22 @@
 
       (let [ch (read-past whitespace? rdr)]
         (if (identical? ch \{)
-          (let [items (read-delimited :namespaced-map \} rdr opts pending-forms)]
+          (let [items (read-delimited :namespaced-map \} rdr opts pending-forms)
+                [end-line end-column] (ending-line-col-info rdr)]
             (when (odd? (count items))
               (err/throw-odd-map rdr nil nil items))
             (let [keys (take-nth 2 items)
                   vals (take-nth 2 (rest items))]
-
-              (RT/map (to-array (mapcat list (namespace-keys (str ns) keys) vals)))))
+              (with-meta
+                (RT/map (to-array (mapcat list (namespace-keys (str ns) keys) vals)))
+                (when start-line
+                  (merge
+                   (when-let [file (get-file-name rdr)]
+                     {:file file})
+                   {:line start-line
+                    :column start-column
+                    :end-line end-line
+                    :end-column end-column})))))
           (err/throw-ns-map-no-map rdr token)))
       (err/throw-bad-ns rdr token))))
 
