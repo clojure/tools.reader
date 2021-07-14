@@ -1,7 +1,7 @@
 Changelog
 ========================================
 
-* Release 1.3.5 on 13 Jul 2021
+* Release 1.3.6 on 13 Jul 2021
   * Add loc info to namespaced map literals (#TRDR-67)
   * Fix inconsistent spacing and typos in error messages (#TRDR-66)
 * Release 1.3.5 on 3 Feb 2021
