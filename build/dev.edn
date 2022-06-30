@@ -1,0 +1,6 @@
+{:main           cljs.tools.test-runner
+ :optimizations  :none
+ :output-to      "target/dev/out/main.js"
+ :output-dir     "target/dev/out"
+ :parallel-build true
+ :target         :nodejs}

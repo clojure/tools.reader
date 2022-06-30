@@ -1,6 +1,8 @@
 {:deps {org.clojure/clojure {:mvn/version "1.10.3"}}
  :paths ["src/main/clojure"]
  :aliases
- {:cljs-test {:extra-deps  {org.clojure/clojurescript {:mvn/version "1.10.597"}}
-              :extra-paths ["src/main/cljs" "src/test/cljs"]
-              :main-opts   ["-m" "cljs.main" "-v" "-co" "build/adv.edn" "-c"]}}}
+ {:cljs-test {:extra-deps  {org.clojure/clojurescript {:mvn/version "1.11.60"}}
+              :extra-paths ["src/main/cljs" "src/test/cljs"]}
+  :cljs-repl {:main-opts   ["-m" "cljs.main" "-v" "-co" "build/dev.edn" "-re" "node" "-r"]}
+  :cljs-adv  {:main-opts   ["-m" "cljs.main" "-v" "-co" "build/adv.edn" "-c"]}
+  :cljs-simp {:main-opts   ["-m" "cljs.main" "-v" "-co" "build/simp.edn" "-c"]}}}

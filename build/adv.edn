@@ -2,4 +2,5 @@
  :optimizations  :advanced
  :output-to      "target/test/tests-advanced.js"
  :output-dir     "target/test/out-advanced"
- :parallel-build true}
+ :parallel-build true
+ :target         :nodejs}
