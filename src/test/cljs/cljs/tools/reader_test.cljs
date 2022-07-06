@@ -145,8 +145,8 @@
 (deftest read-regex
   (is (= (str #"(?i)abc")
          (str (read-string "#\"(?i)abc\""))))
-  (is (= (str #"\[\]?(\")\\")
-         (str (read-string "#\"\\[\\]?(\\\")\\\\\"")))))
+  (is (= (re-matches #"\[\]?(\")\\" "[]\"\\")
+         (re-matches (read-string "#\"\\[\\]?(\\\")\\\\\"") "[]\"\\"))))
 
 (deftest read-quote
   (is (= ''foo (read-string "'foo"))))

@@ -1,0 +1,7 @@
+{:main           cljs.tools.test-runner
+ :optimizations  :simple
+ :output-to      "target/test/tests-simple.js"
+ :output-dir     "target/test/out-simple"
+ :parallel-build true
+ :static-fns     true
+ :target         :nodejs}
