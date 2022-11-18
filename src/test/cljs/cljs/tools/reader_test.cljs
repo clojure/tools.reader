@@ -325,3 +325,12 @@
     (is (instance? PersistentArrayMap a))
     (is (= b {:a 1 :b 2 :c 3 :d 4 :e 5 :f 6 :g 7 :h 8 :i 9}))
     (is (instance? PersistentHashMap b))))
+
+(deftest read+string-test
+  (let [rdr (rt/source-logging-push-back-reader "[1][2][3][4]")]
+    (is (= [[1] "[1]"] (reader/read+string rdr)))
+    (testing "buffer is reset and next value is read succesfully"
+      (is (= [[2] "[2]"] (reader/read+string rdr))))
+    (testing "exercising second arity"
+      (is (= [[3] "[3]"] (reader/read+string  {} rdr)))
+      (is (= [[4] "[4]"] (reader/read+string  {} rdr))))))

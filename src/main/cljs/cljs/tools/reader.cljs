@@ -952,14 +952,14 @@
   Returns a vector containing the object read and the (whitespace-trimmed) string read."
   ([stream] (read+string stream true nil))
   ([stream eof-error? eof-value]
-   (let [buf (fn [stream] (str (:buffer @(.-frames stream))))
-         offset (count (buf stream))
+   (let [buf (:buffer @(.-frames stream))
+         _ (.clear buf)
          o (log-source stream (read stream eof-error? eof-value))
-         s (.trim (subs (buf stream) offset))]
+         s (.trim (str buf))]
      [o s]))
   ([opts stream]
-   (let [buf (fn [stream] (str (:buffer @(.-frames stream))))
-         offset (count (buf stream))
+   (let [buf (:buffer @(.-frames stream))
+         _ (.clear buf)
          o (log-source stream (read opts stream))
-         s (.trim (subs (buf stream) offset))]
+         s (.trim (str buf))]
      [o s])))
