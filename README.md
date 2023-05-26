@@ -73,8 +73,7 @@ Developer Information
 
 * [GitHub project](https://github.com/clojure/tools.reader)
 * [Bug Tracker](https://clojure.atlassian.net/browse/TRDR)
-* [Continuous Integration](https://build.clojure.org/job/tools.reader/)
-* [Compatibility Test Matrix](https://build.clojure.org/job/tools.reader-test-matrix/)
+* [Continuous Integration](https://github.com/clojure/tools.reader/actions/workflows/test.yml)
 
 Example Usage
 ========================================
@@ -176,6 +175,6 @@ There are small differences from clojure.lang.LispReader:
 
 ## License
 
-Copyright © 2013-2018 Nicola Mometto, Rich Hickey & contributors.
+Copyright © 2013-2023 Nicola Mometto, Rich Hickey & contributors.
 
 Licensed under the EPL. (See the file epl.html.)
