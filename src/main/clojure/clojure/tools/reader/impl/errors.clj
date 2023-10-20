@@ -171,7 +171,7 @@
    rdr
    "Metadata cannot be "
    (i/inspect x)
-   ". Metadata must be a Symbol, Keyword, String or Map."))
+   ". Metadata must be a Symbol, Keyword, String, Map or Vector."))
 
 (defn throw-bad-metadata-target [rdr target]
   (reader-error

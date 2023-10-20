@@ -68,6 +68,7 @@
     (keyword? f) {f true}
     (symbol? f)  {:tag f}
     (string? f)  {:tag f}
+    (vector? f)  {:param-tags f}
     :else        f))
 
 (def last-id (atom 0))
