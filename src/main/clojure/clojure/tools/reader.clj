@@ -1022,10 +1022,12 @@
   ([] (read+string (source-logging-push-back-reader *in*)))
   ([stream] (read+string stream true nil))
   ([^SourceLoggingPushbackReader stream eof-error? eof-value]
-   (let [o (log-source stream (read stream eof-error? eof-value))
-         s (.trim (str (:buffer @(.source-log-frames stream))))]
+   (let [^StringBuilder buf (doto (:buffer @(.source-log-frames stream)) (.setLength 0))
+         o (log-source stream (read stream eof-error? eof-value))
+         s (.trim (str buf))]
      [o s]))
   ([opts ^SourceLoggingPushbackReader stream]
-   (let [o (log-source stream (read opts stream))
-         s (.trim (str (:buffer @(.source-log-frames stream))))]
+   (let [^StringBuilder buf (doto (:buffer @(.source-log-frames stream)) (.setLength 0))
+         o (log-source stream (read opts stream))
+         s (.trim (str buf))]
      [o s])))
