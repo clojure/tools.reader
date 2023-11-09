@@ -90,7 +90,7 @@
   <licenses>
     <license>
       <name>Eclipse Public License 1.0</name>
-      <url>http://opensource.org/licenses/eclipse-1.0.php</url>
+      <url>https://opensource.org/license/epl-1-0/</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -131,7 +131,7 @@
   <scm>
     <connection>scm:git:git://github.com/clojure/tools.reader.git</connection>
     <developerConnection>scm:git:git://github.com/clojure/tools.reader.git</developerConnection>
-    <url>http://github.com/clojure/tools.reader</url>
+    <url>https://github.com/clojure/tools.reader</url>
     <tag>HEAD</tag>
   </scm>
 </project>
