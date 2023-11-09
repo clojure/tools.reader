@@ -1,6 +1,10 @@
 Changelog
 ========================================
 
+* Release 1.3.7 on 9 Nov 2023
+  * Reset source-logging-reader's buffer like in Clojure (#TRDR-69)
+  * Respect forms :line and :column meta when provided
+  * source-logging-push-back-reader throws StringIndexOutOfBoundsException reading multiline form (#TRDR-71)
 * Release 1.3.6 on 13 Jul 2021
   * Add loc info to namespaced map literals (#TRDR-67)
   * Fix inconsistent spacing and typos in error messages (#TRDR-66)
