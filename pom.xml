@@ -98,11 +98,11 @@
   <parent>
     <groupId>org.clojure</groupId>
     <artifactId>pom.contrib</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
   </parent>
 
   <properties>
-    <clojure.version>1.5.1</clojure.version>
+    <clojure.version>1.9.0</clojure.version>
   </properties>
 
 
