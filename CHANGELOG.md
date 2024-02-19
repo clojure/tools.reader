@@ -1,6 +1,8 @@
 Changelog
 ========================================
 
+* Release 1.4.0 on 19 Feb 2024
+  * Update parent pom and Clojure dep versions to 1.9.0
 * Release 1.3.7 on 9 Nov 2023
   * Reset source-logging-reader's buffer like in Clojure (#TRDR-69)
   * Respect forms :line and :column meta when provided
