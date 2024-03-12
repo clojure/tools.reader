@@ -42,13 +42,13 @@ Latest stable release: 1.4.0
 
 [clj](https://clojure.org/guides/getting_started) dependency information:
 ```clojure
-org.clojure/tools.reader {:mvn/version "1.4.0"}
+org.clojure/tools.reader {:mvn/version "1.4.1"}
 ```
 
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[org.clojure/tools.reader "1.4.0"]
+[org.clojure/tools.reader "1.4.1"]
 ```
 [Maven](https://maven.apache.org/) dependency information:
 
@@ -56,7 +56,7 @@ org.clojure/tools.reader {:mvn/version "1.4.0"}
 <dependency>
   <groupId>org.clojure</groupId>
   <artifactId>tools.reader</artifactId>
-  <version>1.4.0</version>
+  <version>1.4.1</version>
 </dependency>
 ```
 
