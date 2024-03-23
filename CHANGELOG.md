@@ -1,6 +1,8 @@
 Changelog
 ========================================
 
+* Release 1.4.1 on 12 March 2024
+  * Add type hints to suppress reflection warnings introduced in 1.3.7
 * Release 1.4.0 on 19 Feb 2024
   * Update parent pom and Clojure dep versions to 1.9.0
 * Release 1.3.7 on 9 Nov 2023
