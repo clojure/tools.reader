@@ -1,6 +1,8 @@
 Changelog
 ========================================
 
+* Release 1.4.2 on 18 April 2024
+  * Fixed namespaced map support for clojurescript
 * Release 1.4.1 on 12 March 2024
   * Add type hints to suppress reflection warnings introduced in 1.3.7
 * Release 1.4.0 on 19 Feb 2024
