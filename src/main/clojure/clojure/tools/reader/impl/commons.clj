@@ -107,11 +107,14 @@
         (let [ns-idx (inc ns-idx)]
           (when-not (== ns-idx (count token))
             (let [sym (subs token ns-idx)]
-              (when (and (not (numeric? (nth sym 0)))
-                         (not (= "" sym))
-                         (not (.endsWith ns ":"))
-                         (or (= sym "/")
-                             (== -1 (.indexOf sym "/"))))
+              (cond
+                (re-matches #"[1-9]" sym)
+                [ns sym]
+                (and (not (numeric? (nth sym 0)))
+                     (not (= "" sym))
+                     (not (.endsWith ns ":"))
+                     (or (= sym "/")
+                         (== -1 (.indexOf sym "/"))))
                 [ns sym]))))
         (when (or (= token "/")
                   (== -1 (.indexOf token "/")))
