@@ -1,6 +1,9 @@
 Changelog
 ========================================
 
+* Release 1.5.0 on 18 April 2024
+  * Support clojure 1.12 param-tags metadata (#TRDR-70)
+  * Support Clojure 1.12 array class notation refinement (#TRDR-73)
 * Release 1.4.2 on 18 April 2024
   * Fixed namespaced map support for clojurescript
 * Release 1.4.1 on 12 March 2024
