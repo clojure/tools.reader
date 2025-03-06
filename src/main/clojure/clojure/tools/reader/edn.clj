@@ -56,7 +56,8 @@
         (if (or (whitespace? ch)
                 (macro-terminating? ch)
                 (nil? ch))
-          (do (unread rdr ch)
+          (do (when ch
+                (unread rdr ch))
               (str sb))
           (if (not-constituent? ch)
             (err/throw-bad-char rdr kind ch)
