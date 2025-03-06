@@ -1,6 +1,7 @@
 Changelog
 ========================================
-
+* Release 1.5.1 on 06 March 2025
+  * Fix column number info for token at EOF
 * Release 1.5.0 on 18 August 2024
   * Support clojure 1.12 param-tags metadata (#TRDR-70)
   * Support Clojure 1.12 array class notation refinement (#TRDR-73)
