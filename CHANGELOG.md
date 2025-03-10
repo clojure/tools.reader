@@ -1,5 +1,7 @@
 Changelog
 ========================================
+* Release 1.5.2 on 10 March 2025
+  * Fix column number info for number at EOF
 * Release 1.5.1 on 06 March 2025
   * Fix column number info for token at EOF
 * Release 1.5.0 on 18 August 2024
