@@ -1,7 +1,7 @@
-{:deps {org.clojure/clojure {:mvn/version "1.10.3"}}
+{:deps {org.clojure/clojure {:mvn/version "1.11.4"}}
  :paths ["src/main/clojure"]
  :aliases
- {:cljs-test {:extra-deps  {org.clojure/clojurescript {:mvn/version "1.11.60"}}
+ {:cljs-test {:extra-deps  {org.clojure/clojurescript {:mvn/version "1.9.946"}}
               :extra-paths ["src/main/cljs" "src/test/cljs"]}
   :cljs-repl {:main-opts   ["-m" "cljs.main" "-v" "-co" "build/dev.edn" "-re" "node" "-r"]}
   :cljs-adv  {:main-opts   ["-m" "cljs.main" "-v" "-co" "build/adv.edn" "-c"]}

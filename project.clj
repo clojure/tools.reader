@@ -1,13 +1,13 @@
 (defproject org.clojure/tools.reader "1.0.0-SNAPSHOT"
   :description "A Clojure reader in Clojure"
-  :parent [org.clojure/pom.contrib "0.2.0"]
+  :parent [org.clojure/pom.contrib "1.4.0"]
   :url "https://github.com/clojure/tools.reader"
   :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+            :url "https://www.eclipse.org/legal/epl-v10.html"}
   :source-paths ["src/main/clojure" "src/main/cljs"]
   :test-paths ["src/test/clojure"]
   :repositories {"sonatype-oss-public" "https://oss.sonatype.org/content/groups/public/"}
-  :dependencies [[org.clojure/clojure "1.9.0"]
+  :dependencies [[org.clojure/clojure "1.11.4"]
                  [org.clojure/clojurescript "1.9.946" :scope "provided"]]
   :profiles {:1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
              :1.6 {:dependencies [[org.clojure/clojure "1.6.0"]]}
@@ -20,7 +20,7 @@
   :min-lein-version "2.0.0"
   :global-vars {*warn-on-reflection* true
                 *unchecked-math* :warn-on-boxed}
-  :plugins [[lein-cljsbuild "1.1.4"]]
+  :plugins [[lein-cljsbuild "1.1.8"]]
   :cljsbuild
   {:builds [{:id "dev"
              :source-paths ["src/main/cljs"]
