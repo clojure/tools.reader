@@ -10,7 +10,8 @@ jobs:
       - uses: actions/checkout@v6
 
       - uses: DeLaGuardo/setup-clojure@13.4
-        with: 1.12.4.1582
+        with:
+          tools-deps: '1.12.4.1582'
 
       - name: Build tests
         run: clojure -M:cljs-test:cljs-adv
