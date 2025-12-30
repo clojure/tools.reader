@@ -11,7 +11,7 @@ jobs:
 
       - uses: DeLaGuardo/setup-clojure@13.4
         with:
-          tools-deps: '1.12.4.1582'
+          cli: '1.12.4.1582'
 
       - name: Build tests
         run: clojure -M:cljs-test:cljs-adv
