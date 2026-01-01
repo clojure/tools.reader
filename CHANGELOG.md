@@ -1,6 +1,6 @@
 Changelog
 ========================================
-* Release 1.6.0 on 30 Dec 2025
+* Release 1.6.0 on 01 Jan 2026
   * Update parent pom and Clojure dep versions to 1.11.4
 * Release 1.5.2 on 10 March 2025
   * Fix column number info for number at EOF
